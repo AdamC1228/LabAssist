@@ -5,9 +5,9 @@ require_once "logic/common/commonFunctions.php";
 
 function showBoardListing()
 {
-    $html= "   <div class='flex flexVerticalCenter marginBottom10 '>";
-    $html.=         forumNavigation('0');
-    $html.= "   </div>";
+	$html= "   <div class='flex flexVerticalCenter marginBottom10 '>";
+	$html.=         forumNavigation('0');
+	$html.= "   </div>";
 	$html.= paginatedBoardListing();
 
 	return $html;
@@ -15,32 +15,32 @@ function showBoardListing()
 
 function showBoard($department)
 {
-    $formURL=basename($_SERVER['REQUEST_URI']);
-    $html="";
-    $html.= "<script type='text/javascript' src='scripts/searchbar.js'></script>";
-    $html.= "<div class='flex columnLayout2 alignCenterFlex marginBottom10'>";
-    $html.= "   <div class='flex flexVerticalCenter'>";
-    $html.=         forumNavigation('0');
-    $html.= "   </div>";
-    $html.= "   <div id='createThread'>";
-    $html.= "       <form method='GET' action='{$formURL}'>";
-    $html.=             preserveOldGETParams();
-    $html.= "           <input type='submit' class='btnSmall' value='New Thread' name='newThread'/>";
-    $html.= "       </form>";
-    $html.= "   </div>";
-    $html.= "</div>";
-    //$html.= createSearchBar();
-    $html.= paginatedThreadListing($department);
+	$formURL=basename($_SERVER['REQUEST_URI']);
+	$html="";
+	$html.= "<script type='text/javascript' src='scripts/searchbar.js'></script>";
+	$html.= "<div class='flex columnLayout2 alignCenterFlex marginBottom10'>";
+	$html.= "   <div class='flex flexVerticalCenter'>";
+	$html.=         forumNavigation('0');
+	$html.= "   </div>";
+	$html.= "   <div id='createThread'>";
+	$html.= "       <form method='GET' action='{$formURL}'>";
+	$html.=             preserveOldGETParams();
+	$html.= "           <input type='submit' class='btnSmall' value='New Thread' name='newThread'/>";
+	$html.= "       </form>";
+	$html.= "   </div>";
+	$html.= "</div>";
+	//$html.= createSearchBar();
+	$html.= paginatedThreadListing($department);
 
 	return $html;
 }
 
 function showThread($quid)
 {
-    $html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
-    $html.= "   <div class='flex flexVerticalCenter marginBottom10'>";
-    $html.=         forumNavigation($quid);
-    $html.= "   </div>";
+	$html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
+	$html.= "   <div class='flex flexVerticalCenter marginBottom10'>";
+	$html.=         forumNavigation($quid);
+	$html.= "   </div>";
 	$html.= paginatedQuestionListing($quid);
 
 	return $html;
@@ -48,33 +48,33 @@ function showThread($quid)
 
 function forumNavigation($quid)
 {
-    $html="";
+	$html="";
 
 
-    $html.= "<a href='forum.php'>Home</a> / ";
-    
-    if(isset($_GET['viewBoard']) && !empty($_GET['viewBoard']))
-    {
-        $html.= "<a href='forum.php?viewBoard={$_GET['viewBoard']}'>{$_GET['viewBoard']}</a> / ";
+	$html.= "<a href='forum.php'>Home</a> / ";
 
-        if(isset($_GET['viewThread']) && !empty($_GET['viewThread']))
-        {
-            $questionName=getQuestionName(array($quid));
-            $html.= "<a href='forum.php?viewBoard={$_GET['viewBoard']}&viewThread={$_GET['viewThread']}'>$questionName</a>";
-        }
-    }
-    
-    return $html;
+	if(isset($_GET['viewBoard']) && !empty($_GET['viewBoard']))
+	{
+		$html.= "<a href='forum.php?viewBoard={$_GET['viewBoard']}'>{$_GET['viewBoard']}</a> / ";
+
+		if(isset($_GET['viewThread']) && !empty($_GET['viewThread']))
+		{
+			$questionName=getQuestionName(array($quid));
+			$html.= "<a href='forum.php?viewBoard={$_GET['viewBoard']}&viewThread={$_GET['viewThread']}'>$questionName</a>";
+		}
+	}
+
+	return $html;
 }
 
 function paginatedBoardListing()
 {
-    $html="";
-    $paginationParams=getPaginationParameters();
-    $html.=generateBoardTable(getBoardList($paginationParams));
-    $html.=printBottomPagination($paginationParams,getPaginationCountBoard());
-    
-    return $html;
+	$html="";
+	$paginationParams=getPaginationParameters();
+	$html.=generateBoardTable(getBoardList($paginationParams));
+	$html.=printBottomPagination($paginationParams,getPaginationCountBoard());
+
+	return $html;
 }
 
 function paginatedThreadListing($department)
@@ -89,21 +89,21 @@ function paginatedThreadListing($department)
 
 function paginatedQuestionListing($question)
 {
-    $html="";
-    $paginationParams=getPaginationParameters();
-    $html.=generateThread(getQuestionList(array_merge(array($question),$paginationParams)));
-    $html.=replyToThreadTinyMCE();
-    $html.=printBottomPagination($paginationParams,getPaginationCountQuestion(array($question)));
-    
-    return $html;
+	$html="";
+	$paginationParams=getPaginationParameters();
+	$html.=generateThread(getQuestionList(array_merge(array($question),$paginationParams)));
+	$html.=replyToThreadTinyMCE();
+	$html.=printBottomPagination($paginationParams,getPaginationCountQuestion(array($question)));
+
+	return $html;
 }
 
 function createNewThread()
 {
-    $html ="";
-    $html.=createThreadTinyMCE();
-    
-    return $html;
+	$html ="";
+	$html.=createThreadTinyMCE();
+
+	return $html;
 }
 
 /*
@@ -113,107 +113,107 @@ function createNewThread()
  *
  *
  *
-*/
+ */
 
 function createThreadTinyMCE()
 {
-    $html="";
-    
-    $formURL=basename($_SERVER['REQUEST_URI']);
-    $classDropDown=genClass($_GET['viewBoard']);
-    
-    $html.=<<<EOF
+	$html="";
+
+	$formURL=basename($_SERVER['REQUEST_URI']);
+	$classDropDown=genClass($_GET['viewBoard']);
+
+	$html.=<<<EOF
     <script src='/libraries/tinymce/tinymce.min.js'></script>
     <script>
     tinymce.init({
-        selector: '#body',
-        theme: 'modern',
-        height: 300,
-        width: '100%',
-        plugins: [
-        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-        'save table contextmenu directionality emoticons template paste textcolor'
-        ],
-        content_css: 'css/content.css',
-        toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+	selector: '#body',
+	theme: 'modern',
+	height: 300,
+	width: '100%',
+	plugins: [
+	'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+	'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+	'save table contextmenu directionality emoticons template paste textcolor'
+	],
+	content_css: 'css/content.css',
+	toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
     });
 
     </script>
     <div class='responseBlock dropShadow'>
-        <form class='responseBlockContainer' method='post' action='{$formURL}'>
-            <div class='responseBlockHeader'>
-                <span class='lightText'><b>Create Thread</b></span>
-            </div><!--responseBlockHeader-->
-            <div class='threadBlockTitle'>
-                <div class='threadBlockTitleText'>
-                    <p>Title:</p>
-                </div>
-                <div class='threadBlockTitleInput'>
-                    <input type='text' class='inputprimaryLarge' name='threadTitle' placeholder='Thread Title' maxlength=60/>
-                </div>
-                <div class='threadBlockClassText'>
-                    <p>Class:</p>
-                </div>
-                <div class='threadBlockClassInput'>
-                    {$classDropDown}
-                </div>
-            </div><!--threadBlockTitle-->
-            <div class='responseBlockData'>
-                    <textarea id="body" name="formattedThread"></textarea>
-            </div><!--responseBlockData-->
-            <div class='responseBlockSubmit'>
-                    <input type='submit' class='btn' value='Create'/>
-            </div><!--responseBlockData-->
-        </form><!--responseBlockContainer-->
+	<form class='responseBlockContainer' method='post' action='{$formURL}'>
+	    <div class='responseBlockHeader'>
+		<span class='lightText'><b>Create Thread</b></span>
+	    </div><!--responseBlockHeader-->
+	    <div class='threadBlockTitle'>
+		<div class='threadBlockTitleText'>
+		    <p>Title:</p>
+		</div>
+		<div class='threadBlockTitleInput'>
+		    <input type='text' class='inputprimaryLarge' name='threadTitle' placeholder='Thread Title' maxlength=60/>
+		</div>
+		<div class='threadBlockClassText'>
+		    <p>Class:</p>
+		</div>
+		<div class='threadBlockClassInput'>
+		    {$classDropDown}
+		</div>
+	    </div><!--threadBlockTitle-->
+	    <div class='responseBlockData'>
+		    <textarea id="body" name="formattedThread"></textarea>
+	    </div><!--responseBlockData-->
+	    <div class='responseBlockSubmit'>
+		    <input type='submit' class='btn' value='Create'/>
+	    </div><!--responseBlockData-->
+	</form><!--responseBlockContainer-->
     </div><!--responseBlock-->
-    
+
 EOF;
-    
-    return $html;
+
+	return $html;
 }
 
 function replyToThreadTinyMCE()
 {
-    $html="";
-    
-    $formURL=basename($_SERVER['REQUEST_URI']);
-    
-    $html.=<<<EOF
+	$html="";
+
+	$formURL=basename($_SERVER['REQUEST_URI']);
+
+	$html.=<<<EOF
     <script src='/libraries/tinymce/tinymce.min.js'></script>
     <script>
     tinymce.init({
-        selector: '#response',
-        theme: 'modern',
-        height: 300,
-        width: '100%',
-        plugins: [
-        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-        'save table contextmenu directionality emoticons template paste textcolor'
-        ],
-        content_css: 'css/content.css',
-        toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+	selector: '#response',
+	theme: 'modern',
+	height: 300,
+	width: '100%',
+	plugins: [
+	'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+	'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+	'save table contextmenu directionality emoticons template paste textcolor'
+	],
+	content_css: 'css/content.css',
+	toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
     });
 
     </script>
     <div class='responseBlock dropShadow'>
-        <form class='responseBlockContainer' method='post' action='{$formURL}'>
-            <div class='responseBlockHeader'>
-                <span class='lightText'><b>Quick Reply</b></span>
-            </div><!--responseBlockHeader-->
-            <div class='responseBlockData'>
-                    <textarea id="response" name="formattedReply"></textarea>
-            </div><!--responseBlockData-->
-            <div class='responseBlockSubmit'>
-                    <input type='submit' class='btn' value='Reply'/>
-            </div><!--responseBlockData-->
-        </form><!--responseBlockContainer-->
+	<form class='responseBlockContainer' method='post' action='{$formURL}'>
+	    <div class='responseBlockHeader'>
+		<span class='lightText'><b>Quick Reply</b></span>
+	    </div><!--responseBlockHeader-->
+	    <div class='responseBlockData'>
+		    <textarea id="response" name="formattedReply"></textarea>
+	    </div><!--responseBlockData-->
+	    <div class='responseBlockSubmit'>
+		    <input type='submit' class='btn' value='Reply'/>
+	    </div><!--responseBlockData-->
+	</form><!--responseBlockContainer-->
     </div><!--responseBlock-->
-    
+
 EOF;
-    
-    return $html;
+
+	return $html;
 }
 
 
@@ -225,9 +225,9 @@ EOF;
  *
  *
  */
- 
- 
- 
+
+
+
 
 function getPaginationParameters()
 {
@@ -273,11 +273,11 @@ eof;
 	{
 		$html.="<div class='threadRow'>";
 		$html.="    <div class='deptCol'>";
-        $html.="        <form action='{$_SERVER['PHP_SELF']}' method='GET'>";
-        $html.="            <div class='deptColText'>";
-        $html.=               "<button type='submit' name='viewBoard' class='buttonToLink' value='{$row['deptid']}'>{$row['deptname']}</button>";
-        $html.="            </div>";
-        $html.="        </form>";
+		$html.="        <form action='{$_SERVER['PHP_SELF']}' method='GET'>";
+		$html.="            <div class='deptColText'>";
+		$html.=               "<button type='submit' name='viewBoard' class='buttonToLink' value='{$row['deptid']}'>{$row['deptname']}</button>";
+		$html.="            </div>";
+		$html.="        </form>";
 		$html.="    </div>";
 		$html.="    <div class='unansQuestCol'>";
 		$html.=           "{$row['unanswered_count']}";
@@ -331,10 +331,10 @@ eof;
 
 		$html.="    </div>";
 		$html.="    <div class='subjectCol'>";
-        $html.="        <form action='{$_SERVER['PHP_SELF']}' method='GET'>";
-        $html.=             preserveOldGETParams();
-        $html.=             "<button type='submit' name='viewThread' class='buttonToLink' value='{$row['quid']}'>{$row['title']}</button>";
-        $html.="        </form>";
+		$html.="        <form action='{$_SERVER['PHP_SELF']}' method='GET'>";
+		$html.=             preserveOldGETParams();
+		$html.=             "<button type='submit' name='viewThread' class='buttonToLink' value='{$row['quid']}'>{$row['title']}</button>";
+		$html.="        </form>";
 		$html.="    </div>";
 		$html.="    <div class='classCol'>";
 		$html.="{$row['classname']}";
@@ -364,37 +364,37 @@ eof;
  *  Generate the posts in the thread.
  *
  *
-*/
-    
+ */
+
 
 
 function generateThread($dataset)
 {
 	$html="";
 	$html.="\n<div class='postList'>\n";
-	
+
 	foreach($dataset as $row)
 	{
-        $html.="<div class='postBlock dropShadow'>\n";
-        $html.="    <div class='postBlockUserInfoContainer'>\n";
-        $html.="        <div class='postBlockUserImgContainer'>\n";
-        $html.=             getPostUserImg($row['author']);
-        $html.="        </div><!--postBlockUserImgContainer-->\n";
-        $html.="        <div class='postBlockUserInfo'>\n";
-        $html.=             getPostUserInfo($row['author']);
-        $html.="        </div><!--postBlockUserInfo-->\n";
-        $html.="    </div><!--postBlockUserInfo-->\n";
-        $html.="    <div class='postBlockContainer'>\n";
-        $html.="        <div class='postBlockHeader'>\n";
-        $html.=             getPostHeader($row['author'],$row['added'],$row['is_question'],$row['status']);
-        $html.="        </div><!--postBlockHeader-->\n";
-        $html.="        <div class='postBlockDataContainer'>\n";
-        $html.="            <div class='postBlockData'>\n";
-        $html.=                 $row['body'];
-        $html.="            </div><!--postBlockData-->\n";
-        $html.="        </div><!--postBlockDataContainer-->\n";
-        $html.="    </div><!--postBlockContainer-->\n";
-        $html.="</div><!--postBlock-->\n";
+		$html.="<div class='postBlock dropShadow'>\n";
+		$html.="    <div class='postBlockUserInfoContainer'>\n";
+		$html.="        <div class='postBlockUserImgContainer'>\n";
+		$html.=             getPostUserImg($row['author']);
+		$html.="        </div><!--postBlockUserImgContainer-->\n";
+		$html.="        <div class='postBlockUserInfo'>\n";
+		$html.=             getPostUserInfo($row['author']);
+		$html.="        </div><!--postBlockUserInfo-->\n";
+		$html.="    </div><!--postBlockUserInfo-->\n";
+		$html.="    <div class='postBlockContainer'>\n";
+		$html.="        <div class='postBlockHeader'>\n";
+		$html.=             getPostHeader($row['author'],$row['added'],$row['is_question'],$row['status']);
+		$html.="        </div><!--postBlockHeader-->\n";
+		$html.="        <div class='postBlockDataContainer'>\n";
+		$html.="            <div class='postBlockData'>\n";
+		$html.=                 $row['body'];
+		$html.="            </div><!--postBlockData-->\n";
+		$html.="        </div><!--postBlockDataContainer-->\n";
+		$html.="    </div><!--postBlockContainer-->\n";
+		$html.="</div><!--postBlock-->\n";
 
 	}
 	$html.="</div><!--postList-->\n";
@@ -405,81 +405,81 @@ function generateThread($dataset)
 
 function getPostUserImg($idno)
 {
-    $html = "";
+	$html = "";
 
-    $result = databaseQuery($sql="select encode(avatar,'base64')as avatar from user_avatars where user_avatars.idno=?",array($idno));
+	$result = databaseQuery($sql="select encode(avatar,'base64')as avatar from user_avatars where user_avatars.idno=?",array($idno));
 
-    if(is_array($result) && count($result)!=0)
-    {
-        $html = "           <div class='postBlockUserImg'>\n";
-        $html.= "               <img src=\"data:image/png;base64," . $result[0]["avatar"] . "\"/>\n";
-        $html.= "           </div>\n";
-    }
-    else
-    {
-        $html = "           <div class='postBlockUserImg'> \n";
-        $html.= "               <img src='styles/img/icons/user.svg' class='defaultFill'/>\n";
-        $html.= "           </div>\n";
-    }
+	if(is_array($result) && count($result)!=0)
+	{
+		$html = "           <div class='postBlockUserImg'>\n";
+		$html.= "               <img src=\"data:image/png;base64," . $result[0]["avatar"] . "\"/>\n";
+		$html.= "           </div>\n";
+	}
+	else
+	{
+		$html = "           <div class='postBlockUserImg'> \n";
+		$html.= "               <img src='styles/img/icons/user.svg' class='defaultFill'/>\n";
+		$html.= "           </div>\n";
+	}
 
 	return $html;
 }
 
 function getPostUserInfo($idno)
 {
-    $html = "";
+	$html = "";
 
-    $result = databaseQuery($sql="select realname,email,role from users where idno=?",array($idno));
+	$result = databaseQuery($sql="select realname,email,role from users where idno=?",array($idno));
 
-    if(is_array($result) && !empty($result))
-    {
-        $html = "           <div class=\"postBlockUserInfo\">\n";
-        $html.= "               <p><em><b>{$result[0]['role']}</b></em></p>\n";
-        $html.= "               <b>{$result[0]['realname']}</b>\n";
-        $html.= "               <em>{$result[0]['email']}</em>\n";
-        $html.= "           </div>\n";
+	if(is_array($result) && !empty($result))
+	{
+		$html = "           <div class=\"postBlockUserInfo\">\n";
+		$html.= "               <p><em><b>{$result[0]['role']}</b></em></p>\n";
+		$html.= "               <b>{$result[0]['realname']}</b>\n";
+		$html.= "               <em>{$result[0]['email']}</em>\n";
+		$html.= "           </div>\n";
 
-    }
+	}
 
 	return $html;
 }
 
 function getPostHeader($author,$date,$is_question,$status)
 {
-    $formURL=basename($_SERVER['REQUEST_URI']);
+	$formURL=basename($_SERVER['REQUEST_URI']);
 
 
-    $time = date('M d, h:i a',strtotime($date));
-    $html = "       <div class='postBlockHeaderWrapper'>\n";
-    $html.= "           <div class='postDate'>\n";
-    $html.= "               <em>$time</em>\n";
-    $html.= "           </div>\n";
-    if($is_question==true)
-    {
-        if($_SESSION['useridno']==$author || isUserRoleGreaterThanOrEqualTo(array($_SESSION['useridno'],'tutor'))==1)
-        {
-            $html.= "       <div class='isSolved'>\n";
-            $html.= "           <form name='header' method='POST' action='{$formURL}'>\n";
+	$time = date('M d, h:i a',strtotime($date));
+	$html = "       <div class='postBlockHeaderWrapper'>\n";
+	$html.= "           <div class='postDate'>\n";
+	$html.= "               <em>$time</em>\n";
+	$html.= "           </div>\n";
+	if($is_question==true)
+	{
+		if($_SESSION['useridno']==$author || isUserRoleGreaterThanOrEqualTo(array($_SESSION['useridno'],'tutor'))==1)
+		{
+			$html.= "       <div class='isSolved'>\n";
+			$html.= "           <form name='header' method='POST' action='{$formURL}'>\n";
 
-            if($status=='answered')
-            {
-                $html.= "           <input id='solvedCheck' onChange='this.form.submit()' name='solvedCheck' type='checkbox' checked>\n";
-                $html.= "           <input type='hidden' name='solvedCheck' value='-100' >\n";
-                $html.= "           <label for='solvedCheck'><em><b>Solved ?</b></em></label>\n";
-            }
-            else
-            {
-                $html.= "           <input id='solvedCheck' onChange='this.form.submit()' name='solvedCheck' type='checkbox'>\n";
-                $html.= "           <input type='hidden' name='solvedCheck' value='100' >\n";
-                $html.= "           <label for='solvedCheck'><em><b>Solved ?</b></em></label>\n";
-            }
-            
-            $html.= "           </form>\n";
-            $html.= "       </div>\n";
-        }
-    }
-    $html.= "       </div>\n";
-    return $html;
+			if($status=='answered')
+			{
+				$html.= "           <input id='solvedCheck' onChange='this.form.submit()' name='solvedCheck' type='checkbox' checked>\n";
+				$html.= "           <input type='hidden' name='solvedCheck' value='-100' >\n";
+				$html.= "           <label for='solvedCheck'><em><b>Solved ?</b></em></label>\n";
+			}
+			else
+			{
+				$html.= "           <input id='solvedCheck' onChange='this.form.submit()' name='solvedCheck' type='checkbox'>\n";
+				$html.= "           <input type='hidden' name='solvedCheck' value='100' >\n";
+				$html.= "           <label for='solvedCheck'><em><b>Solved ?</b></em></label>\n";
+			}
+
+			$html.= "           </form>\n";
+			$html.= "       </div>\n";
+		}
+	}
+	$html.= "       </div>\n";
+	return $html;
 }
 
 
@@ -491,30 +491,30 @@ function getPostHeader($author,$date,$is_question,$status)
  *  End Thread generation.
  *
  *
-*/
+ */
 
 
 
 
 function preserveOldGETParams()
 {
-    $html="";
+	$html="";
 
-    $keys = array('viewBoard', 'viewThread', 'viewPost', 'page');
-    
-    foreach($keys as $name) 
-    {
-        if(!isset($_GET[$name])) 
-        {
-            continue;
-        }
-        
-        $value = htmlspecialchars($_GET[$name]);
-        $name = htmlspecialchars($name);
-        $html.= '<input type="hidden" name="'. $name .'" value="'. $value .'">';
-    }
-    
-    return $html;
+	$keys = array('viewBoard', 'viewThread', 'viewPost', 'page');
+
+	foreach($keys as $name) 
+	{
+		if(!isset($_GET[$name])) 
+		{
+			continue;
+		}
+
+		$value = htmlspecialchars($_GET[$name]);
+		$name = htmlspecialchars($name);
+		$html.= '<input type="hidden" name="'. $name .'" value="'. $value .'">';
+	}
+
+	return $html;
 }
 
 function printBottomPagination($paginationValues,$count)
@@ -556,8 +556,8 @@ function genClass($dept)
 {
 	//Declare array
 	$result=array();
-    $class="";
-	
+	$class="";
+
 	$html="";
 
 	$sql= "select distinct name,sections.cid from terms,sections left join classes on sections.cid=classes.cid where terms.activeterm=true and dept=? and sections.term = terms.code";
@@ -571,14 +571,14 @@ function genClass($dept)
 	}
 	else
 	{
-        filterClasses($result);
+		filterClasses($result);
 	}
-	
+
 	if(isset($_POST['classSelect']) && !empty($_POST['classSelect']))
 	{       
-        $class=$_POST['classSelect'];
-    }
-	
+		$class=$_POST['classSelect'];
+	}
+
 	//Generate the html code for the class selection box
 	$html.= "<select name=\"classSelect\" class=\"inputSelect\">";
 
@@ -603,27 +603,27 @@ function genClass($dept)
 
 function filterClasses()
 {
-    //Filter out anything not accessable b y students
-    $curRole=getUserLevelAccessIdno($_SESSION['useridno']);
+	//Filter out anything not accessable b y students
+	$curRole=getUserLevelAccessIdno($_SESSION['useridno']);
 
-    if($curRole[0]["role"]=='student')
-    {
-        //Loof for anything that contains the word tutor, and mark the in a new array
-        if (($key = preg_grep("/(tutor)/", array_map('strtolower',array_column($result,'name')))) !== false) 
-        {
+	if($curRole[0]["role"]=='student')
+	{
+		//Loof for anything that contains the word tutor, and mark the in a new array
+		if (($key = preg_grep("/(tutor)/", array_map('strtolower',array_column($result,'name')))) !== false) 
+		{
 
-            //Remove anything matching the expression from the array 
-            foreach($key as $row)
-            {
-                if(($newKey = array_search($row,array_map('strtolower',array_column($result,'name')))) !== false)
-                {
-                    unset($result[$newKey]);
-                }
-            }
-            //Re-index the array
-            $result = array_values($result);
-        }
-    }
+			//Remove anything matching the expression from the array 
+			foreach($key as $row)
+			{
+				if(($newKey = array_search($row,array_map('strtolower',array_column($result,'name')))) !== false)
+				{
+					unset($result[$newKey]);
+				}
+			}
+			//Re-index the array
+			$result = array_values($result);
+		}
+	}
 }
 
 /*
@@ -634,98 +634,106 @@ function filterClasses()
  *
  *
  */
- 
+
 function updateQuestionStatus($array)
 {
-    $result=databaseQuery("update questions set status=? where quid=?",$array);
-    
-    if(!is_array($result) || empty($result))
-    {
-        return -1;
-    }
-    else
-    {
-        return 1;
-    }
-    
+	$result=databaseQuery("update questions set status=? where quid=?",$array);
+
+	if(!is_array($result) || empty($result))
+	{
+		return -1;
+	}
+	else
+	{
+		return 1;
+	}
+
 }
- 
+
 function getQuestionName($array)
 {
-    $result=databaseQuery("select title from questions where quid=?",$array);
-    
-    if(!is_array($result) || empty($result))
-    {
-        return "Question not found";
-    }
-    else
-    {
-        return $result[0]['title'];
-    }
+	$result=databaseQuery("select title from questions where quid=?",$array);
+
+	if(!is_array($result) || empty($result))
+	{
+		return "Question not found";
+	}
+	else
+	{
+		return $result[0]['title'];
+	}
 }
 
 
 function createResponse($array)
 {
-    $result=databaseQuery("insert into posts (question,author,body,is_question,added) values (?,?,?,false,CURRENT_TIMESTAMP)",$array);
-    
-    if(is_array($result))
-    {
-        return 1;
-    }
-    else
-    {
-        return -1;
-    }
+	$result=databaseQuery("insert into posts (question,author,body,is_question,added) values (?,?,?,false,CURRENT_TIMESTAMP)",$array);
+
+	if(is_array($result))
+	{
+		return 1;
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 function createThread($array, $array2)
 {
-    
-    $result=databaseQuery("insert into questions (subject,title,asker,status,added) values (?,?,?,'awaiting_response',CURRENT_TIMESTAMP) returning quid",$array);
-    
-    
-    if(is_array($result))
-    {
+	$query =<<<'SQL'
+INSERT INTO questions(subject, term, title, asker, status, added)
+	VALUES(?, (SELECT code FROM terms WHERE terms.activeterm = true), ?, ?, 'awaiting_response', CURRENT_TIMESTAMP) 
+	RETURNING quid
+SQL;
 
-        $temp=$result[0]['quid'];
-        array_unshift($array2,$temp);
+	$result = databaseQuery($query, $array);
 
-        $result=databaseQuery("insert into posts (question,author,body,is_question,added) values (?,?,?,true,CURRENT_TIMESTAMP)",$array2);
 
-        
-        if(is_array($result))
-        {
-            return 1;
-        }
-        else
-        {
-            return -1;
-        }
+	if(is_array($result))
+	{
 
-    }
-    else
-    {
-        return -1;
-    }
+		$temp=$result[0]['quid'];
+		array_unshift($array2,$temp);
+
+		$result=databaseQuery("insert into posts (question,author,body,is_question,added) values (?,?,?,true,CURRENT_TIMESTAMP)",$array2);
+
+
+		if(is_array($result))
+		{
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 function getThreadList($array)
 {
-	return databaseQuery("WITH filt_sections AS (
-		SELECT * FROM sections WHERE sections.term = (SELECT terms.code FROM terms WHERE terms.activeterm = true)
-	), filt_classes AS (
-		SELECT * FROM classes WHERE classes.dept = ?
-	)
-	SELECT questions.quid as quid,filt_classes.name AS classname, questions.title, users.realname AS author,
+	$query = <<<'SQL'
+WITH filt_classes AS (
+	SELECT * FROM classes WHERE classes.dept = ?
+)
+SELECT questions.quid as quid, filt_classes.name AS classname, questions.title, users.realname AS author,
 	questions.status, posts.added
 	FROM questions
-	JOIN filt_sections ON questions.subject = filt_sections.secid
 	JOIN filt_classes  ON filt_sections.cid = filt_classes.cid
 	JOIN users         ON questions.asker   = users.idno
 	JOIN posts         ON questions.quid    = posts.question
-	WHERE posts.added = (SELECT MAX(posts.added) FROM posts WHERE posts.question = questions.quid) order by posts.added DESC
-	offset ? limit ?",$array);
+	WHERE posts.added = (SELECT MAX(posts.added) FROM posts WHERE posts.question = questions.quid)
+		AND questions.term = (SELECT code FROM terms WHERE terms.activeterm = true)
+	ORDER BY posts.added DESC
+	OFFSET ? LIMIT ?"
+SQL;
+
+	return databaseQuery($query, $array);
 }
 
 function getBoardList($array)

@@ -2,6 +2,11 @@
 
 require_once "logic/database/dbCon.php";
 
+/*
+ * Verify that a user is registered.
+ * 
+ * Logged in users or users currently registering are handled differently.
+ */
 function verifyUser()
 {
 	//Users not registered should be forced to register
@@ -51,6 +56,9 @@ function verifyUser()
 
 }
 
+/*
+ * Verify that the user has logged into kiosk mode.
+ */
 function verifyKiosk()
 {
 	// Usermode login does not grant access to this mode
@@ -78,10 +86,12 @@ function verifyKiosk()
 
 }
 
-function getUserLevelAccess($user)
+/*
+ * Get the access level that a user has, based off of their username.
+ */
+function getUserLevelAccess($username)
 {
-
-	$result= databaseQuery("select role from users where username=?",array($user));
+	$result = databaseQuery("select role from users where username=?", array($username));
 
 	if(!empty($result))
 	{
@@ -93,10 +103,13 @@ function getUserLevelAccess($user)
 	}
 }
 
+/*
+ * Get the access level that a user has, based off of their id number.
+ */
 function getUserLevelAccessIdno($idno)
 {
 
-	$result= databaseQuery("select role from users where username=?",array($idno));
+	$result= databaseQuery("select role from users where idno=?", array($idno));
 
 	if(!empty($result))
 	{
@@ -108,9 +121,11 @@ function getUserLevelAccessIdno($idno)
 	}
 }
 
-function verifyUserLevelAccess($username,$requestPage)
+/*
+ * Verify that a user has permission to access a particular page.
+ */
+function verifyUserLevelAccess($username, $requestPage)
 {
-
 	$result=databaseQuery("select count(username) from users,pageaccess where users.username=? and pageaccess.page=? and users.role>=pageaccess.role",array($username,$requestPage));
 
 	if(empty($result) || $result[0]['count']==0)

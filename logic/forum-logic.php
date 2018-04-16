@@ -724,13 +724,13 @@ WITH filt_classes AS (
 SELECT questions.quid as quid, filt_classes.name AS classname, questions.title, users.realname AS author,
 	questions.status, posts.added
 	FROM questions
-	JOIN filt_classes  ON filt_sections.cid = filt_classes.cid
+	JOIN filt_classes  ON questions.subject = filt_classes.cid
 	JOIN users         ON questions.asker   = users.idno
 	JOIN posts         ON questions.quid    = posts.question
 	WHERE posts.added = (SELECT MAX(posts.added) FROM posts WHERE posts.question = questions.quid)
 		AND questions.term = (SELECT code FROM terms WHERE terms.activeterm = true)
 	ORDER BY posts.added DESC
-	OFFSET ? LIMIT ?"
+	OFFSET ? LIMIT ?
 SQL;
 
 	return databaseQuery($query, $array);

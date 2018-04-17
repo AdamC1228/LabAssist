@@ -1,6 +1,9 @@
 <?php
 require_once "logic/database/dbCon.php";
 
+/*
+ * Create the add class page.
+ */
 function createForm()
 {
 	$html=<<<HTML
@@ -24,8 +27,9 @@ HTML;
 	return $html;
 }
 
-
-
+/*
+ * Generate the add class form.
+ */
 function generateForm()
 {
 	$html = "";
@@ -61,6 +65,9 @@ HTML;
 	return $html;
 }
 
+/*
+ * Get the list of departments.
+ */
 function getDepartmentList()
 {
 	$html = "";
@@ -70,23 +77,27 @@ function getDepartmentList()
 		return "An error has occured getting the available departments";
 	}
 
-	$sql="select * from departments where deptid=?";
+	/*
+	 * NOTE: :DepartmentListing
+	 *
+	 * This appears that it will only ever retrieve one department, instead 
+	 * of a list of all of them. Is that what's intended, or should this be 
+	 * something else?
+	 */
+	$sql="SELECT * FROM departments WHERE departments.deptid=?";
 	$result = databaseQuery($sql, array($currentDepartment));
 
 	if(empty($result))
 	{
-		$html = "Unable to fetch roles. Contact system administrator.";
+		$html = "Unable to fetch departments. Contact system administrator.";
 	}
 	else
 	{            
-		//Create select statement
+		/*
+		 * Create select statement
+		 */
 		$html="<select name='department' class='inputSelectLarge'>";
 
-		/*
-		 * @CLEANUP
-		 *
-		 * Is this for-loop necessary?
-		 */
 		foreach($result as $row)
 		{
 			if ($currentDepartment === $row["deptid"])
@@ -104,6 +115,9 @@ function getDepartmentList()
 	return $html;
 }
 
+/*
+ * Generate a table containing all of the class for the current department.
+ */
 function generateTable($dataset)
 {
 	if(empty($dataset))
@@ -143,8 +157,9 @@ HTML;
 	return $html;
 }
 
-
-
+/*
+ * Attempt to add a class from POST data.
+ */
 function attemptAddClass()
 {
 	if(!isset($_POST['className']) || empty($_POST['className']))
@@ -156,66 +171,26 @@ function attemptAddClass()
 		return -1;
 	}
 
-	return databaseSubmitAdd(array($_POST['className'],$_POST['department']));
+	return databaseSubmitAdd(array($_POST['className'], $_POST['department']));
 }
 
-
-
+/*
+ * Execute adding a class.
+ *
+ * The array should be the class name, followed by the department
+ */
 function databaseSubmitAdd($array)
 {
-	return databaseQuery("insert into classes (name,dept) values(?,?)",$array);
-
+	return databaseQuery("INSERT INTO classes (name, dept) VALUES(?, ?)", $array);
 }
 
+/*
+ * Get all of the classes for the current department.
+ */
 function getCurrentDepartmentClasses()
 {
-	$result=getUsersDepartment($_SESSION['username']);
+	$result = getUsersDepartment($_SESSION['username']);
 
-	return databaseQuery("select name,dept from classes where dept=?",array($result));
+	return databaseQuery("SELECT classes.name, classes.dept FROM classes WHERE classes.dept=?", array($result));
 }
-
-// function createForm()
-// {
-//     $html = "";
-//     $html.= "<h3>Add Class:</h3>";
-//     $html.= "<div class='flex columnLayout2'>";
-//     $html.= "   <div class='group'>";
-//     $html.= generateForm();
-//     $html.= "   </div>";
-//     $html.= "   <div></div>";
-//     $html.= "   <div></div>";
-//     $html.= "</div>";
-// 
-// 
-//     return $html;
-// }
-// function generateForm()
-// {
-//     $html = "";
-//     
-//     $html.= "<form action='adduser.php' method='post'>";
-//     $html.= "   <div class='flex flexRow'>";
-//     $html.= "       <div id='column1' class='flex flexRow marginLeft20'>";
-//     $html.= "           <div class='flexRightAlign flexGrow paddingTop10'>";
-//     $html.= "               <p>Class Name:</p>";
-//     $html.= "           </div>";
-//     $html.= "           <div class='flexLeftAlign flexGrow marginLeft20 paddingTop20'>";
-//     $html.= "               <input class='inputprimary ' placeholder='Catalog Name' name='className' type='text'/>";
-//     $html.= "           </div>";
-//     $html.= "       </div>";
-//     $html.= "       <div id='column2' class='flex flexRow marginLeft20'>";
-//     $html.= "           <div class='flexRightAlign flexGrow paddingTop10'>";
-//     $html.= "               <p>Department:</p>";
-//     $html.= "           </div>";
-//     $html.= "           <div class='flexLeftAlign flexGrow marginLeft20 paddingTop20'>";
-//     $html.= getDepartmentList();
-//     $html.= "           </div>";
-//     $html.= "       </div>";
-// //     $html.= "       <div id='column3' class='flex marginLeft20'>";
-// //     $html.= "       </div>";
-//     $html.= "   </div>";
-//     $html.= "</form>";
-//     
-//     return $html;
-// }
 ?>

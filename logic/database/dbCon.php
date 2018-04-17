@@ -1,5 +1,8 @@
 <?php
 
+/*
+ * Per-page DB connection
+ */
 $DBCON = null;
 
 function connectDB() 
@@ -37,14 +40,22 @@ function connectDB()
 		// MySQL DB conn
 		#$dbase_connection = new PDO("pgsql:dbname=$dBase" $user, $password);
 
-		// PostgreSQL DB conn
+		/*
+		 * PostgreSQL DB conn
+		 */
 		$DBCON = new PDO("pgsql:dbname=$dBase", $user);
 
-		// PDO error mode is set to throw exceptions
+		/*
+		 * PDO error mode is set to throw exceptions
+		 */
 		$DBCON->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		// Let PDO try to use native prepared statements
+		/*
+		 * Let PDO try to use native prepared statements
+		 */
 		$DBCON->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-		// Set the default fetch mode to be associative
+		/*
+		 * Set the default fetch mode to be associative
+		 */
 		$DBCON->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 	} 
 	catch(PDOException $e) 

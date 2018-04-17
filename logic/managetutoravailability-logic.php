@@ -6,7 +6,20 @@ function generateScheduleTable($dept) {
 	$TIME_SLICE = 30;
 
 	$data = retrieveSchedules($dept);
-	$lims = getLimits($dept)[0];
+	//$lims = getLimits($dept)[0];
+	$lims = getLimits($dept);
+
+
+	//Edit
+	if(is_array($lims) && !empty($lims))
+	{
+		$lims= $lims[0];
+	}
+	else
+	{
+		return "Unexpected error getting lab times.";
+	}
+	//End Edit
 
 	$data = mapSchedules($data);
 
@@ -26,6 +39,7 @@ function generateScheduleTable($dept) {
 		</tr>
 HTML;
 
+	//Needs removing
 	if(empty($lims) || !is_array($lims)) {
 		$ret.= <<<HTML
 	</table>
@@ -33,6 +47,7 @@ HTML;
 <br/><br/>
 Unexpected error getting lab times.
 HTML;
+		//Needs removing
 
 		return $ret;
 	}

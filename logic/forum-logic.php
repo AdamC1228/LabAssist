@@ -564,8 +564,9 @@ function genClass($dept)
 
 	$result=databaseQuery($sql,array($dept));
 
-
-	if(!is_array($result))
+    var_dump($result);
+	
+	if(!is_array($result) || empty($result))
 	{
 		return "Could not find any classes. Please contact administrator.";
 	}

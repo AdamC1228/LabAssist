@@ -20,8 +20,7 @@
     verifyUserLevelAccess($_SESSION['username'],basename($_SERVER['PHP_SELF']));
  
 	#Since the user is not logged in nor completed a successful login requiest, render the form.
-	
-	var_dump($_SESSION['useridno']);
+
 	
 	printHeader();
 	printStartBody();

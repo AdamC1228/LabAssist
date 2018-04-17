@@ -26,7 +26,7 @@
     *
     */
     $html="";
-    
+
     //Handle The solution checkbox
     if(isset($_POST['solvedCheck']) && !empty($_POST['solvedCheck']))
     {

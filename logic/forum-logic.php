@@ -563,8 +563,6 @@ function genClass($dept)
 	$sql= "select distinct name,sections.cid from terms,sections left join classes on sections.cid=classes.cid where terms.activeterm=true and dept=? and sections.term = terms.code";
 
 	$result=databaseQuery($sql,array($dept));
-
-    var_dump($result);
 	
 	if(!is_array($result) || empty($result))
 	{
@@ -607,7 +605,8 @@ function filterClasses()
 	//Filter out anything not accessable b y students
 	$curRole=getUserLevelAccessIdno($_SESSION['useridno']);
 
-	if($curRole[0]["role"]=='student')
+	
+	if($curRole=='student')
 	{
 		//Loof for anything that contains the word tutor, and mark the in a new array
 		if (($key = preg_grep("/(tutor)/", array_map('strtolower',array_column($result,'name')))) !== false) 

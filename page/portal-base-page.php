@@ -10,8 +10,7 @@
             <head>
                 <link rel="stylesheet" type="text/css" href="styles/portal.css" />
                 <link rel="stylesheet" type="text/css" href="styles/primary.css" />
-                <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i" rel="stylesheet"/> 
-                <link href="https://fonts.googleapis.com/css?family=Patrick+Hand+SC" rel="stylesheet"/> 
+
                 <title>Welcome to LabAssist</title>
             </head>
 eof;

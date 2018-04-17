@@ -25,7 +25,7 @@ function getUserInfo()
 		if(!empty($result))
 		{
 			$output = "<div class=\"userImgWrapper\">";
-			$output.= "<img src=\"data:image/png;base64," . $result[0]["avatar"] . "\"/>";
+			$output.= "<img height='100' width='100' src=\"data:image/png;base64," . $result[0]["avatar"] . "\"/>";
 			$output.= "</div>";
 			$output.= "<div class=\"userDataWrapper\"><div class=\"userdata\"> <b> ";
 			$output.= $result[0]["realname"] . "</b><br><b><span id=\"email\">" . $result[0]["email"] . "</span></b>";

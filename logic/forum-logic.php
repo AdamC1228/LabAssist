@@ -456,7 +456,7 @@ function getPostHeader($author,$date,$is_question,$status)
 	$html.= "           </div>\n";
 	if($is_question==true)
 	{
-		if($_SESSION['useridno']==$author || isUserRoleGreaterThanOrEqualTo(array($_SESSION['useridno'],'tutor'))==1)
+		if($_SESSION['useridno']==$author || isUserRoleGreaterThanOrEqualTo($_SESSION['useridno'],'tutor')==1)
 		{
 			$html.= "       <div class='isSolved'>\n";
 			$html.= "           <form name='header' method='POST' action='{$formURL}'>\n";

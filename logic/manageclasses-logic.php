@@ -157,14 +157,14 @@ function formattedInformation($uniqueID)
 function getDepartmentList()
 {
 	$html = "";
-	$currentDepartment= getUsersDepartment(array($_SESSION['username']));
-	if(!is_array($currentDepartment))
+	$currentDepartment= getUsersDepartment($_SESSION['username']);
+	if($currentDepartment === -1)
 	{
 		return "An error has occured getting the available departments";
 	}
 
 	$sql="select * from departments where deptid=?";
-	$result = databaseQuery($sql,array($currentDepartment[0]['deptid']));
+	$result = databaseQuery($sql,array($currentDepartment));
 
 	if(empty($result))
 	{

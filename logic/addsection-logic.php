@@ -65,14 +65,14 @@ function getClassList()
 
 
 	$html = "";
-	$currentDepartment= getUsersDepartment(array($_SESSION['username']));
-	if(!is_array($currentDepartment))
+	$currentDepartment= getUsersDepartment($_SESSION['username']);
+	if($currentDepartment === -1)
 	{
 		return "<div style='margin:auto; padding-top:6px;padding-bottom:6px;'>Unable to find any departments</div>";
 	}
 
 	$sql="select cid,name from classes where dept=?";
-	$result = databaseQuery($sql,array($currentDepartment[0]['deptid']));
+	$result = databaseQuery($sql,array($currentDepartment));
 
 	if(empty($result) || !is_array($result))
 	{
@@ -125,15 +125,15 @@ function getProfList()
 	}
 
 
-	$currentDepartment= getUsersDepartment(array($_SESSION['username']));
-	if(!is_array($currentDepartment))
+	$currentDepartment= getUsersDepartment($_SESSION['username']);
+	if($currentDepartment === -1)
 	{
 		return "<div style='margin:auto; padding-top:6px;padding-bottom:6px;'>Unable to find any departments</div>";
 	}
 
 	$sql="select idno,realname from users where deptid=? and users.role>='staff'::role and role<'developer'::role";
 
-	$result = databaseQuery($sql,array($currentDepartment[0]['deptid']));
+	$result = databaseQuery($sql,array($currentDepartment));
 
 	if(empty($result) || !is_array($result))
 	{

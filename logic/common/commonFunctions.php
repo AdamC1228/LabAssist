@@ -316,6 +316,18 @@ function myDebug($val)
 	echo "</pre>\n";
 }
 
+function arrayPrint($array)
+{
+    ob_start();
+    var_dump($array);
+    $result = ob_get_clean();
+    
+    $html = "<pre>";
+    $html.=     $result;
+    $html.= "</pre>";
+    
+    return $html;
+}
 
 /*
  * Generate a select box.

@@ -17,6 +17,23 @@ eof;
 
          
     }
+    function printCustomHeader($include)
+    {
+        header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+        header("Pragma: no-cache"); // HTTP 1.0.
+        header("Expires: 0"); // Proxies.  
+        echo<<<eof
+            <!DOCTYPE html>
+            <head>
+                <link rel="stylesheet" type="text/css" href="styles/portal.css" />
+                <link rel="stylesheet" type="text/css" href="styles/primary.css" />
+                $include
+                <title>Welcome to LabAssist</title>
+            </head>
+eof;
+
+         
+    }
 
 function printStartBody()
 {

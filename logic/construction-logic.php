@@ -2,17 +2,23 @@
 require_once "logic/common/ldap.php";
 require_once "logic/database/dbCon.php";
 
-
+/*
+ * Get the 'under-construction error message.
+ */
 function getCustomErrorMessage()
 {
 
 	if(isSet($_SESSION['username']) && !empty($_SESSION['username']))
 	{
-		$message="Hey! You! Yes you ". getUserRealName(). ". I can't let you come in here without a hard hat on.";
+		$username = getUserRealName();
+
+		$message="Hey! You! Yes you {$username}. I can't let you come in here without a hard hat on.";
 	}
 	else if (isSet($_SESSION['sidno']) && !empty($_SESSION['sidno']))
 	{
-		$message="Hey! You! Yes you ". getUserRealNameId(). ". I can't let you come in here without a hard hat on.";
+		$username = getUserRealNameId();
+
+		$message="Hey! You! Yes you {$username}. I can't let you come in here without a hard hat on.";
 	}
 	else
 	{
@@ -25,66 +31,70 @@ function getCustomErrorMessage()
 
 	if(isSet($_GET['requestedPage']) && !empty($_GET['requestedPage']))
 	{
-		$message .= "<br><br><br> Requested page: " . $_GET['requestedPage'] . "<br><br>";
+		$message .= "<br><br><br> Requested page: {$_GET['requestedPage']}<br><br>";
 	}
 
 	return $message;
 }
 
+/*
+ * Create button to get out.
+ */
 function getMeOutOfHere()
 {
-	$code=<<<eof
-
-	    <br><br><br>
-	    <form action = "logout.php" method = "post">
-		Go back or click below to logout.
-	    <br>
-		<input type="submit" class="btn" id="logout" name="logout" value="Logout"/>
-	    </form>
-
-eof;
+	$code=<<<HTML
+<br /><br /><br />
+<form action = "logout.php" method = "post">
+	Go back or click below to logout.
+	<br />
+	<input type="submit" class="btn" id="logout" name="logout" value="Logout"/>
+</form>
+HTML;
 
 	return $code;
 }
 
+/*
+ * Get the first name of the currently logged in user.
+ *
+ * The username must be present in the session.
+ */
 function getUserRealName()
 {
-	$status = false;
+	$sql = "SELECT users.realname FROM users WHERE users.username=?";
 
-	$dbCon = connectDB();
+	$result = databaseQuery($sql, array($_SESSION['username']));
 
-	$sql="select realname from users where username=?";
+	$arr = array();
 
-	$stmt= $dbCon->prepare($sql);
-
-	$stmt->execute(array($_SESSION['username']));
-
-	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-	$arr = explode(' ',trim($result[0]['realname']));
-
+	if(is_array($result) && !empty($result)) {
+		$arr = explode(' ', trim($result[0]['realname']));
+	} else {
+		return "";
+	}
 
 	return $arr[0];
 }
 
+/*
+ * Get the first name of the currently logged in user.
+ *
+ * The id number must be present in the session.
+ */
 function getUserRealNameId()
 {
-	$status = false;
+	$sql = "SELECT realname FROM users WHERE idno=?";
 
-	$dbCon = connectDB();
+	$result = databaseQuery($sql, array($_SESSION['sidno']));
 
-	$sql="select realname from users where idno=?";
+	$arr = array();
 
-	$stmt= $dbCon->prepare($sql);
-
-	$stmt->execute(array($_SESSION['sidno']));
-
-	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-	$arr = explode(' ',trim($result[0]['realname']));
-
+	if(is_array($result) && !empty($result)) {
+		$arr = explode(' ', trim($result[0]['realname']));
+	} else {
+		return "";
+	}
 
 	return $arr[0];
 }
-
 ?>

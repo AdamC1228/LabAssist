@@ -9,11 +9,15 @@ function getCustomErrorMessage()
 {
 	if(isSet($_SESSION['username']) && !empty($_SESSION['username']))
 	{
-		$message="I'm sorry ". getUserRealName(). ", but I can't let you do that.";
+		$username = getUserRealName();
+
+		$message="I'm sorry {$username}, but I can't let you do that.";
 	}
 	else if (isSet($_SESSION['sidno']) && !empty($_SESSION['sidno']))
 	{
-		$message="I'm sorry ". getUserRealNameId(). ", but I can't let you do that.";
+		$username = getUserRealNameId();
+
+		$message="I'm sorry {$username}, but I can't let you do that.";
 	}
 	else
 	{

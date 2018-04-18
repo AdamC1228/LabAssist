@@ -251,6 +251,18 @@ function myDebug($array)
 	echo "</pre>\n";
 }
 
+function arrayPrint($array)
+{
+    ob_start();
+    var_dump($array);
+    $result = ob_get_clean();
+    
+    $html = "<pre>";
+    $html.=     $result;
+    $html.= "</pre>";
+    
+    return $html;
+}
 
 
 function generateSelectBox($name, $array, $matchPrev, $key, $value, $nullVal) {

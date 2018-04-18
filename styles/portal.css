@@ -474,6 +474,9 @@
  .paddingLeft60{
      padding-left:60px;
 }
+ .paddingLeft10{
+     padding-left:10px;
+}
  .marginLeft40{
      margin-left:40px;
 }
@@ -483,11 +486,17 @@
  .marginRight40{
      margin-right:40px;
 }
- .paddingRight20{
+ .marginRight20{
      margin-right:20px;
 }
  .paddingTopX{
      margin-top:20px;
+}
+ .marginTop10{
+     margin-top:10px;
+}
+ .marginLeft10{
+     margin-left:10px;
 }
  .paddingTop20{
      padding-top:20px;
@@ -783,6 +792,9 @@
  .flexRow{
      flex-direction:row;
 }
+ .flexColumn{
+     flex-direction:column;
+}
  .flexSearchRow {
      vertical-align: middle;
      align-items: center;
@@ -804,6 +816,9 @@
 }
  .flexAlignSelf{
      align-self: flex-start;
+}
+ .flexAlignCenter{
+     align-items:center;
 }
  .flexGrow {
      flex-grow: 1;

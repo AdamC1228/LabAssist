@@ -80,7 +80,7 @@ function printReport($reportID)
             $html.= "<h2>Hourly Data </h2>";
             $html.= labUsageReportHourly();
             $html.= "<hr>";
-            $html.= "<h2>Hourly Data </h2>";
+            $html.= "<h2>Daily Data </h2>";
             $html.= labUsageReportDaily();
             break;
         case 1:

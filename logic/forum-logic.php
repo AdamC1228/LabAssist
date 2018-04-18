@@ -2,7 +2,9 @@
 require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
-
+/*
+ * Show the board listing.
+ */
 function showBoardListing()
 {
 	$html= "   <div class='flex flexVerticalCenter marginBottom10 '>";
@@ -13,6 +15,9 @@ function showBoardListing()
 	return $html;
 }
 
+/*
+ * Show a particular board
+ */
 function showBoard($department)
 {
 	$formURL=basename($_SERVER['REQUEST_URI']);
@@ -29,12 +34,17 @@ function showBoard($department)
 	$html.= "       </form>";
 	$html.= "   </div>";
 	$html.= "</div>";
+
 	//$html.= createSearchBar();
+	
 	$html.= paginatedThreadListing($department);
 
 	return $html;
 }
 
+/*
+ * Show a particular thread.
+ */
 function showThread($quid)
 {
 	$html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
@@ -46,6 +56,9 @@ function showThread($quid)
 	return $html;
 }
 
+/*
+ * Show the forum navigation.
+ */
 function forumNavigation($quid)
 {
 	$html="";
@@ -59,7 +72,7 @@ function forumNavigation($quid)
 
 		if(isset($_GET['viewThread']) && !empty($_GET['viewThread']))
 		{
-			$questionName=getQuestionName(array($quid));
+			$questionName=getQuestionName($quid);
 			$html.= "<a href='forum.php?viewBoard={$_GET['viewBoard']}&viewThread={$_GET['viewThread']}'>$questionName</a>";
 		}
 	}
@@ -67,6 +80,9 @@ function forumNavigation($quid)
 	return $html;
 }
 
+/*
+ * Show a paginated board listing.
+ */
 function paginatedBoardListing()
 {
 	$html="";
@@ -77,6 +93,9 @@ function paginatedBoardListing()
 	return $html;
 }
 
+/*
+ * Show a paginated thread listing.
+ */
 function paginatedThreadListing($department)
 {
 	$html="";
@@ -87,6 +106,9 @@ function paginatedThreadListing($department)
 	return $html;
 }
 
+/*
+ * Show a paginated listing of a question.
+ */
 function paginatedQuestionListing($question)
 {
 	$html="";
@@ -98,6 +120,9 @@ function paginatedQuestionListing($question)
 	return $html;
 }
 
+/*
+ * Create a new thread.
+ */
 function createNewThread()
 {
 	$html ="";
@@ -115,6 +140,9 @@ function createNewThread()
  *
  */
 
+/*
+ * Create a TinyMCE editor for creating a thread.
+ */
 function createThreadTinyMCE()
 {
 	$html="";
@@ -122,96 +150,95 @@ function createThreadTinyMCE()
 	$formURL=basename($_SERVER['REQUEST_URI']);
 	$classDropDown=genClass($_GET['viewBoard']);
 
-	$html.=<<<EOF
-    <script src='/libraries/tinymce/tinymce.min.js'></script>
-    <script>
-    tinymce.init({
-	selector: '#body',
-	theme: 'modern',
-	height: 300,
-	width: '100%',
-	plugins: [
-	'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-	'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-	'save table contextmenu directionality emoticons template paste textcolor'
-	],
-	content_css: 'css/content.css',
-	toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
-    });
-
-    </script>
-    <div class='responseBlock dropShadow'>
+	$html.=<<<HTML
+<script src='/libraries/tinymce/tinymce.min.js'></script>
+<script>
+	tinymce.init({
+		selector: '#body',
+		theme: 'modern',
+		height: 300,
+		width: '100%',
+		plugins: [
+			'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+			'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+			'save table contextmenu directionality emoticons template paste textcolor'
+		],
+		content_css: 'css/content.css',
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+	});
+</script>
+<div class='responseBlock dropShadow'>
 	<form class='responseBlockContainer' method='post' action='{$formURL}'>
-	    <div class='responseBlockHeader'>
-		<span class='lightText'><b>Create Thread</b></span>
-	    </div><!--responseBlockHeader-->
-	    <div class='threadBlockTitle'>
-		<div class='threadBlockTitleText'>
-		    <p>Title:</p>
-		</div>
-		<div class='threadBlockTitleInput'>
-		    <input type='text' class='inputprimaryLarge' name='threadTitle' placeholder='Thread Title' maxlength=60/>
-		</div>
-		<div class='threadBlockClassText'>
-		    <p>Class:</p>
-		</div>
-		<div class='threadBlockClassInput'>
-		    {$classDropDown}
-		</div>
-	    </div><!--threadBlockTitle-->
-	    <div class='responseBlockData'>
-		    <textarea id="body" name="formattedThread"></textarea>
-	    </div><!--responseBlockData-->
-	    <div class='responseBlockSubmit'>
-		    <input type='submit' class='btn' value='Create'/>
-	    </div><!--responseBlockData-->
+		<div class='responseBlockHeader'>
+			<span class='lightText'><b>Create Thread</b></span>
+		</div><!--responseBlockHeader-->
+		<div class='threadBlockTitle'>
+			<div class='threadBlockTitleText'>
+				<p>Title:</p>
+			</div>
+			<div class='threadBlockTitleInput'>
+				<input type='text' class='inputprimaryLarge' name='threadTitle' placeholder='Thread Title' maxlength=60/>
+			</div>
+			<div class='threadBlockClassText'>
+				<p>Class:</p>
+			</div>
+			<div class='threadBlockClassInput'>
+				{$classDropDown}
+			</div>
+		</div><!--threadBlockTitle-->
+		<div class='responseBlockData'>
+			<textarea id="body" name="formattedThread"></textarea>
+		</div><!--responseBlockData-->
+		<div class='responseBlockSubmit'>
+			<input type='submit' class='btn' value='Create'/>
+		</div><!--responseBlockData-->
 	</form><!--responseBlockContainer-->
-    </div><!--responseBlock-->
-
-EOF;
+</div><!--responseBlock-->
+HTML;
 
 	return $html;
 }
 
+/*
+ * Create a TinyMCE editor for replying to a thread.
+ */
 function replyToThreadTinyMCE()
 {
 	$html="";
 
 	$formURL=basename($_SERVER['REQUEST_URI']);
 
-	$html.=<<<EOF
-    <script src='/libraries/tinymce/tinymce.min.js'></script>
-    <script>
-    tinymce.init({
-	selector: '#response',
-	theme: 'modern',
-	height: 300,
-	width: '100%',
-	plugins: [
-	'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-	'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-	'save table contextmenu directionality emoticons template paste textcolor'
-	],
-	content_css: 'css/content.css',
-	toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
-    });
-
-    </script>
-    <div class='responseBlock dropShadow'>
+	$html.=<<<HTML
+<script src='/libraries/tinymce/tinymce.min.js'></script>
+<script>
+	tinymce.init({
+		selector: '#response',
+		theme: 'modern',
+		height: 300,
+		width: '100%',
+		plugins: [
+			'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+			'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+			'save table contextmenu directionality emoticons template paste textcolor'
+		],
+		content_css: 'css/content.css',
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+	});
+</script>
+<div class='responseBlock dropShadow'>
 	<form class='responseBlockContainer' method='post' action='{$formURL}'>
-	    <div class='responseBlockHeader'>
-		<span class='lightText'><b>Quick Reply</b></span>
-	    </div><!--responseBlockHeader-->
-	    <div class='responseBlockData'>
-		    <textarea id="response" name="formattedReply"></textarea>
-	    </div><!--responseBlockData-->
-	    <div class='responseBlockSubmit'>
-		    <input type='submit' class='btn' value='Reply'/>
-	    </div><!--responseBlockData-->
+		<div class='responseBlockHeader'>
+			<span class='lightText'><b>Quick Reply</b></span>
+		</div><!--responseBlockHeader-->
+		<div class='responseBlockData'>
+			<textarea id="response" name="formattedReply"></textarea>
+		</div><!--responseBlockData-->
+		<div class='responseBlockSubmit'>
+			<input type='submit' class='btn' value='Reply'/>
+		</div><!--responseBlockData-->
 	</form><!--responseBlockContainer-->
-    </div><!--responseBlock-->
-
-EOF;
+</div><!--responseBlock-->
+HTML;
 
 	return $html;
 }
@@ -228,10 +255,15 @@ EOF;
 
 
 
-
+/*
+ * Get the pagination parameters to use.
+ */
 function getPaginationParameters()
 {
-	if ( isset($_SESSION['numPerPage']) && !empty($_SESSION['numPerPage']))
+	/*
+	 * Get specified values, or use default ones.
+	 */
+	if( isset($_SESSION['numPerPage']) && !empty($_SESSION['numPerPage']))
 	{
 		$limit=$_SESSION["numPerPage"];
 	}
@@ -254,63 +286,83 @@ function getPaginationParameters()
 	return array($startIndex,$limit);
 }
 
+/*
+ * Generate the board table
+ */
 function generateBoardTable($dataset)
 {
 	$html="";
 
-	$html.=<<<eof
-    <div class="tableStyleB dropShadow center" id="table">
-    <div class="threadList">
-	<div class="threadHeader tableHeaderStyleB">
-		<div class='deptCol'><div class='deptColText'><b>Department</b></div></div>
-		<div class='unansQuestCol'><b>Un-Answered</b></div>
-		<div class='totalQuestCol'><b>Total</b></div>
-	</div><!--threadHeader-->
-	<div class="threadBody tableRowStyleB">
-eof;
+	$html.=<<<HTML
+<div class="tableStyleB dropShadow center" id="table">
+	<div class="threadList">
+		<div class="threadHeader tableHeaderStyleB">
+			<div class='deptCol'>
+				<div class='deptColText'>
+					<b>Department</b>
+				</div>
+			</div>
+			<div class='unansQuestCol'>
+				<b>Un-Answered</b>
+			</div>
+			<div class='totalQuestCol'>
+				<b>Total</b>
+			</div>
+		</div><!--threadHeader-->
+		<div class="threadBody tableRowStyleB">
+HTML;
 
 	foreach($dataset as $row)
 	{
-		$html.="<div class='threadRow'>";
-		$html.="    <div class='deptCol'>";
-		$html.="        <form action='{$_SERVER['PHP_SELF']}' method='GET'>";
-		$html.="            <div class='deptColText'>";
-		$html.=               "<button type='submit' name='viewBoard' class='buttonToLink' value='{$row['deptid']}'>{$row['deptname']}</button>";
-		$html.="            </div>";
-		$html.="        </form>";
-		$html.="    </div>";
-		$html.="    <div class='unansQuestCol'>";
-		$html.=           "{$row['unanswered_count']}";
-		$html.="    </div>";
-		$html.="    <div class='totalQuestCol'>";
-		$html.=           "{$row['question_count']}";
-		$html.="    </div>";
-		$html.="    </div><!--threadRow-->";
+		$html.=<<<HTML
+<div class='threadRow'>
+	<div class='deptCol'>
+		<form action='{$_SERVER['PHP_SELF']}' method='GET'>
+			<div class='deptColText'>
+				<button type='submit' name='viewBoard' class='buttonToLink' value='{$row['deptid']}'>{$row['deptname']}</button>
+			</div>
+		</form>
+	</div>
+	<div class='unansQuestCol'>
+		{$row['unanswered_count']}
+	</div>
+	<div class='totalQuestCol'>
+		{$row['question_count']}
+	</div>
+</div><!--threadRow-->
+HTML;
+
 	}
+
 	$html.="</div><!--threadBody-->";
 	$html.="</div><!--threadList-->";
 	$html.="</div><!--tableContainer-->";
 
-
 	return $html;
 }
 
-
+/*
+ * Generate the thread table.
+ */
 function generateThreadTable($dataset)
 {
 	$html="";
 
-	$html.=<<<eof
-    <div class="tableStyleB dropShadow center" id="table">
-    <div class="threadList">
-	<div class="threadHeader tableHeaderStyleB">
-		<div class='statusCol'><b>Status</b></div>
-		<div class='subjectCol'><b>Subject</b></div>
-		<div class='classCol'><b>Class</b></div>
-		<div class='infoCol'><div class='infoColText'><b>Info</b></div></div>
-	</div><!--threadHeader-->
-	<div class="threadBody tableRowStyleB">
-eof;
+	$html.=<<<HTML
+<div class="tableStyleB dropShadow center" id="table">
+	<div class="threadList">
+		<div class="threadHeader tableHeaderStyleB">
+			<div class='statusCol'><b>Status</b></div>
+			<div class='subjectCol'><b>Subject</b></div>
+			<div class='classCol'><b>Class</b></div>
+			<div class='infoCol'>
+				<div class='infoColText'>
+					<b>Info</b>
+				</div>
+			</div>
+		</div><!--threadHeader-->
+		<div class="threadBody tableRowStyleB">
+HTML;
 
 	foreach($dataset as $row)
 	{
@@ -366,8 +418,9 @@ eof;
  *
  */
 
-
-
+/*
+ * Generate the thread
+ */
 function generateThread($dataset)
 {
 	$html="";
@@ -402,12 +455,18 @@ function generateThread($dataset)
 	return $html;
 }
 
-
+/*
+ * Get the avatar for a user.
+ */
 function getPostUserImg($idno)
 {
 	$html = "";
 
-	$result = databaseQuery($sql="select encode(avatar,'base64')as avatar from user_avatars where user_avatars.idno=?",array($idno));
+	$query =<<<SQL
+SELECT ENCODE(ua.avatar, 'base64') AS avatar FROM user_avatars ua WHERE ua.idno = ?
+SQL;
+
+	$result = databaseQuery($query, array($idno));
 
 	if(is_array($result) && count($result)!=0)
 	{
@@ -425,11 +484,17 @@ function getPostUserImg($idno)
 	return $html;
 }
 
+/*
+ * Get the user info for a post
+ */
 function getPostUserInfo($idno)
 {
 	$html = "";
 
-	$result = databaseQuery($sql="select realname,email,role from users where idno=?",array($idno));
+	$query =<<<SQL
+SELECT users.realname, users.email, users.role FROM users WHERE users.idno = ?
+SQL;
+	$result = databaseQuery($query, array($idno));
 
 	if(is_array($result) && !empty($result))
 	{
@@ -444,19 +509,27 @@ function getPostUserInfo($idno)
 	return $html;
 }
 
+/*
+ * Get the header for a post.
+ */
 function getPostHeader($author,$date,$is_question,$status)
 {
 	$formURL=basename($_SERVER['REQUEST_URI']);
 
-
 	$time = date('M d, h:i a',strtotime($date));
-	$html = "       <div class='postBlockHeaderWrapper'>\n";
-	$html.= "           <div class='postDate'>\n";
-	$html.= "               <em>$time</em>\n";
-	$html.= "           </div>\n";
-	if($is_question==true)
+
+	$html =<<<HTML
+<div class='postBlockHeaderWrapper'>
+	<div class='postDate'>
+		<em>$time</em>
+	</div>
+HTML;
+
+	if($is_question===true)
 	{
-		if($_SESSION['useridno']==$author || isUserRoleGreaterThanOrEqualTo($_SESSION['useridno'],'tutor')==1)
+		$pred = isUserRoleGreaterThanOrEqualTo($_SESSION['useridno'], 'tutor');
+
+		if($_SESSION['useridno']===$author || $pred===1)
 		{
 			$html.= "       <div class='isSolved'>\n";
 			$html.= "           <form name='header' method='POST' action='{$formURL}'>\n";
@@ -495,7 +568,9 @@ function getPostHeader($author,$date,$is_question,$status)
 
 
 
-
+/*
+ * Preserve the get parameters.
+ */
 function preserveOldGETParams()
 {
 	$html="";
@@ -517,11 +592,14 @@ function preserveOldGETParams()
 	return $html;
 }
 
+/*
+ * Print out the pagination stuff for the bottom.
+ */
 function printBottomPagination($paginationValues,$count)
 {    
 	$total_records = $count[0]['count'];
 
-	if($paginationValues[1]==0)
+	if($paginationValues[1]===0)
 	{
 		$total_pages = 1;
 	}
@@ -534,17 +612,21 @@ function printBottomPagination($paginationValues,$count)
 
 	foreach($_GET as $index =>$get)
 	{
-		if($index!='page')
+		if($index!='page') {
 			$baseurl.=$index.'='.$get.'&';
+		}
 	}
+
 	$pagLink = "<div class='pagination centerFlex'>";
 	$pagLink .= "<ul><li>Page: </li>";  
+
 	for ($i=1; $i<=$total_pages; $i++) 
 	{  
-		if(empty($_SERVER['QUERY_STRING']))
+		if(empty($_SERVER['QUERY_STRING'])) {
 			$pagLink .= "<li><a href='$baseurl?page=".$i."'>".$i."</a></li>";
-		else
+		} else {
 			$pagLink .= "<li><a href='$baseurl"."page=".$i."'>".$i."</a></li>";
+		}
 	}
 
 	$pagLink.="</ul></div><br><br><br><br>";
@@ -552,6 +634,9 @@ function printBottomPagination($paginationValues,$count)
 	return $pagLink;
 }
 
+/*
+ * Generate class list.
+ */
 function genClass($dept)
 {
 	//Declare array
@@ -560,17 +645,21 @@ function genClass($dept)
 
 	$html="";
 
-	$sql= "select distinct name,sections.cid from terms,sections left join classes on sections.cid=classes.cid where terms.activeterm=true and dept=? and sections.term = terms.code";
+	$sql=<<<SQL
+SELECT DISTINCT classes.name, sections.cid FROM terms
+	JOIN sections ON sections.term = terms.code 
+	LEFT JOIN classes ON sections.cid = classes.cid
+	WHERE terms.activeterm = TRUE AND dept = ?
+SQL;
+	$result=databaseQuery($sql, array($dept));
 
-	$result=databaseQuery($sql,array($dept));
-	
 	if(!is_array($result) || empty($result))
 	{
 		return "Could not find any classes. Please contact administrator.";
 	}
 	else
 	{
-		filterClasses($result);
+		$result = filterClasses($result);
 	}
 
 	if(isset($_POST['classSelect']) && !empty($_POST['classSelect']))
@@ -578,51 +667,57 @@ function genClass($dept)
 		$class=$_POST['classSelect'];
 	}
 
-	//Generate the html code for the class selection box
+	/*
+	 * Generate the html code for the class selection box
+	 */
 	$html.= "<select name=\"classSelect\" class=\"inputSelect\">";
 
 	foreach($result as $row)
 	{
-		#$row = ;
-		if ($class == $row["cid"])
+		if ($class === $row["cid"])
 		{
-			$html.= "<option value=\"" . $row["cid"] . "\" selected>" . $row["name"]  . "</option>";
+			$html.= "<option value=\"{$row["cid"]}\" selected>{$row["name"]}</option>";
 		}
 		else
 		{
-			$html.= "<option value=\"" . $row["cid"]  . "\">" . $row["name"]  . "</option>";
+			$html.= "<option value=\"{$row['cid']}\">{$row['name']}</option>";
 		}
 	}
 	$html.= "</select>";
 
 
-	//Send the "string" of html code back to the calling function
+	/*
+	 * Send the "string" of html code back to the calling function
+	 */
 	return $html;
 }
 
-function filterClasses()
+/*
+ * Filter out non-fitting classes.
+ */
+function filterClasses($result)
 {
-	//Filter out anything not accessable b y students
-	$curRole=getUserLevelAccessIdno($_SESSION['useridno']);
+	/*
+	 * Filter out anything not accessable by students
+	 *
+	 * This is any class with the word 'tutor' in its name
+	 */
+	$curRole = getUserLevelAccessIdno($_SESSION['useridno']);
 
-	
-	if($curRole=='student')
+	if($curRole === 'student')
 	{
-		//Loof for anything that contains the word tutor, and mark the in a new array
-		if (($key = preg_grep("/(tutor)/", array_map('strtolower',array_column($result,'name')))) !== false) 
-		{
+		$newArray = array_filter($result, function($key, $val) {
+			/*
+			 * This does a case-insensitve search for the word tutor 
+			 * in the name.
+			 */
+			return !preg_grep("/(?i)tutor/", $val['name']);
+		});
 
-			//Remove anything matching the expression from the array 
-			foreach($key as $row)
-			{
-				if(($newKey = array_search($row,array_map('strtolower',array_column($result,'name')))) !== false)
-				{
-					unset($result[$newKey]);
-				}
-			}
-			//Re-index the array
-			$result = array_values($result);
-		}
+		/*
+		 * Reindex the array.
+		 */
+		return array_values($newArray);
 	}
 }
 
@@ -635,9 +730,14 @@ function filterClasses()
  *
  */
 
-function updateQuestionStatus($array)
+/*
+ * Update the status of a question
+ *
+ * :UncalledFunction
+ */
+function updateQuestionStatus($status, $quid)
 {
-	$result=databaseQuery("update questions set status=? where quid=?",$array);
+	$result = databaseQuery("UPDATE questions SET status=? WHERE quid=?", array($status, $quid));
 
 	if(!is_array($result) || empty($result))
 	{
@@ -650,9 +750,12 @@ function updateQuestionStatus($array)
 
 }
 
-function getQuestionName($array)
+/*
+ * Get the name of a question.
+ */
+function getQuestionName($quid)
 {
-	$result=databaseQuery("select title from questions where quid=?",$array);
+	$result = databaseQuery("SELECT questions.title FROM questions WHERE questions.quid=?", array($quid));
 
 	if(!is_array($result) || empty($result))
 	{
@@ -664,10 +767,15 @@ function getQuestionName($array)
 	}
 }
 
-
-function createResponse($array)
+/*
+ * Create a response.
+ */
+function createResponse($quid, $author, $reply)
 {
-	$result=databaseQuery("insert into posts (question,author,body,is_question,added) values (?,?,?,false,CURRENT_TIMESTAMP)",$array);
+	$query = <<<SQL
+INSERT INTO posts(question, author, body, is_question, added) VALUES (?, ?, ?, FALSE, CURRENT_TIMESTAMP)
+SQL;
+	$result=databaseQuery($query, array( $quid, $author, $reply));
 
 	if(is_array($result))
 	{
@@ -679,7 +787,10 @@ function createResponse($array)
 	}
 }
 
-function createThread($array, $array2)
+/*
+ * Create a thread.
+ */
+function createThread($questionArr, $postArr)
 {
 	$query =<<<'SQL'
 INSERT INTO questions(subject, term, title, asker, status, added)
@@ -687,27 +798,18 @@ INSERT INTO questions(subject, term, title, asker, status, added)
 	RETURNING quid
 SQL;
 
-	$result = databaseQuery($query, $array);
+	$result = databaseQuery($query, $questionArr);
 
 
 	if(is_array($result))
 	{
+		/*
+		 * Get the question ID, and stick it on the array.
+		 */
+		$temp = $result[0]['quid'];
+		array_unshift($postArr,$temp);
 
-		$temp=$result[0]['quid'];
-		array_unshift($array2,$temp);
-
-		$result=databaseQuery("insert into posts (question,author,body,is_question,added) values (?,?,?,true,CURRENT_TIMESTAMP)",$array2);
-
-
-		if(is_array($result))
-		{
-			return 1;
-		}
-		else
-		{
-			return -1;
-		}
-
+		return createResponse($postArr[0], $postArr[1], $postArr[2]);
 	}
 	else
 	{
@@ -715,6 +817,9 @@ SQL;
 	}
 }
 
+/*
+ * Get the list of threads.
+ */
 function getThreadList($array)
 {
 	$query = <<<'SQL'
@@ -736,189 +841,65 @@ SQL;
 	return databaseQuery($query, $array);
 }
 
+/*
+ * Get the list of boards.
+ */
 function getBoardList($array)
 {
 	return databaseQuery("select * from forum_overview offset ? limit ?",$array);
 }
 
+/*
+ * Get the list of posts for a question.
+ */
 function getQuestionList($array)
 {
-	return databaseQuery("select posts.postid,posts.question,posts.author,posts.body,posts.is_question,posts.added,questions.status from posts,questions where questions.quid=posts.question and posts.question=? order by added offset ? limit ?",$array);
+	$query =<<<SQL
+SELECT posts.postid, posts.question, posts.author, posts.body, posts.is_question, posts.added, questions.status
+	FROM posts
+	JOIN questions ON posts.question = questions.quid
+	WHERE posts.question=?
+	ORDER BY added
+	OFFSET ? LIMIT ?
+SQL;
+
+	return databaseQuery($query, $array);
 }
 
+/*
+ * Get the pagination count for threads.
+ */
 function getPaginationCountThread($array)
 {
-	return databaseQuery("select count(questions.title) as count from questions,terms,sections,classes where questions.subject = sections.secid and sections.term=terms.code and sections.cid=classes.cid and classes.dept=? and activeterm=true ",$array);
+	$query = <<<SQL
+WITH filt_classes AS (
+	SELECT * FROM classes WHERE classes.dept = ?
+)
+SELECT COUNT(questions.title) AS count
+	FROM questions
+	JOIN sections ON questions.subject = sections.secid
+	JOIN terms ON sections.term = terms.code
+	JOIN filt_classes ON sections.cid = classes.cid
+	WHERE terms.code = (SELECT code FROM terms WHERE activeterm = true)
+SQL;
+
+	return databaseQuery($query, $array);
 }
 
+/*
+ * Get the pagination count for boards.
+ */
 function getPaginationCountBoard()
 {
 	return databaseExecute("select count(deptid) as count from departments");
 }
 
+/*
+ * Get the pagination counts for a question.
+ */
 function getPaginationCountQuestion($array)
 {
 	return databaseQuery("select count(body) as count from posts where question=?",$array);
 }
-
-
-
-
-// function createSearchBar()
-// {
-// 	//Search options
-// 	$options=array(array('Title','title'),array('Class','cid'),array('User','username'));
-// 	$prevVal= $options[0][1];
-// 
-// 	//Restore val if present, or use default
-// 	if(isSet($_GET['searchSelect']) && !empty($_GET['searchSelect']))
-// 	{
-// 		$prevVal=$_GET['searchSelect'];
-// 	}
-// 
-// 	$html = "<form action='manageusers.php' method='GET'><div class='flex rightAlignFlex padding20Bottom' >";
-// 
-// 	if(isSet($_GET['searchSubmit']))
-// 	{
-// 		$html.= "   <div class=' searchContainer flex' id='searchMaster'>";    
-// 	}
-// 	else
-// 	{
-// 		$html.= "   <div class=' searchContainer flex' id='searchMaster' style='display:none;'>";
-// 	}
-// 
-// 
-// 	//$html.= "       <div class='flexSearchColumn'>";
-// 	$html.= "       <div></div>";
-// 	$html.= "       <div class='flexSearchRow'>";
-// 	$html.= "           <div >Category: </div> ";
-// 	$html.= "            <div> <select name='searchSelect' class='inputSelectSmall'>";
-// 
-// 	foreach($options as $row)
-// 	{
-// 		if ($prevVal == $row[1])
-// 		{
-// 			$html.= "<option value=\"" . $row[1] . "\" selected>" . $row[0]  . "</option>";
-// 		}
-// 		else
-// 		{
-// 			$html.= "<option value=\"" . $row[1]  . "\">" . $row[0]  . "</option>";
-// 		}
-// 	}
-// 
-// 	$html.= "           </select>";
-// 	$html.= "           </div>";
-// 	$html.= "       </div>";
-// 	$html.= "       <div class='flexSearchRow'>";
-// 	$html.= "           <div >Search: </div>";
-// 	$html.= "           <div><input class='inputprimary' placeholder='Use % for wildcard search' name='searchText' type='text'/></div>";
-// 	$html.= "       </div>";
-// 	$html.= "       <div class= 'flexSearchRow'>";
-// 	$html.= "           <input class= 'btn btnleft' type='submit' name='searchSubmit' value='Search'>";
-// 	$html.= "           <input class= 'btn btnright' type='submit' name='searchReset' value='Reset'>";
-// 	$html.= "       </div>";
-// 	$html.= "   </div>";
-// 	$html.= "</div></form>";
-// 
-// 	return $html;
-// }
-// 
-// function searchResults()
-// {
-// 	$html = "<script type='text/javascript' src='scripts/manageusers.js'></script>";
-// 	$html.= "<div class='flex columnLayout2 alignCenterFlex'>";
-// 	$html.= "<div><h3>Users:</h3></div>";
-// 	$html.= "<div id='searchIcon'><a href='javascript:showHideSearch()'><img src='styles/img/icons/search.svg' alt='Show/Hide search'></a></div>";
-// 	$html.= "</div><div class=\"\">";
-// 	$html.= createSearchBar();
-// 	$html.= generatePaginatedTableSearch();
-// 
-// 	$html .="</div>";
-// 	return $html;
-// }
-
-// function paginatedThreadListingOLD()
-// {
-// 
-// 	$html="";
-// 
-// 	$paginationParams=array_merge(array('CS-IS'),getPaginationParameters());
-// 
-// 	$dataset=getThreadList($paginationParams);
-// 
-// 	$html.=<<<eof
-//     <div class="tableStyleB dropShadow center" id="table">
-//     <form class="" action="manageusers.php" method="post">
-//     <table>
-// 	<thead>
-// 	    <tr>
-// 		<th class='statusCol'>Status</th>
-// 		<th class='subjectCol'>Subject </th>
-// 		<th class='classCol'>Class</th>
-// 		<th class='infoCol'><div class='infoColText'>Info</div></th>
-// 	    </tr>
-// 	</thead>
-// 	<tbody>
-// eof;
-// 
-// 	foreach($dataset as $row)
-// 	{
-// 		$html.="<a href='{$_SERVER['PHP_SELF']}'>";
-// 		$html.="<tr>";
-// 
-// 		if($row['status']=='answered')
-// 		{
-// 			$html.="    <td class='statusCol'>v</td>";
-// 		}
-// 		else
-// 		{
-// 			$html.="    <td class='statusCol'>X</td>";
-// 		}
-// 
-// 		$html.="    <td class='subjectCol'>". $row['title'] ."</td>";
-// 		$html.="    <td class='classCol'>". $row['classname'] ."</td>";
-// 		$html.="    <td class='infoCol'><div class='infoColText'>". $row['author'] ."</div></td>";
-// 		$html.="</tr>";
-// 		$html.="</a>";
-// 	}
-// 	$html.="</tbody></table>";
-// 
-// 	return $html;
-// }
-
-// function generateSearchSql()
-// {
-// 	$options=array(array('ID#','idno'),array('Department','deptid'),array('Username','username'),array('Full Name','realname'),array('E-mail','email'),array('Role','role'));
-// 
-// 	if(isSet($_GET['searchSelect']) &&!empty($_GET['searchSelect']))
-// 	{
-// 		$search=$_GET['searchSelect'];
-// 	}
-// 	else
-// 	{
-// 		return "Search error";
-// 	}
-// 
-// 	foreach($options as $row)
-// 	{
-// 		if ($search == $row[1])
-// 		{
-// 			if($search=='role')
-// 				$sql="select * from users where ". $row[1] ."=? order by role desc, username OFFSET ? LIMIT ? ";
-// 			else
-// 				$sql="select * from users where ". $row[1] ." ilike ? order by role desc, username OFFSET ? LIMIT ? ";
-// 
-// 			return $sql;
-// 		}
-// 	}
-// 
-// 	return "Search error";
-// 
-// }
-
-// function getSearchList($sql,$array)
-// {
-// 	return databaseQuery($sql,$array);
-// }
 
 ?>

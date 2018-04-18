@@ -295,7 +295,7 @@ function getCurrentClassSections()
 	}
 	else
 	{
-		return databaseExecute("select secid,sections.code,term,realname,email from sections,users,terms where terms=null");
+		return null;
 	}
 }
 

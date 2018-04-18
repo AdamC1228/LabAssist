@@ -351,12 +351,7 @@ SQL;
 	}
 	else
 	{
-		/*
-		 * NOTE: :QuestionableQuery
-		 * 
-		 * What is this query supposed to do?
-		 */
-		return databaseExecute("SELECT secid,sections.code,term,realname,email FROM sections,users,terms WHERE terms=null");
+		return null;
 	}
 }
 

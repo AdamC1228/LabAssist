@@ -78,11 +78,11 @@ function getDepartmentList()
 	}
 
 	/*
-	 * NOTE: :DepartmentListing
+	 * FUTURE: :DepartmentListing
 	 *
-	 * This appears that it will only ever retrieve one department, instead 
-	 * of a list of all of them. Is that what's intended, or should this be 
-	 * something else?
+	 * The reason the for-each loop is used with this query that seems to 
+	 * only return one row, is in the case where someone can be attached to 
+	 * multiple departments.
 	 */
 	$sql="SELECT * FROM departments WHERE departments.deptid=?";
 	$result = databaseQuery($sql, array($currentDepartment));

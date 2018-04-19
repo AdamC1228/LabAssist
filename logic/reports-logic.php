@@ -145,10 +145,14 @@ function reportHourlyUsage() {
 	$query = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
 	JOIN sections ON usage.secid = sections.secid
+	JOIN classes ON sections.cid = classes.cid
 	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
+		AND classes.dept = ?
 SQL;
 
-	$data = safeDBQuery($query, array());
+	$dept = getUsersDepartment($_SESSION['username']);
+
+	$data = safeDBQuery($query, array($dept));
 
 	if($data === -1) {
 		return -1;
@@ -162,6 +166,9 @@ SQL;
 
 		$wkday  = strftime("%u", strtotime($datum['markin']));
 
+		$lim = getLimits($dept)[0];
+
+		$end = strptime($lim['labend'], "%T");
 		/*
 		 * NOTE:
 		 *
@@ -169,6 +176,8 @@ SQL;
 		 * each day.
 		 */
 		for($initVal = $begin['tm_hour']; $initVal <= $end['tm_hour']; $initVal++) {
+			if($initVal > $end['tm_hour']) break;
+
 			if(isset($retval[$wkday][$initVal])) {
 				$retval[$wkday][$initVal] += 1;
 			} else {
@@ -184,10 +193,14 @@ function reportDailyUsage() {
 	$query = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
 	JOIN sections ON usage.secid = sections.secid
+	JOIN classes ON sections.cid = classes.cid
 	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
+		AND classes.dept = ?
 SQL;
 
-	$data = safeDBQuery($query, array());
+	$dept = getUsersDepartment($_SESSION['username']);
+
+	$data = safeDBQuery($query, array($dept));
 
 	if($data === -1) {
 		return -1;
@@ -215,6 +228,10 @@ SELECT stu.idno, stu.realname, stu.role, stu.total_hours
 SQL;
 
 	return safeDBQuery($query, array());
+}
+
+function getLimits($dept) {
+	return databaseQuery("SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?", array($dept));
 }
 
 /*

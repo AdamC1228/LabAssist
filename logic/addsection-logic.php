@@ -1,26 +1,35 @@
 <?php
 require_once "logic/database/dbCon.php";
 
+
+/*
+ * Create the section-ading form and table.
+ */
 function createForm()
 {
-	$html=<<<eof
+	$html=<<<HTML
 	    <div class="flex ">
 		<div>
 		    <h3> Add Section:</h3>
 		    <div class="group paddingRight20">
-eof;
+HTML;
+
 	$html.=generateForm();
-	$html.="          </div>
-		</div>";
+	$html.="		</div>"
+	$html.="	</div>";
 	$html.=generateTable(getCurrentClassSections());
 	$html.="</div>";
 	return $html;
 }
 
-
-
+/*
+ * Create the section adding form.
+ */
 function generateForm()
 {
+	/*
+	 * Set the current value.
+	 */
 	if(isset($_POST['sectionCode']) && !empty($_POST['sectionCode']))
 	{
 		$current=$_POST['sectionCode'];
@@ -32,47 +41,60 @@ function generateForm()
 
 	$html = "";
 
-	$html.= "<form action='{$_SERVER['PHP_SELF']}' method='post'>";
-	$html.= "   <div class='flex paddingLeft20 '>";
-	$html.= "       <div class='flexRightAlign paddingRight20 '>";
-	$html.= "           <div style='padding-bottom:1px; padding-top:3px; text-align:right;'><p>Term: </p></div>";
-	$html.= "           <div style='margin:auto; padding-bottom:1px;text-align:right;'><p>Class: </p></div>";
-	$html.= "           <div style='margin:auto; padding-bottom:1px;text-align:right;'><p>Professor: </p></div>";
-	$html.= "           <div style='margin:auto; padding-bottom:1px;text-align:right;'><p>Code: </p></div>";
-	$html.= "       </div>";
-	$html.= "       <div class='flexLeftAlign paddingTop10 flexOne'>";
+	$html.=<<<HTML
+<form action='{$_SERVER['PHP_SELF']}' method='post'>
+	<div class='flex paddingLeft20 '>
+		<div class='flexRightAlign paddingRight20 '>
+			<div style='padding-bottom:1px; padding-top:3px; text-align:right;'>
+				<p>Term: </p>
+			</div>
+			<div style='margin:auto; padding-bottom:1px;text-align:right;'>
+				<p>Class: </p>
+			</div>
+			<div style='margin:auto; padding-bottom:1px;text-align:right;'>
+				<p>Professor: </p>
+			</div>
+			<div style='margin:auto; padding-bottom:1px;text-align:right;'>
+				<p>Code: </p>
+			</div>
+		</div>
+		<div class='flexLeftAlign paddingTop10 flexOne'>
+HTML;
 	$html.=             getTermList();
-	$html.= "           <br>";
+	$html.= "           <br/>";
 	$html.=             getClassList();
-	$html.= "           <br>";
+	$html.= "           <br/>";
 	$html.=             getProfList();
-	$html.= "           <br><input class='inputprimary' maxlength=3 placeholder='Section Code' name='sectionCode' value='{$current}' type='text'/>";
-	$html.= "       </div>";
-	$html.= "   </div>";
-	$html.= "   <div class='flex centerFlex paddingBottom20 '>";
-	$html.= "       <button class=\"btn margin20top btnleft\" name=\"cancelEdit\" type=\"submit\" value='cancelEdit'>Cancel</button>";
-	$html.= "       <button class=\"btn margin20top btnright\" name=\"submitEdit\" type=\"submit\" value='submitEdit'>Add Class</button>";
-	$html.= "   </div>";
-	$html.= "</form>";
+	$html.=<<<HTML
+			<br/>
+			<input class='inputprimary' maxlength=3 placeholder='Section Code' name='sectionCode' value='{$current}' type='text'/>
+		</div>
+	</div>
+	<div class='flex centerFlex paddingBottom20 '>
+		<button class="btn margin20top btnleft" name="cancelEdit" type="submit" value='cancelEdit'>Cancel</button>
+		<button class="btn margin20top btnright" name="submitEdit" type="submit" value='submitEdit'>Add Class</button>
+	</div>
+</form>
+HTML;
 
 	return $html;
 }
 
-
+/*
+ * Get the list of classes.
+ */
 function getClassList()
 {
-
-
-
 	$html = "";
-	$currentDepartment= getUsersDepartment(array($_SESSION['username']));
-	if(!is_array($currentDepartment))
+	$currentDepartment= getUsersDepartment($_SESSION['username']);
+	if($currentDepartment === -1)
 	{
 		return "<div style='margin:auto; padding-top:6px;padding-bottom:6px;'>Unable to find any departments</div>";
 	}
 
-	$sql="select cid,name from classes where dept=?";
-	$result = databaseQuery($sql,array($currentDepartment[0]['deptid']));
+	$sql = "SELECT classes.cid, classes.name FROM classes WHERE classes.dept=?";
+
+	$result = databaseQuery($sql, array($currentDepartment));
 
 	if(empty($result) || !is_array($result))
 	{
@@ -80,7 +102,6 @@ function getClassList()
 	}
 	else
 	{    
-
 		if(isset($_POST['classSelected']) && !empty($_POST['classSelected']))
 		{
 			$current=$_POST['classSelected'];
@@ -91,18 +112,20 @@ function getClassList()
 			$_POST['classSelected']=$result[0]['cid'];
 		}
 
-		//Create select statement
+		/*
+		 * Create select box.
+		 */
 		$html="<select name='classSelected' onchange='this.form.submit()' class='inputSelectLarge marginBottom20'>";
 
 		foreach($result as $row)
 		{
-			if ($current == $row["cid"])
+			if ($current === $row["cid"])
 			{
-				$html.= "<option value=\"" . $row["cid"] . "\" selected>" . $row["name"]  . "</option>";
+				$html.= "<option value=\"{$row["cid"]}\" selected>{$row["name"]}</option>";
 			}
 			else
 			{
-				$html.= "<option value=\"" . $row["cid"]  . "\">" . $row["name"]  . "</option>";
+				$html.= "<option value=\"{$row["cid"]}\">{$row["name"]}</option>";
 			}
 		}
 
@@ -111,10 +134,16 @@ function getClassList()
 	return $html;
 }
 
+/*
+ * Get the list of the professors.
+ */
 function getProfList()
 {
 	$html = "";
 
+	/*
+	 * Set the current value.
+	 */
 	if(isset($_POST['profSelected']) && !empty($_POST['profSelected']))
 	{
 		$current=$_POST['profSelected'];
@@ -124,16 +153,15 @@ function getProfList()
 		$current="";
 	}
 
-
-	$currentDepartment= getUsersDepartment(array($_SESSION['username']));
-	if(!is_array($currentDepartment))
+	$currentDepartment= getUsersDepartment($_SESSION['username']);
+	if($currentDepartment === -1)
 	{
 		return "<div style='margin:auto; padding-top:6px;padding-bottom:6px;'>Unable to find any departments</div>";
 	}
 
-	$sql="select idno,realname from users where deptid=? and users.role>='staff'::role and role<'developer'::role";
+	$sql = "SELECT users.idno, users.realname FROM users WHERE users.deptid=? AND users.role>='staff'::role AND users.role<'developer'::role";
 
-	$result = databaseQuery($sql,array($currentDepartment[0]['deptid']));
+	$result = databaseQuery($sql, array($currentDepartment));
 
 	if(empty($result) || !is_array($result))
 	{
@@ -141,18 +169,20 @@ function getProfList()
 	}
 	else
 	{            
-		//Create select statement
+		/*
+		 * Create select box.
+		 */
 		$html="<select name='profSelected' class='inputSelectLarge marginBottom20'>";
 
 		foreach($result as $row)
 		{
-			if ($current == $row["idno"])
+			if ($current === $row["idno"])
 			{
-				$html.= "<option value=\"" . $row["idno"] . "\" selected>" . $row["realname"]  . "</option>";
+				$html.= "<option value=\"{$row['idno']}\" selected>{$row['realname']}</option>";
 			}
 			else
 			{
-				$html.= "<option value=\"" . $row["idno"]  . "\">" . $row["realname"]  . "</option>";
+				$html.= "<option value=\"{$row['idno']}\">{$row['realname']}</option>";
 			}
 		}
 
@@ -161,9 +191,14 @@ function getProfList()
 	return $html;
 }
 
+/*
+ * Get the list of terms.
+ */
 function getTermList()
 {
-
+	/*
+	 * Set the current value.
+	 */
 	if(isset($_POST['termSelected']) && !empty($_POST['termSelected']))
 	{
 		$current=$_POST['termSelected'];
@@ -174,7 +209,7 @@ function getTermList()
 	}
 
 
-	$sql="select code from terms";
+	$sql="SELECT code FROM terms";
 	$result = databaseExecute($sql);
 
 	if(empty($result) || !is_array($result))
@@ -183,68 +218,75 @@ function getTermList()
 	}
 	else
 	{            
-		//Create select statement
+		/*
+		 * Create select box.
+		 */
 		$html="<select name='termSelected' class='inputSelectLarge marginBottom20'>";
 
 		foreach($result as $row)
 		{
-			if ($current == $row["code"])
+			if ($current === $row["code"])
 			{
-				$html.= "<option value=\"" . $row["code"] . "\" selected>" . $row["code"]  . "</option>";
+				$html.= "<option value=\"{$row['code']}\" selected>{$row['code']}</option>";
 			}
 			else
 			{
-				$html.= "<option value=\"" . $row["code"]  . "\">" . $row["code"]  . "</option>";
+				$html.= "<option value=\"{$row['code']}\">{$row['code']}</option>";
 			}
 		}
 
 		$html .= "</select>";
 	}
+
 	return $html;
 }
 
+/*
+ * Generate the class table.
+ */
 function generateTable($dataset)
 {
 
-	$data= databaseExecute("select code from terms where activeterm=true");
+	$data = databaseExecute("SELECT code FROM terms WHERE activeterm=true");
 
 	if(empty($dataset))
 	{
 		return "<h3>All sections for current selected class:</h3>";
 	}
 
-	$html=<<<eof
-	<div class="tableStyleA center flexGrow flexAlignSelf marginLeft20 marginBottom20" id="table">
+	$html=<<<HTML
+<div class="tableStyleA center flexGrow flexAlignSelf marginLeft20 marginBottom20" id="table">
 	<h3>All sections for current selected class</h3>
 	<form class="" action="managesections.php" method="post">
-	<table class= "dropShadow ">
-	    <thead>
-		<tr>
-		    <th>Term</th>
-		    <th>Section Code</th>
-		    <th>Professor</th>
-		    <th>Email</th>
-		</tr>
-	    </thead>
-eof;
+		<table class= "dropShadow ">
+			<thead>
+				<tr>
+					<th>Term</th>
+					<th>Section Code</th>
+					<th>Professor</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+HTML;
+
 	foreach ($dataset as $row)
 	{
-		if($row['term']==$data[0]['code'])
+		if($row['term'] === $data[0]['code'])
 		{
 			$html.="<tr>";
-			$html.="    <td><b>". $row['term'] ."</b></td>";
-			$html.="    <td><b>". $row['code'] ."</b></td>";
-			$html.="    <td><b>". $row['realname'] ."</b></td>";
-			$html.="    <td><b>". $row['email'] ."</b></td>";
+			$html.="    <td><b>{$row['term']}</b></td>";
+			$html.="    <td><b>{$row['code']}</b></td>";
+			$html.="    <td><b>{$row['realname']}</b></td>";
+			$html.="    <td><b>{$row['email']}</b></td>";
 			$html.="</tr>";
 		}
 		else
 		{
 			$html.="<tr>";
-			$html.="    <td>". $row['term'] ."</td>";
-			$html.="    <td>". $row['code'] ."</td>";
-			$html.="    <td>". $row['realname'] ."</td>";
-			$html.="    <td>". $row['email'] ."</td>";
+			$html.="    <td>{$row['term']}</td>";
+			$html.="    <td>{$row['code']}</td>";
+			$html.="    <td>{$row['realname']}</td>";
+			$html.="    <td>{$row['email']}</td>";
 			$html.="</tr>";
 		}
 	}
@@ -254,44 +296,58 @@ eof;
 	return $html;
 }
 
-
-
+/*
+ * Attempt to add a section.
+ */
 function attemptAddSection()
 {
 	if(!isset($_POST['termSelected']) || empty($_POST['termSelected']))
 	{
 		return -1;
 	}
+
 	if(!isset($_POST['classSelected']) || empty($_POST['classSelected']))
 	{
 		return -1;
 	}
+
 	if(!isset($_POST['profSelected']) || empty($_POST['profSelected']))
 	{
 		return -1;
 	}
+
 	if(!isset($_POST['sectionCode']) || empty($_POST['sectionCode']))
 	{
 		return -1;
 	}
 
-	return databaseSubmitAdd(array($_POST['termSelected'],$_POST['classSelected'],$_POST['profSelected'],$_POST['sectionCode']));
+	return databaseSubmitAdd(array($_POST['termSelected'], $_POST['classSelected'], $_POST['profSelected'], $_POST['sectionCode']));
 }
 
-
-
+/*
+ * Add a section to the database.
+ */
 function databaseSubmitAdd($array)
 {
-
-	return databaseQuery("insert into sections (term,cid,teacher,code) values(?,?,?,?)",$array);
-
+	return databaseQuery("INSERT INTO sections (term, cid, teacher, code) VALUES(?, ?, ?, ?)" ,$array);
 }
 
+/*
+ * Get the current sections of a class.
+ */
 function getCurrentClassSections()
 {
 	if(isset($_POST['classSelected']) && !empty($_POST['classSelected']))
 	{
-		return databaseQuery("select secid,sections.code,term,realname,email from sections,users,terms where sections.term=terms.code and (sections.cid=? and users.idno=sections.teacher) order by term DESC,code",array($_POST['classSelected']));
+		$query = <<<SQL
+SELECT sections.secid, sections.code, sections.term, users.realname, users.email 
+	FROM sections
+	JOIN terms ON sections.term = terms.code
+	JOIN users ON sections.teacher = users.idno
+	WHERE sections.cid = ?
+	ORDER BY sections.term, sections.code
+SQL;
+		return databaseQuery($query, array($_POST['classSelected']));
 	}
 	else
 	{

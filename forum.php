@@ -32,18 +32,18 @@
     {
         if($_POST['solvedCheck']==100)
         {
-            updateQuestionStatus(array('answered',$_GET['viewThread']));
+            updateQuestionStatus('answered',$_GET['viewThread']);
         }
         else if($_POST['solvedCheck']==-100)
         {
-            updateQuestionStatus(array('awaiting_response',$_GET['viewThread']));
+            updateQuestionStatus('awaiting_response',$_GET['viewThread']);
         }
     }
     
     //Handle the Thread responses
     if(isset($_POST['formattedReply']) && !empty($_POST['formattedReply']))
     {
-        $is_Success=createResponse(array($_GET['viewThread'],$_SESSION['useridno'],$_POST['formattedReply']));
+        $is_Success=createResponse($_GET['viewThread'],$_SESSION['useridno'],$_POST['formattedReply']);
         
         if($is_Success==1)
         {

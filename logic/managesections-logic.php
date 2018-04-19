@@ -169,14 +169,14 @@ function formattedInformation($uniqueID)
 function getDepartmentList()
 {
 	$html = "";
-	$currentDepartment= getUsersDepartment(array($_SESSION['username']));
-	if(!is_array($currentDepartment))
+	$currentDepartment= getUsersDepartment($_SESSION['username']);
+	if($currentDepartment === -1)
 	{
 		return "An error has occured getting the available departments";
 	}
 
 	$sql="select * from departments where deptid=?";
-	$result = databaseQuery($sql,array($currentDepartment[0]['deptid']));
+	$result = databaseQuery($sql,array($currentDepartment));
 
 	if(empty($result))
 	{
@@ -244,16 +244,16 @@ function getProfessorList($prev)
 {
 	$html = "";
 
-	$temp= getUsersDepartment(array($_SESSION['username']));
+	$temp= getUsersDepartment($_SESSION['username']);
 
 
-	if(!is_array($temp))
+	if($temp === -1)
 	{
 		return "An error has occured getting the available professors.";
 	}
 
 
-	$data = databaseQuery("select idno,realname from users where users.role>=cast('staff' as role) and deptid=?",array($temp[0]['deptid']));
+	$data = databaseQuery("select idno,realname from users where users.role>=cast('staff' as role) and deptid=?",array($temp));
 
 	if(empty($data)|| !is_array($data))
 	{
@@ -381,7 +381,7 @@ function generatePaginatedTable()
 {
 	$paginationValues=getPaginated();
 
-	$paginationValues=array_merge(array(getUsersDepartment(array($_SESSION['username']))[0]['deptid']),$paginationValues);
+	$paginationValues=array_merge(array(getUsersDepartment($_SESSION['username'])),$paginationValues);
 	
 	$dataset=getDataSet($paginationValues);
 

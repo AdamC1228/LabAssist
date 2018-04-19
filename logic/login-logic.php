@@ -12,25 +12,34 @@ function attemptPassLogin()
 	}
 	else
 	{
-		// Define $username and $password
+		/*
+		 * Define $username and $password
+		 */
 		$username   = $_POST['username'];
 		$password   = $_POST['password'];
 
-		//Processs login
+		/*
+		 * Processs login
+		 */
 		$isSuccess = login($username,$password);
 
 
-		//Error Handling
+		/*
+		 * Error Handling
+		 */
 		if( $isSuccess == 1)
 		{
 
-			//Login was successfull now we need to determine if user is a new user. 
+			/*
+			 * Login was successful now we need to determine if user is a new user, thus needing to register. 
+			 */
 			$registered = isRegistered($username);
-			//$registered = true;
-
 
 			if($registered == false)
 			{
+				/*
+				 * Set registration vars.
+				 */
 				$_SESSION['userAttr']=getUserAttr($username,$password);
 				$_SESSION["username"]=strtolower($username);
 				$_SESSION["register"]=true;
@@ -39,8 +48,16 @@ function attemptPassLogin()
 			}
 			else
 			{
+				/*
+				 * Set login vars.
+				 */
 				$_SESSION["username"]=strtolower($username);
-				$_SESSION["useridno"]=(databaseQuery("select idno from users where username ilike ?",array(strtolower($username))))[0]['idno'];
+				$_SESSION["useridno"]=(
+					databaseQuery("select idno from users where username ilike ?",
+						array(strtolower($username))
+					)
+				)[0]['idno'];
+
 				header("location: portal.php"); // Redirecting To Other Page
 				exit();
 			}
@@ -62,6 +79,9 @@ function attemptPassLogin()
 	return $error;
 }
 
+/*
+ * Attempt a kiosk mode login.
+ */
 function attemptKioskLogin()
 {
 	if(empty($_POST['sidno']))
@@ -88,6 +108,9 @@ function attemptKioskLogin()
 		}
 		else
 		{
+			/*
+			 * User needs to register.
+			 */
 			$_SESSION["registerSid"]=true;
 			$_SESSION['sidno']= $_POST['sidno'];
 			$_SESSION['userAttr']=getSidnoAttr($_POST['sidno']);
@@ -99,19 +122,12 @@ function attemptKioskLogin()
 	return $error;
 }
 
+/*
+ * Check if a user is registered.
+ */
 function isRegistered($userName)
 {
 	$status = false;
-
-	$dbCon = connectDB();
-
-	$sql="select idno from users where username ilike ?";
-
-	$stmt= $dbCon->prepare($sql);
-
-	$stmt->execute(array($userName));
-
-	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 	$result = safeDBQuery("SELECT idno FROM users WHERE username ILIKE ?", array(
 		$userName
@@ -125,6 +141,9 @@ function isRegistered($userName)
 	return $status;
 }
 
+/*
+ * Check kiosk mode login.
+ */
 function kioskLoginCheck() {
 	$result = safeDBQuery("SELECT idno FROM users WHERE idno = ?", array(
 		$_POST['sidno']

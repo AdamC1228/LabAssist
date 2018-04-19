@@ -251,9 +251,12 @@ SQL;
 	}
 }
 
-function isUserRoleGreaterThanOrEqualTo($array)
+/*
+ * Check if the users role is greater than or equal to the provided one.
+ */
+function isUserRoleGreaterThanOrEqualTo($idno, $role)
 {
-	$result=databaseQuery("select count (role) as result from users where idno=? and role>=?::role ",$array);
+	$result=databaseQuery("SELECT COUNT(role) AS result FROM users WHERE idno=? AND role>=?::role", array($idno, $role));
 
 	if(empty($result) || !is_array($result))
 	{
@@ -261,29 +264,7 @@ function isUserRoleGreaterThanOrEqualTo($array)
 	}
 	else
 	{
-        if($result[0]['result']==1)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-	}
-}
-
-
-function doesUserBelongToDept($user,$dept)
-{
-	$result=databaseQuery("select deptid from users where username=?",array($user));
-
-	if(empty($result) || !is_array($result))
-	{
-		return -1;
-	}
-	else
-	{
-		if($result[0]['deptid']==$dept)
+		if($result[0]['result']==1)
 		{
 			return 1;
 		}
@@ -294,14 +275,30 @@ function doesUserBelongToDept($user,$dept)
 	}
 }
 
+/*
+ * Check if the user belongs to a specific department.
+ */
+function doesUserBelongToDept($user, $dept)
+{
+	$res = getUsersDepartment($user);
 
+	if($res === -1) {
+		return -1;
+	} else {
+		return $res[0] === $dept;
+	}
+}
+
+/*
+ * Get the department for a user.
+ */
 function getUsersDepartment($user)
 {
-	$result = databaseQuery("select deptid from users where username=?",$user);
+	$result = databaseQuery("SELECT deptid FROM users WHERE username=?", array($user));
 
 	if(!empty($result) && is_array($result))
 	{
-		return $result;
+		return $result[0]['deptid'];
 	}
 	else
 	{

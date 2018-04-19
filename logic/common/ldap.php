@@ -1,36 +1,54 @@
 <?php
 
-//Primary login handler
+/*
+ * Primary login handler
+ */
 function login($usr,$pass)
 {
-	//Establish ldap connection object
+	/*
+	 * Establish ldap connection object
+	 */
 	$ldap=ldapCon();
 
-	//Determine if login server is up/down
+	/*
+	 * Determine if login server is up/down
+	 */
 	$status = chkServer("idmprodldap.wvu.edu",389);
 
-	//If server is up, lets check the credentials
+	/*
+	 * If server is up, lets check the credentials
+	 */
 	if($status == 200)
 	{
 		$status = checkUser($ldap,$usr,$pass);
 	}
 
-	//Return the status.
+	/*
+	 * Return the status.
+	 */
 	return $status;
 }
 
-//Create ldap connection object
+/*
+ * Create ldap connection object
+ */
 function ldapCon()
 {
-	//this is the name of the domain controller
+	/*
+	 * This is the name of the domain controller
+	 */
 	$server = "ldap://idmprodldap.wvu.edu"; 
 
-	//the port to query the global catalog for active directory is 3268
+	/*
+	 * The port to query the global catalog for active directory is 3268
+	 */
 	$ldap_connection = ldap_connect($server,389) or die("Could not connect to $ldaphost");
 
-	var_dump($ldap_connection);
+	//var_dump($ldap_connection);
 
-	//If ldap connection was not null set some parameters. 
+	/*
+	 * If ldap connection was not null set some parameters. 
+	 */
 	if($ldap_connection)
 	{
 		ldap_set_option($ldap_connection, LDAP_OPT_PROTOCOL_VERSION,3);
@@ -40,17 +58,23 @@ function ldapCon()
 	return $ldap_connection;
 }
 
-//Bind the user to determine if the credentials are indeed valid.
-function checkUser($ldap,$user,$pass)
+/*
+ * Bind the user to determine if the credentials are indeed valid.
+ */
+function checkUser($ldap, $user, $pass)
 {
 	$login_ok = false;
 
 	$ldapParams="uid=$user,ou=people,dc=wvu,dc=edu";
 
-	//Check credentials
+	/*
+	 * Check credentials
+	 */
 	$bind = ldap_bind($ldap,$ldapParams,$pass);
 
-	//if not null then credentials were valid
+	/*
+	 * If not null then credentials were valid
+	 */
 	if($bind)
 	{
 		$login_ok=true;
@@ -60,40 +84,63 @@ function checkUser($ldap,$user,$pass)
 }
 
 
-//Function to determine if login server is up.
+/*
+ * Function to determine if login server is up.
+ */
 function chkServer($host, $port)
 {  
-	$hostip = @gethostbyname($host); // resloves IP from Hostname returns hostname on failure
+	/*
+	 * Resolves IP from Hostname, returns hostname on failure.
+	 */
+	$hostip = @gethostbyname($host);
 
-	//Check to see if host exists
-	if ($hostip == $host) // if the IP is not resloved
-	{
+	/*
+	 * Check to see if host exists
+	 */
+	if ($hostip == $host)
+	{ 
+		/*
+		 * If the IP is not resolved, return the correct status code.
+		 */
 		return 503;
 	}
 	else
 	{
-		//Host exists, now check to see if host wants to talk on the port.
-		if (!$x = @fsockopen($hostip, $port, $errno, $errstr, 5)) // attempt to connect
+		/*
+		 * Host exists, now check to see if host wants to talk on the port.
+		 */
+		if (!$x = @fsockopen($hostip, $port, $errno, $errstr, 5)) 
 		{
-			//Host didn't want to talk
+			/*
+			 * Host didn't want to talk, return correct status code.
+			 */
 			return 504;
 		}
 		else
 		{
-			//Host talked, now delete the connection object and return
+			/*
+			 * Host talked, now delete the connection object and return.
+			 */
 			if ($x)
-			{
-				@fclose($x); //close connection
+			{ 
+				/*
+				 * Close connection
+				 */
+				@fclose($x);
 			}
+
 			return 200;
 		} 
 	}
 }
 
-
-
+/*
+ * Get the attributes of the user by the username.
+ */
 function getUserAttr($query_user,$password) {
-	// Active Directory server
+	/*
+	 * Active Directory server
+	 */
 	$ldap=ldapCon();
 
 	$ldap_dn="ou=people,DC=wvu,DC=edu";
@@ -102,18 +149,28 @@ function getUserAttr($query_user,$password) {
 	ldap_bind($ldap,$ldapParams,$password) or die("Could not bind to LDAP");
 
 	// Search AD
-	$results = ldap_search($ldap,$ldap_dn,"(uid=$query_user)",array("gecos","value","mail","value","wvuid","value"));
+	$results = ldap_search($ldap, $ldap_dn, "(uid=$query_user)",
+		array("gecos", "value", "mail", "value", "wvuid", "value")
+	);
+
 	$entries = ldap_get_entries($ldap, $results);
 
 	// No information found, bad user
 	if($entries['count'] == 0) return false;
 
 	// Clean up data by dumping needed items into fresh array.
-	$data = array("fullName" => $entries[0]['gecos'][0],"mail" => $entries[0]['mail'][0],"sidno" => $entries[0]['wvuid'][0]);
+	$data = array(
+		"fullName" => $entries[0]['gecos'][0],
+		"mail"     => $entries[0]['mail'][0],
+		"sidno"    => $entries[0]['wvuid'][0]
+	);
 
 	return $data;
 }
 
+/*
+ * Get the attributes of the user by the ID number.
+ */
 function getSidnoAttr($sidno) {
 	// Active Directory server
 	$ldap=ldapCon();
@@ -124,14 +181,21 @@ function getSidnoAttr($sidno) {
 	ldap_bind($ldap) or die("Could not bind to LDAP");
 
 	// Search AD
-	$results = ldap_search($ldap,$ldap_dn,"(wvuid=$sidno)",array("uid","value","gecos","value","mail","value","wvuid","value"));
+	$results = ldap_search($ldap, $ldap_dn, "(wvuid=$sidno)", 
+		array("uid", "value", "gecos", "value", "mail", "value", "wvuid", "value")
+	);
 	$entries = ldap_get_entries($ldap, $results);
 
 	// No information found, bad user
 	if($entries['count'] == 0) return false;
 
 	// Clean up data by dumping needed items into fresh array.
-	$data = array("fullName" => $entries[0]['gecos'][0],"mail" => $entries[0]['mail'][0],"sidno" => $entries[0]['wvuid'][0],"uid" => $entries[0]['uid'][0]);
+	$data = array(
+		"fullName" => $entries[0]['gecos'][0],
+		"mail"     => $entries[0]['mail'][0],
+		"sidno"    => $entries[0]['wvuid'][0],
+		"uid"      => $entries[0]['uid'][0]
+	);
 
 	return $data;
 }

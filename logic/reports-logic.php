@@ -115,7 +115,7 @@ function labUsageReportHourly()
     $data = reportHourlyUsage();
 
     $html = "<div id='Monday'></div>";
-    $html.= lineChartWithArea($data,0,"#Monday");
+    $html.= lineChartWithArea($data,1,"#Monday");
     $html.= arrayPrint(reportHourlyUsage());
     return $html;
 }
@@ -146,19 +146,31 @@ function studentUsageReport()
 function lineChartWithArea($array,$index,$cssElement)
 {   
     $html="";
-    foreach($array as $row)
+    
+    $labels="";
+    $data="";
+    foreach($array[$index] as $row)
     {
-        $html.= key($row) . "<br>";
+        $data.=$row .',';
     }
-    $html.="<hr>";
+    
+    foreach($array[$index] as $row)
+    {
+        $labels.=$row . ',';
+    }
+    
+    $labels=rtrim($labels, ',');
+    $data=rtrim($data, ',');
 
-
+    $html.=$labels ."<br>";
+    $html.=$data . "<br>";
+    $html.= "<hr>";
 
     $html.= '<script>';
     $html.= "new Chartist.Line('$cssElement', {";
-    $html.= "    labels: {$array[$index]}";
+    $html.= "    labels: {$labels}";
     $html.= "    series: [";
-    $html.= "        [{$array[$index]}]";
+    $html.= "        [{$data}]";
     $html.= "    ]";
     $html.= "}, {";
     $html.= "    low: 0,";
@@ -202,10 +214,6 @@ SQL;
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
 		$retval[$i] = array();
-
-		for($j = 0; $j <= 23; $j++) {
-			$retval[$i][$j] = 0;
-		}
 	}
 
 	foreach($data as $datum) {
@@ -214,7 +222,7 @@ SQL;
 		$begin = strptime($datum['markin'],  $formatstr);
 		$end   = strptime($datum['markout'], $formatstr);
 
-		$wkday  =strftime("%u", strtotime($datum['markin']));
+		$wkday = strftime("%u", strtotime($datum['markin']));
 
 		/*
 		 * NOTE:
@@ -230,6 +238,10 @@ SQL;
 			}
 		}
 	}
+
+	for($i = 1; $i <= 5; $i++) {
+		ksort($retval[$i]);
+	} 
 
 	return $retval;
 }
@@ -262,6 +274,9 @@ SQL;
 	return $retval;
 }
 
+
+
+
 function reportStudentUsage() {
 	$query = <<<'SQL'
 SELECT stu.idno, stu.realname, stu.role, stu.total_hours
@@ -270,6 +285,9 @@ SQL;
 
 	return safeDBQuery($query, array());
 }
+
+
+
 
 function reportSectionVisits($sect) {
 	$query = <<<SQL

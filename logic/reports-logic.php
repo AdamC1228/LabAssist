@@ -3,7 +3,7 @@ require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
 #Global to the file
-$availableReports = array(array('Lab Usage By Hour','0')array('Lab Usage By Day','1'),array('Student Usage','2'));
+$availableReports = array(array('Lab Usage By Hour','0'),array('Lab Usage By Day','1'),array('Student Usage','2'));
 
 
 /*
@@ -80,7 +80,7 @@ function printReport($reportID)
             $html.= "<h2>Hourly Data </h2>";
             $html.= labUsageReportHourly();
             break;
-        case 2:
+        case 1:
             $html.= "<h2>Daily Data </h2>";
             $html.= labUsageReportDaily();
             break;
@@ -112,7 +112,11 @@ function printReport($reportID)
 
 function labUsageReportHourly()
 {
-    $html = arrayPrint(reportHourlyUsage());
+    $data = reportHourlyUsage();
+
+    $html = "<div id='Monday'></div>";
+    $html.= lineChartWithArea($data,0,"#Monday");
+    $html.= arrayPrint(reportHourlyUsage());
     return $html;
 }
 
@@ -125,6 +129,46 @@ function labUsageReportDaily()
 function studentUsageReport()
 {
     $html = arrayPrint(reportStudentUsage());
+    return $html;
+}
+
+
+
+/*
+ *
+ *
+ *  Charting Functions
+ *
+ *
+*/
+
+
+function lineChartWithArea($array,$index,$cssElement)
+{   
+    $html="";
+    foreach($array as $row)
+    {
+        $html.= key($row) . "<br>";
+    }
+    $html.="<hr>";
+
+
+
+    $html.= '<script>';
+    $html.= "new Chartist.Line('$cssElement', {";
+    $html.= "    labels: {$array[$index]}";
+    $html.= "    series: [";
+    $html.= "        [{$array[$index]}]";
+    $html.= "    ]";
+    $html.= "}, {";
+    $html.= "    low: 0,";
+    $html.= "    showArea: true";
+    $html.= "});";
+    $html.= "</script>";
+    
+    
+    
+    
     return $html;
 }
 
@@ -155,13 +199,22 @@ SQL;
 		return -1;
 	}
 
+	$retval = array();
+	for($i = 1; $i <= 5; $i++) {
+		$retval[$i] = array();
+
+		for($j = 0; $j <= 23; $j++) {
+			$retval[$i][$j] = 0;
+		}
+	}
+
 	foreach($data as $datum) {
 		$formatstr = "%Y-%m-%d %T";
 
 		$begin = strptime($datum['markin'],  $formatstr);
 		$end   = strptime($datum['markout'], $formatstr);
 
-		$wkday  = wknumtoname(strftime("%u", strtotime($datum['markin'])));
+		$wkday  =strftime("%u", strtotime($datum['markin']));
 
 		/*
 		 * NOTE:
@@ -197,7 +250,7 @@ SQL;
 	$retval = array();
 
 	foreach($data as $datum) {
-		$wkday  = strftime("%u", strtotime($datum['markin']));
+		$wkday  = wknumtoname(strftime("%u", strtotime($datum['markin'])));
 
 		if(isset($retval[$wkday])) {
 			$retval[$wkday] += 1;
@@ -241,5 +294,5 @@ SQL;
 }
 /*
     NOTE: A report on clockin length might be useful.
-*/
+ */
 ?>

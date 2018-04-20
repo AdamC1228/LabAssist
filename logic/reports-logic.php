@@ -161,7 +161,7 @@ SQL;
 		$begin = strptime($datum['markin'],  $formatstr);
 		$end   = strptime($datum['markout'], $formatstr);
 
-		$wkday  = strftime("%u", strtotime($datum['markin']));
+		$wkday  = wknumtoname(strftime("%u", strtotime($datum['markin'])));
 
 		/*
 		 * NOTE:
@@ -218,6 +218,18 @@ SQL;
 	return safeDBQuery($query, array());
 }
 
+function reportSectionVisits($sect) {
+	$query = <<<SQL
+SELECT users.realname, COUNT(usage.markin)
+	FROM usage
+	JOIN term_sections ON usage.secid = term_sections.secid
+	JOIN users         ON usage.student = users.idno
+	WHERE usage.secid = ?
+	GROUP BY users.idno
+SQL;
+
+	return safeDBQuery($query, array($sect));
+}
 /*
     NOTE: A report on clockin length might be useful.
 */

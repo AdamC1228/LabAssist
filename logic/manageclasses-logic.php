@@ -242,12 +242,12 @@ function getDepartmentList()
  */
 function generateTable($dataset)
 {
-    if(empty($dataset))
-    {
-	return "<p>Database error<p>";
-    }
+	if(empty($dataset))
+	{
+		return "<p>Database error<p>";
+	}
 
-    $html=<<<HTML
+	$html=<<<HTML
 <div class="tableStyleA center flexGrow flexAlignSelf marginLeft20" id="table">
 	<h3>Sections taught this term:</h3>
 	<form class="" action="manageclasses.php" method="post">
@@ -262,19 +262,19 @@ function generateTable($dataset)
 			</thead>
 HTML;
 
-    foreach ($dataset as $row)
-    {
-	    $html.="<tr>";
-	    $html.="    <td>". $row['secid'] ."</td>";
-	    $html.="    <td>". $row['code'] ."</td>";
-	    $html.="    <td>". $row['realname'] ."</td>";
-	    $html.="    <td>". $row['email'] ."</td>";
-	    $html.="</tr>";
-    }
+	foreach ($dataset as $row)
+	{
+		$html.="<tr>";
+		$html.="    <td>". $row['secid'] ."</td>";
+		$html.="    <td>". $row['code'] ."</td>";
+		$html.="    <td>". $row['realname'] ."</td>";
+		$html.="    <td>". $row['email'] ."</td>";
+		$html.="</tr>";
+	}
 
-    $html.="</table></form></div>";
+	$html.="</table></form></div>";
 
-    return $html;
+	return $html;
 }
 
 /*
@@ -681,11 +681,17 @@ function getDataSet($array)
 	return databaseQuery("SELECT classes.cid, classes.dept, classes.name, count(sections.secid) as sectioncount FROM classes LEFT JOIN sections ON classes.cid = sections.cid group BY classes.cid order by classes.dept OFFSET ? LIMIT ?",$array);
 }
 
+/*
+ * Get the count of users.
+ */
 function getNumUsers()
 {
 	return databaseExecute("select count(cid) as count from classes");
 }
 
+/*
+ * Update class names.
+ */
 function databaseSubmitEdits($idno,$name)
 {
 	$sql="update classes set name=? where cid=?";

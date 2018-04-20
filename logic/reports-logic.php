@@ -230,6 +230,7 @@ SQL;
 	return safeDBQuery($query, array());
 }
 
+
 function getLimits($dept) {
 	return databaseQuery("SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?", array($dept));
 }

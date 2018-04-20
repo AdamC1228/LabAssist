@@ -4,6 +4,9 @@ require_once "logic/common/commonFunctions.php";
 
 
 
+/*
+ * Display all of the sections.
+ */
 function displayAll()
 {
 	$html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
@@ -19,6 +22,9 @@ function displayAll()
 	return $html;
 }
 
+/*
+ * Create the search bar.
+ */
 function createSearchBar()
 {
 
@@ -81,6 +87,9 @@ function createSearchBar()
 	return $html;
 }
 
+/*
+ * Display the search results.
+ */
 function searchResults()
 {
 	$html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
@@ -95,11 +104,17 @@ function searchResults()
 	return $html;
 }
 
+/*
+ * Edit a section.
+ */
 function editEntry($uniqueID)
 {
 	return genEditForm($uniqueID);
 }
 
+/*
+ * Generate the 'edit section' form.
+ */
 function genEditForm($uniqueID)
 {
 	$html="<div class='flex '><div>";
@@ -382,7 +397,7 @@ function generatePaginatedTable()
 	$paginationValues=getPaginated();
 
 	$paginationValues=array_merge(array(getUsersDepartment($_SESSION['username'])),$paginationValues);
-	
+
 	$dataset=getDataSet($paginationValues);
 
 

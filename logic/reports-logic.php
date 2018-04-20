@@ -295,11 +295,20 @@ SELECT users.realname, COUNT(usage.markin)
 	FROM usage
 	JOIN term_sections ON usage.secid = term_sections.secid
 	JOIN users         ON usage.student = users.idno
-	WHERE usage.secid = ?
+	WHERE usage.secid = ? AND usage.markout IS NOT NULL
 	GROUP BY users.idno
 SQL;
 
 	return safeDBQuery($query, array($sect));
+}
+
+function reportSectionSummary($sect) {
+	$sql = <<<SQL
+SELECT COUNT(DISTINCT usage.student) as dist_visits, COUNT(usage.student) as all_visits,
+	SUM(usage.markout - usage.markin) as total_hours
+	FROM usage
+	WHERE usage.secid = ? AND usage.markout IS NOT NULL
+SQL;
 }
 /*
     NOTE: A report on clockin length might be useful.

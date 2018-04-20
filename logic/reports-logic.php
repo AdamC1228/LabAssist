@@ -3,7 +3,7 @@ require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
 #Global to the file
-$availableReports = array(array('Lab Usage','0'),array('Student Usage','1'));
+$availableReports = array(array('Lab Usage By Hour','0')array('Lab Usage By Day','1'),array('Student Usage','2'));
 
 
 /*
@@ -79,19 +79,20 @@ function printReport($reportID)
             $html.= "<h1>{$availableReports[0][0]} report</h1>";
             $html.= "<h2>Hourly Data </h2>";
             $html.= labUsageReportHourly();
-            $html.= "<hr>";
+            break;
+        case 2:
             $html.= "<h2>Daily Data </h2>";
             $html.= labUsageReportDaily();
             break;
-        case 1:
+        case 2:
             //Student Usage Report
             $html.= "<h1>{$availableReports[1][0]} report</h1>";
             $html.= studentUsageReport();
             break;
-        case 2:
+        case 3:
             $html.= "{$availableReports[2][0]}";
             break;
-        case 3:
+        case 4:
             $html.= "{$availableReports[3][0]}";
             break;
     }
@@ -145,14 +146,10 @@ function reportHourlyUsage() {
 	$query = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
 	JOIN sections ON usage.secid = sections.secid
-	JOIN classes ON sections.cid = classes.cid
 	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
-		AND classes.dept = ?
 SQL;
 
-	$dept = getUsersDepartment($_SESSION['username']);
-
-	$data = safeDBQuery($query, array($dept));
+	$data = safeDBQuery($query, array());
 
 	if($data === -1) {
 		return -1;
@@ -166,9 +163,6 @@ SQL;
 
 		$wkday  = strftime("%u", strtotime($datum['markin']));
 
-		$lim = getLimits($dept)[0];
-
-		$end = strptime($lim['labend'], "%T");
 		/*
 		 * NOTE:
 		 *
@@ -176,8 +170,6 @@ SQL;
 		 * each day.
 		 */
 		for($initVal = $begin['tm_hour']; $initVal <= $end['tm_hour']; $initVal++) {
-			if($initVal > $end['tm_hour']) break;
-
 			if(isset($retval[$wkday][$initVal])) {
 				$retval[$wkday][$initVal] += 1;
 			} else {
@@ -193,14 +185,10 @@ function reportDailyUsage() {
 	$query = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
 	JOIN sections ON usage.secid = sections.secid
-	JOIN classes ON sections.cid = classes.cid
 	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
-		AND classes.dept = ?
 SQL;
 
-	$dept = getUsersDepartment($_SESSION['username']);
-
-	$data = safeDBQuery($query, array($dept));
+	$data = safeDBQuery($query, array());
 
 	if($data === -1) {
 		return -1;
@@ -228,10 +216,6 @@ SELECT stu.idno, stu.realname, stu.role, stu.total_hours
 SQL;
 
 	return safeDBQuery($query, array());
-}
-
-function getLimits($dept) {
-	return databaseQuery("SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?", array($dept));
 }
 
 /*

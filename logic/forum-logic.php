@@ -879,7 +879,7 @@ SELECT COUNT(questions.title) AS count
 	FROM questions
 	JOIN sections ON questions.subject = sections.secid
 	JOIN terms ON sections.term = terms.code
-	JOIN filt_classes ON sections.cid = classes.cid
+	JOIN filt_classes ON sections.cid = filt_classes.cid
 	WHERE terms.code = (SELECT code FROM terms WHERE activeterm = true)
 SQL;
 

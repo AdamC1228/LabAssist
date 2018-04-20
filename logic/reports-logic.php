@@ -202,6 +202,10 @@ SQL;
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
 		$retval[$i] = array();
+
+		for($j = 0; $j <= 23; $j++) {
+			$retval[$i][$j] = 0;
+		}
 	}
 
 	foreach($data as $datum) {
@@ -267,6 +271,18 @@ SQL;
 	return safeDBQuery($query, array());
 }
 
+function reportSectionVisits($sect) {
+	$query = <<<SQL
+SELECT users.realname, COUNT(usage.markin)
+	FROM usage
+	JOIN term_sections ON usage.secid = term_sections.secid
+	JOIN users         ON usage.student = users.idno
+	WHERE usage.secid = ?
+	GROUP BY users.idno
+SQL;
+
+	return safeDBQuery($query, array($sect));
+}
 /*
     NOTE: A report on clockin length might be useful.
  */

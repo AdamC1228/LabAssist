@@ -15,7 +15,7 @@ function createForm()
 HTML;
 
 	$html.=generateForm();
-	$html.="		</div>"
+	$html.="		</div>";
 	$html.="	</div>";
 	$html.=generateTable(getCurrentClassSections());
 	$html.="</div>";

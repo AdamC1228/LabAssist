@@ -88,6 +88,10 @@ function databaseExecute($sql)
 
 function databaseQuery($sql,$array) 
 {
+
+//     var_dump($array);
+//     var_dump(debug_backtrace());
+
 	$result = "";
 	try 
 	{

@@ -15,6 +15,13 @@
 	require_once "logic/reports-logic.php";
     require_once "page/reports-page.php";
     
+    $header =<<<header
+        <link rel='stylesheet' href='bower_components/chartist/dist/chartist.min.css'>
+        <link rel='stylesheet' href='styles/charts.css'>
+header;
+    
+    
+    
 	$error = "";
 	$html = "";
 	$reportSelected="";
@@ -23,25 +30,26 @@
     verifyUser();
     verifyUserLevelAccess($_SESSION['username'],basename($_SERVER['PHP_SELF']));
     
-    
-    #Print the header where the user can select the appropriate report
-    if(isSet($_GET['selectedReport']) && !empty($_GET['selectedReport']))
-    {
-        $reportSelected=$_GET['selectedReport'];
-    }
-    else
-    {
-        $reportSelected='0';
-    }
-    
-    
-    $html.=reportHeader($reportSelected);
+    $html.=printReportHeader();
 
-    $html.=printReport($reportSelected);    
+    if(isset($_GET['showReport']) && !empty($_GET['showReport']))
+    {
+        #Print the header where the user can select the appropriate report
+        if(isSet($_GET['selectedReport']) && !empty($_GET['selectedReport']))
+        {
+            $reportSelected=$_GET['selectedReport'];
+        }
+        else
+        {
+            $reportSelected='0';
+        }
+        
+        $html.=printReport($reportSelected);    
+    }
 
     
     #Render the form
-	printCustomHeader("<link rel='stylesheet' href='bower_components/chartist/dist/chartist.min.css'><link rel='stylesheet' href='styles/charts.css'>");
+	printCustomHeader($header);
 	printStartBody();
 	printPortalHead();
 	printNavBar(getUserInfo(),createNavigation());

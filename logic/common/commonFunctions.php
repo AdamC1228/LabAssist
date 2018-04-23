@@ -237,7 +237,7 @@ SQL;
 function compareAccessLevelbyName($user1, $user2)
 {
 	$query = <<<'SQL'
-SELCT COUNT(user1.role) AS result FROM users AS user1 JOIN users AS user2 ON user1.role > user2.role WHERE user1.username=? AND user2.username=?
+SELECT COUNT(user1.role) AS result FROM users AS user1 JOIN users AS user2 ON user1.role > user2.role WHERE user1.username=? AND user2.username=?
 SQL;
 	$result=databaseQuery($query, array($user1, $user2));
 

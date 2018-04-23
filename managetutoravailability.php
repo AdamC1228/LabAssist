@@ -22,7 +22,7 @@ verifyUserLevelAccess($_SESSION['username'], basename($_SERVER['PHP_SELF']));
 
 
 //$depart = 'CS-IS';
-$depart = getUsersDepartment(array($_SESSION['username']))[0]['deptid'];
+$depart = getUsersDepartment($_SESSION['username']);
 
 $html = "";
 

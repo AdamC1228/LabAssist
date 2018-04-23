@@ -18,7 +18,7 @@ require_once "logic/manageschedules-logic.php";
 verifyUser();
 verifyUserLevelAccess($_SESSION['username'], basename($_SERVER['PHP_SELF']));
 
-$depart = getUsersDepartment(array($_SESSION['username']))[0]['deptid'];
+$depart = getUsersDepartment($_SESSION['username']);
 
 $html = "";
 

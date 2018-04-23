@@ -686,9 +686,12 @@ SQL;
 	}
 
 	$retval = array();
+	for($i = 1; $i <= 5; $i++) {
+		$retval[wknumtoname($i)] = array();
+	}
 
 	foreach($data as $datum) {
-		$wkday  = strftime("%u", strtotime($datum['markin']));
+		$wkday  = wknumtoname(strftime("%u", strtotime($datum['markin'])));
 
 		if(isset($retval[$wkday])) {
 			$retval[$wkday] += 1;
@@ -697,10 +700,6 @@ SQL;
 		}
 	}
 
-	for($i = 1; $i <= 5; $i++) {
-		ksort($retval);
-	} 
-	
 	return $retval;
 }
 

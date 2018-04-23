@@ -340,6 +340,7 @@ function sectionOverviewReport()
     if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
     {
         $data = reportSectionSummary($_GET['selectedSection'])[0];
+        
         if($data['total_hours']===null)
         {
             $data['total_hours']=0;

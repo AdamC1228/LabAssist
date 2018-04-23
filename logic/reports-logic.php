@@ -3,7 +3,7 @@ require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
 #Global to the file
-$availableReports = array(array('Lab Usage','0'),array('Student Usage','1'));
+$availableReports = array(array('Lab Usage By Hour','0'),array('Lab Usage By Day','1'),array('Student Usage','2'));
 
 
 /*
@@ -17,7 +17,7 @@ $availableReports = array(array('Lab Usage','0'),array('Student Usage','1'));
 
 function reportHeader($prevVal)
 {
-    $html = "<h3>Reports</h3>\n";
+    $html = "<h2>Reports</h2>\n";
     $html.= "<div class='group flex' style='max-width:450px;'>\n";
     $html.= "   <div class='marginLeft10 flexRow flexAlignCenter marginTop10 marginBottom10 flex'>\n";
     $html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
@@ -76,22 +76,23 @@ function printReport($reportID)
     switch ($reportID) {
         case 0:
             //LabUsageReport
-            $html.= "<h1>{$availableReports[0][0]} report</h1>";
-            $html.= "<h2>Hourly Data </h2>";
+            //$html.= "<h1>{$availableReports[0][0]} report</h1>";
+            $html.= "<h2 class='centerText'>Hourly Data </h2>";
             $html.= labUsageReportHourly();
-            $html.= "<hr>";
+            break;
+        case 1:
             $html.= "<h2>Daily Data </h2>";
             $html.= labUsageReportDaily();
             break;
-        case 1:
+        case 2:
             //Student Usage Report
             $html.= "<h1>{$availableReports[1][0]} report</h1>";
             $html.= studentUsageReport();
             break;
-        case 2:
+        case 3:
             $html.= "{$availableReports[2][0]}";
             break;
-        case 3:
+        case 4:
             $html.= "{$availableReports[3][0]}";
             break;
     }
@@ -111,13 +112,43 @@ function printReport($reportID)
 
 function labUsageReportHourly()
 {
-    $html = arrayPrint(reportHourlyUsage());
+    $data = reportHourlyUsage();
+    
+    $html = "<h2>Monday</h2>";
+    $html.= "<div id='Mon'></div>";
+    $html.= lineChartWithArea($data[1],"#Mon");
+
+    $html.= "<h2>Tuesday</h2>";
+    $html.= "<div id='Tue'></div>";
+    $html.= lineChartWithArea($data[2],"#Tue");
+    
+    $html.= "<h2>Wednesday</h2>";
+    $html.= "<div id='Wed'></div>";
+    $html.= lineChartWithArea($data[3],"#Wed");
+    
+    $html.= "<h2>Thursday</h2>";
+    $html.= "<div id='Thu'></div>";
+    $html.= lineChartWithArea($data[4],"#Thu");
+    
+    $html.= "<h2>Friday</h2>";
+    $html.= "<div id='Fri'></div>";
+    $html.= lineChartWithArea($data[5],"#Fri");
+    
+    //$html.= arrayPrint(reportHourlyUsage());
     return $html;
 }
 
 function labUsageReportDaily()
 {
-    $html = arrayPrint(reportDailyUsage());
+
+    $data = reportDailyUsage();
+    
+    $html = "<h2>Daily Usage</h2>";
+    $html.= "<div id='week'></div>";
+    $html.= barChart($data,"#week");
+
+    $html.= arrayPrint(reportDailyUsage());
+    
     return $html;
 }
 
@@ -128,6 +159,94 @@ function studentUsageReport()
 }
 
 
+
+/*
+ *
+ *
+ *  Charting Functions
+ *
+ *
+*/
+
+
+function lineChartWithArea($array,$cssElement)
+{   
+    $html="";
+    
+    $labels="";
+    $data="";
+    $labels.=implode(',',array_keys($array));
+    $data.=implode(',',array_values($array));
+    
+    $html.=<<<eof
+    <script>
+    new Chartist.Line('$cssElement', {
+            labels: [$labels],
+            series: [
+                [$data]
+            ]
+        }, {
+            low: 0,
+            showArea: true
+        },
+                axisY: {
+                    onlyInteger: true
+                },
+                plugins: [
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Time (mins)',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Goals',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: -1
+                            },
+                            flipTitle: false
+                        }
+                    })
+                ]
+        });
+    </script>
+eof;
+    
+    return $html;
+}
+
+function barChart($array,$cssElement)
+{   
+//     var_dump($array);
+    $html="";
+    
+    $labels="";
+    $data="";
+
+    $labels.=implode(',',array_keys($array));
+    $data.=implode(',',array_values($array));
+    
+    $html.=<<<eof
+    <script>
+    new Chartist.Bar('$cssElement', {
+            labels: [$labels],
+            series: [
+                [$data]
+            ]
+        }, {
+            low: 0
+        });
+    </script>
+eof;
+    
+    return $html;
+}
 
 
 
@@ -145,17 +264,18 @@ function reportHourlyUsage() {
 	$query = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
 	JOIN sections ON usage.secid = sections.secid
-	JOIN classes ON sections.cid = classes.cid
 	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
-		AND classes.dept = ?
 SQL;
 
-	$dept = getUsersDepartment($_SESSION['username']);
-
-	$data = safeDBQuery($query, array($dept));
+	$data = safeDBQuery($query, array());
 
 	if($data === -1) {
 		return -1;
+	}
+
+	$retval = array();
+	for($i = 1; $i <= 5; $i++) {
+		$retval[$i] = array();
 	}
 
 	foreach($data as $datum) {
@@ -164,11 +284,8 @@ SQL;
 		$begin = strptime($datum['markin'],  $formatstr);
 		$end   = strptime($datum['markout'], $formatstr);
 
-		$wkday  = strftime("%u", strtotime($datum['markin']));
+		$wkday = strftime("%u", strtotime($datum['markin']));
 
-		$lim = getLimits($dept)[0];
-
-		$end = strptime($lim['labend'], "%T");
 		/*
 		 * NOTE:
 		 *
@@ -176,8 +293,6 @@ SQL;
 		 * each day.
 		 */
 		for($initVal = $begin['tm_hour']; $initVal <= $end['tm_hour']; $initVal++) {
-			if($initVal > $end['tm_hour']) break;
-
 			if(isset($retval[$wkday][$initVal])) {
 				$retval[$wkday][$initVal] += 1;
 			} else {
@@ -186,6 +301,10 @@ SQL;
 		}
 	}
 
+	for($i = 1; $i <= 5; $i++) {
+		ksort($retval[$i]);
+	} 
+
 	return $retval;
 }
 
@@ -193,14 +312,10 @@ function reportDailyUsage() {
 	$query = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
 	JOIN sections ON usage.secid = sections.secid
-	JOIN classes ON sections.cid = classes.cid
 	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
-		AND classes.dept = ?
 SQL;
 
-	$dept = getUsersDepartment($_SESSION['username']);
-
-	$data = safeDBQuery($query, array($dept));
+	$data = safeDBQuery($query, array());
 
 	if($data === -1) {
 		return -1;
@@ -218,8 +333,15 @@ SQL;
 		}
 	}
 
+	for($i = 1; $i <= 5; $i++) {
+		ksort($retval);
+	} 
+	
 	return $retval;
 }
+
+
+
 
 function reportStudentUsage() {
 	$query = <<<'SQL'
@@ -233,9 +355,31 @@ SQL;
 
 function getLimits($dept) {
 	return databaseQuery("SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?", array($dept));
+
+function reportSectionVisits($sect) {
+	$query = <<<SQL
+SELECT users.realname, COUNT(usage.markin)
+	FROM usage
+	JOIN term_sections ON usage.secid = term_sections.secid
+	JOIN users         ON usage.student = users.idno
+	WHERE usage.secid = ? AND usage.markout IS NOT NULL
+	GROUP BY users.idno
+SQL;
+
+	return safeDBQuery($query, array($sect));
 }
 
+function reportSectionSummary($sect) {
+	$sql = <<<SQL
+SELECT COUNT(DISTINCT usage.student) as dist_visits, COUNT(usage.student) as all_visits,
+	SUM(usage.markout - usage.markin) as total_hours
+	FROM usage
+	WHERE usage.secid = ? AND usage.markout IS NOT NULL
+SQL;
+
+	return safeDBQuery($query, array($sect));
+}
 /*
     NOTE: A report on clockin length might be useful.
-*/
+ */
 ?>

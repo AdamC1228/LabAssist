@@ -41,7 +41,7 @@
 
     
     #Render the form
-	printCustomHeader("<link rel='stylesheet' href='bower_components/chartist/dist/chartist.min.css'>");
+	printCustomHeader("<link rel='stylesheet' href='bower_components/chartist/dist/chartist.min.css'><link rel='stylesheet' href='styles/charts.css'>");
 	printStartBody();
 	printPortalHead();
 	printNavBar(getUserInfo(),createNavigation());

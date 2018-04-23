@@ -832,3 +832,6 @@
  .timeColumn{
      min-width:175px;
  }
+ .centerText{
+     text-align:center;
+ }

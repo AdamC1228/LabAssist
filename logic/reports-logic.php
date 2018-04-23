@@ -742,7 +742,15 @@ SELECT COUNT(DISTINCT usage.student) as dist_visits, COUNT(usage.student) as all
 	WHERE usage.secid = ? AND usage.markout IS NOT NULL
 SQL;
 
-	return safeDBQuery($sql, array($sect));
+	$dat = safeDBQuery($sql, array($sect));
+	if($dat === -1) {
+		return -1;
+	}
+
+	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])
+		.format("%d days, %h hours and %i minutes");
+
+	return $dat;
 }
 /*
     NOTE: A report on clockin length might be useful.

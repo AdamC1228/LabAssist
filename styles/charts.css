@@ -1,19 +1,16 @@
-.ct-series-a .ct-line,
-.ct-series-a .ct-point {
+.custLine .ct-chart-line .ct-series-a .ct-line,
+.custLine .ct-chart-line .ct-series-a .ct-point {
     stroke: var(--dark-secondary-color);
 
 }
 
-.ct-series-a .ct-area {
+.custLine .ct-chart-line .ct-series-a .ct-area {
     fill:var(--dark-secondary-color);
 }
 
 
-.ct-series-b .ct-line,
-.ct-series-b .ct-point {
-    stroke: var(--dark-primary-color);
-  
+.custBar .ct-chart-bar .ct-series-a .ct-bar{
+    stroke: var(--dark-secondary-color);
+    stroke-width: 80px;
 }
-.ct-series-b .ct-area {
-    fill:var(--dark-secondary-color);
-}
+

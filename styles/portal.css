@@ -50,6 +50,7 @@
      color: var(--primary-text-color);
      min-width:-moz-min-content;
      min-widht:-webkit-min-content;
+     margin-bottom: 125px;
 }
  .portalhead{
      vertical-align: middle;
@@ -462,6 +463,9 @@
  .paddingRight40{
      padding-right:40px;
 }
+ .paddingRight10{
+     padding-right:10px;
+}
  .paddingRight20{
      padding-right:20px;
 }
@@ -494,6 +498,9 @@
 }
  .marginTop10{
      margin-top:10px;
+}
+ .marginTop30{
+     margin-top:30px;
 }
  .marginLeft10{
      margin-left:10px;
@@ -690,6 +697,14 @@
  .marginBottom20 {
      margin-bottom:20px;
 }
+ .marginBottom40 {
+     margin-bottom:40px !important;
+}
+
+ .marginBottom80 {
+     margin-bottom:80px !important;
+}
+
 /* * * * * * End of base CSS * * * * */
  .group {
      background-color:white;
@@ -834,4 +849,16 @@
  }
  .centerText{
      text-align:center;
+ }
+ .reportOverviewWrapper{
+     max-width: 600px;
+     margin-left:auto;
+     margin-right:auto;
+     min-height:100px;
+ }
+ .reportOverview{
+     flex:1;
+     padding:10px;
+     align-items:center;
+     justify-content: center;
  }

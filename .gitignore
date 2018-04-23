@@ -1,3 +1,5 @@
 cron/
 tags
 seniordesign/
+.directory
+*.kate-swp

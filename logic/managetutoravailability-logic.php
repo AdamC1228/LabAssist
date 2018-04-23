@@ -4,7 +4,7 @@ require_once "logic/common/commonFunctions.php";
 
 function generateScheduleTable($dept) {
 	$TIME_SLICE = 30;
-
+	
 	$data = retrieveSchedules($dept);
 	//$lims = getLimits($dept)[0];
 	$lims = getLimits($dept);

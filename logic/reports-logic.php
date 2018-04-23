@@ -603,21 +603,19 @@ eof;
  *
 */
 
-
-
-function reportHourlyUsage() {
+function reportHourlyUsage($term) {
 
 	$query = <<<'SQL'
 WITH dept_sections AS (
-	SELECT * FROM term_sections
-		JOIN classes ON term_sections.cid = classes.cid
-		WHERE classes.dept = ?
+	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?)
+		JOIN classes ON sections.cid = classes.cid
+		WHERE classes.dept = ? AND sections.code <> 'TUT' -- Filter out tutoring sections
 )
 SELECT usage.markin, usage.markout FROM usage
 	JOIN dept_sections ON usage.secid = dept_sections.secid
 SQL;
 	$dept = getUsersDepartment($_SESSION['username']);
-	$data = safeDBQuery($query, array($dept));
+	$data = safeDBQuery($query, array($term, $dept));
 
 	if($data === -1) {
 		return -1;
@@ -629,7 +627,7 @@ SQL;
 	}
 
 	$lstart = strptime($lims[0]['labstart'], "%T");
-	$lend   = strptime($lims[0]['labend'], "%T");
+	$lend   = strptime($lims[0]['labend'],   "%T");
 	
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
@@ -669,16 +667,19 @@ SQL;
 	return $retval;
 }
 
-function reportDailyUsage() {
+function reportDailyUsage($term) {
 	$sql = <<<'SQL'
+WITH dept_sections AS (
+	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?)
+		JOIN classes ON sections.cid = classes.cid
+		WHERE classes.dept = ? AND sections.code <> 'TUT' -- Filter out tutoring sections
+)
 SELECT usage.markin, usage.markout FROM usage
-	JOIN term_sections ON usage.secid = term_sections.secid
-	JOIN classes ON term_sections.cid = classes.cid
-	WHERE classes.dept = ?
+	JOIN dept_sections ON usage.secid = dept_sections.secid
 SQL;
 
 	$dept = getUsersDepartment($_SESSION['username']);
-	$data = safeDBQuery($query, array($dept));
+	$data = safeDBQuery($query, array($term, $dept));
 
 	if($data === -1) {
 		return -1;

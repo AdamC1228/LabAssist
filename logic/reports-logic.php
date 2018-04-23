@@ -17,7 +17,7 @@ $availableReports = array(array('Lab Usage By Hour','0'),array('Lab Usage By Day
 
 function reportHeader($prevVal)
 {
-    $html = "<h3>Reports</h3>\n";
+    $html = "<h2>Reports</h2>\n";
     $html.= "<div class='group flex' style='max-width:450px;'>\n";
     $html.= "   <div class='marginLeft10 flexRow flexAlignCenter marginTop10 marginBottom10 flex'>\n";
     $html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
@@ -76,8 +76,8 @@ function printReport($reportID)
     switch ($reportID) {
         case 0:
             //LabUsageReport
-            $html.= "<h1>{$availableReports[0][0]} report</h1>";
-            $html.= "<h2>Hourly Data </h2>";
+            //$html.= "<h1>{$availableReports[0][0]} report</h1>";
+            $html.= "<h2 class='centerText'>Hourly Data </h2>";
             $html.= labUsageReportHourly();
             break;
         case 1:
@@ -113,16 +113,42 @@ function printReport($reportID)
 function labUsageReportHourly()
 {
     $data = reportHourlyUsage();
+    
+    $html = "<h2>Monday</h2>";
+    $html.= "<div id='Mon'></div>";
+    $html.= lineChartWithArea($data[1],"#Mon");
 
-    $html = "<div id='Monday'></div>";
-    $html.= lineChartWithArea($data,1,"#Monday");
-    $html.= arrayPrint(reportHourlyUsage());
+    $html.= "<h2>Tuesday</h2>";
+    $html.= "<div id='Tue'></div>";
+    $html.= lineChartWithArea($data[2],"#Tue");
+    
+    $html.= "<h2>Wednesday</h2>";
+    $html.= "<div id='Wed'></div>";
+    $html.= lineChartWithArea($data[3],"#Wed");
+    
+    $html.= "<h2>Thursday</h2>";
+    $html.= "<div id='Thu'></div>";
+    $html.= lineChartWithArea($data[4],"#Thu");
+    
+    $html.= "<h2>Friday</h2>";
+    $html.= "<div id='Fri'></div>";
+    $html.= lineChartWithArea($data[5],"#Fri");
+    
+    //$html.= arrayPrint(reportHourlyUsage());
     return $html;
 }
 
 function labUsageReportDaily()
 {
-    $html = arrayPrint(reportDailyUsage());
+
+    $data = reportDailyUsage();
+    
+    $html = "<h2>Daily Usage</h2>";
+    $html.= "<div id='week'></div>";
+    $html.= barChart($data,"#week");
+
+    $html.= arrayPrint(reportDailyUsage());
+    
     return $html;
 }
 
@@ -143,48 +169,84 @@ function studentUsageReport()
 */
 
 
-function lineChartWithArea($array,$index,$cssElement)
+function lineChartWithArea($array,$cssElement)
 {   
     $html="";
     
     $labels="";
     $data="";
-    foreach($array[$index] as $row)
-    {
-        $data.=$row .',';
-    }
+    $labels.=implode(',',array_keys($array));
+    $data.=implode(',',array_values($array));
     
-    foreach($array[$index] as $row)
-    {
-        $labels.=$row . ',';
-    }
-    
-    $labels=rtrim($labels, ',');
-    $data=rtrim($data, ',');
-
-    $html.=$labels ."<br>";
-    $html.=$data . "<br>";
-    $html.= "<hr>";
-
-    $html.= '<script>';
-    $html.= "new Chartist.Line('$cssElement', {";
-    $html.= "    labels: {$labels}";
-    $html.= "    series: [";
-    $html.= "        [{$data}]";
-    $html.= "    ]";
-    $html.= "}, {";
-    $html.= "    low: 0,";
-    $html.= "    showArea: true";
-    $html.= "});";
-    $html.= "</script>";
-    
-    
-    
+    $html.=<<<eof
+    <script>
+    new Chartist.Line('$cssElement', {
+            labels: [$labels],
+            series: [
+                [$data]
+            ]
+        }, {
+            low: 0,
+            showArea: true
+        },
+                axisY: {
+                    onlyInteger: true
+                },
+                plugins: [
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Time (mins)',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Goals',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: -1
+                            },
+                            flipTitle: false
+                        }
+                    })
+                ]
+        });
+    </script>
+eof;
     
     return $html;
 }
 
+function barChart($array,$cssElement)
+{   
+//     var_dump($array);
+    $html="";
+    
+    $labels="";
+    $data="";
 
+    $labels.=implode(',',array_keys($array));
+    $data.=implode(',',array_values($array));
+    
+    $html.=<<<eof
+    <script>
+    new Chartist.Bar('$cssElement', {
+            labels: [$labels],
+            series: [
+                [$data]
+            ]
+        }, {
+            low: 0
+        });
+    </script>
+eof;
+    
+    return $html;
+}
 
 
 
@@ -262,7 +324,7 @@ SQL;
 	$retval = array();
 
 	foreach($data as $datum) {
-		$wkday  = wknumtoname(strftime("%u", strtotime($datum['markin'])));
+		$wkday  = strftime("%u", strtotime($datum['markin']));
 
 		if(isset($retval[$wkday])) {
 			$retval[$wkday] += 1;
@@ -271,6 +333,10 @@ SQL;
 		}
 	}
 
+	for($i = 1; $i <= 5; $i++) {
+		ksort($retval);
+	} 
+	
 	return $retval;
 }
 
@@ -309,6 +375,8 @@ SELECT COUNT(DISTINCT usage.student) as dist_visits, COUNT(usage.student) as all
 	FROM usage
 	WHERE usage.secid = ? AND usage.markout IS NOT NULL
 SQL;
+
+	return safeDBQuery($query, array($sect));
 }
 /*
     NOTE: A report on clockin length might be useful.

@@ -2,8 +2,9 @@
 require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
-
-
+/*
+ * Display all the departments
+ */
 function displayAll()
 {
 	$html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
@@ -19,6 +20,9 @@ function displayAll()
 	return $html;
 }
 
+/*
+ * Create the search bar.
+ */
 function createSearchBar()
 {
 
@@ -81,6 +85,9 @@ function createSearchBar()
 	return $html;
 }
 
+/*
+ * Display search results.
+ */
 function searchResults()
 {
 	$html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
@@ -95,11 +102,17 @@ function searchResults()
 	return $html;
 }
 
+/*
+ * Edit a department.
+ */
 function editEntry($uniqueID)
 {
 	return genEditForm($uniqueID);
 }
 
+/*
+ * Generate the department editing form.
+ */
 function genEditForm($uniqueID)
 {
 	$html=<<<eof
@@ -119,6 +132,9 @@ eof;
 }
 
 
+/*
+ * Display formatted information for a department.
+ */
 function formattedInformation($uniqueID)
 {
 	$dataArray=getDetailedInfo($uniqueID);
@@ -154,6 +170,9 @@ function formattedInformation($uniqueID)
 	return $html;
 }
 
+/*
+ * Get the list of departments.
+ */
 function getDepartmentList()
 {
 	$html = "";
@@ -192,6 +211,9 @@ function getDepartmentList()
 	return $html;
 }
 
+/*
+ * Generate the table of departments.
+ */
 function generateTable($dataset)
 {
 	if(empty($dataset)|| !is_array($dataset))
@@ -224,6 +246,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Get the sections associated with a department.
+ */
 function printSectionsAssociated($uniqueID)
 {
 	return generateTable(databaseQuery("select * from dept_stats where deptid=?",array($uniqueID)));
@@ -248,6 +273,9 @@ function printSectionsAssociated($uniqueID)
  *
  */
 
+/*
+ * Get pagination parameters.
+ */
 function getPaginated()
 {
 	if ( isset($_SESSION['numPerPage']) && !empty($_SESSION['numPerPage']))
@@ -274,6 +302,9 @@ function getPaginated()
 }
 
 
+/*
+ * Generate a paginated table.
+ */
 function generatePaginatedTable()
 {
 	$paginationValues=getPaginated();
@@ -324,6 +355,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Generate the SQL statement for a search.
+ */
 function generateSearchSql()
 {
 	$options=array(array('Department ID','deptid'),array('Department Name','deptname'));
@@ -354,6 +388,9 @@ function generateSearchSql()
 
 }
 
+/*
+ * Generate a paginated search table.
+ */
 function generatePaginatedTableSearch()
 {
 
@@ -421,6 +458,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Print the bottom things for pagination.
+ */
 function printBottomPagination($paginationValues)
 {    
 	$count = getNumUsers();
@@ -474,6 +514,9 @@ function printBottomPagination($paginationValues)
 
 
 
+/*
+ * Get detailed info on a department.
+ */
 function getDetailedInfo($uniqueID)
 {
 	$sql="select * from dept_stats where deptid=?";
@@ -482,21 +525,33 @@ function getDetailedInfo($uniqueID)
 	return databaseQuery($sql,array($uniqueID));
 }
 
+/*
+ * Get paginated info on all departments.
+ */
 function getDataSet($array)
 {
 	return databaseQuery("SELECT * from dept_stats OFFSET ? LIMIT ?",$array);
 }
 
+/*
+ * Execute the SQL statement.
+ */
 function getSearchList($sql,$array)
 {
 	return databaseQuery($sql,$array);
 }
 
+/*
+ * Get the number of departments.
+ */
 function getNumUsers()
 {
 	return databaseExecute("select count(deptid) as count from dept_stats");
 }
 
+/*
+ * Update department info.
+ */
 function databaseSubmitEdits($array)
 {
 	$sql="update departments set deptid=?,deptname=? where deptid=?";

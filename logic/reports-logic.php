@@ -606,21 +606,35 @@ eof;
 
 
 function reportHourlyUsage() {
-	$sql = <<<'SQL'
-SELECT usage.markin, usage.markout FROM usage
-	JOIN sections ON usage.secid = sections.secid
-	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
+	$query = <<<'SQL'
+WITH dept_sections AS (
+	SELECT * FROM term_sections
+		JOIN classes ON term_sections.cid = classes.cid
+		WHERE classes.dept = ?
+)
 SQL;
-
-	$data = safeDBQuery($sql, array());
+	$dept = getUsersDepartment($_SESSION['username'])
+	$data = safeDBQuery($query, array($dept));
 
 	if($data === -1) {
 		return -1;
 	}
 
+	$lims = getLimits($dept);
+	if($lims === -1) {
+		return -1;
+	}
+
+	$lstart = strptime($lims[0]['labstart'], "%T");
+	$lend   = strptime($lims[0]['labend'], "%T");
+	
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
 		$retval[$i] = array();
+
+		for($j = $lstart['tm_hour']; $j <= $lend['tm_end']; $j++) {
+			$retval[$i][$j] = 0;
+		}
 	}
 
 	foreach($data as $datum) {
@@ -637,7 +651,10 @@ SQL;
 		 * Maybe we want this report to be a count of clock-ins/hour for 
 		 * each day.
 		 */
-		for($initVal = $begin['tm_hour']; $initVal <= $end['tm_hour']; $initVal++) {
+		$minVal = min($end['tm_hour'],   $lend['tm_hour']);
+		$maxVal = max($begin['tm_hour'], $lstart['tm_hour']);
+
+		for($initVal = $maxVal; $initVal <= $minVal; $initVal++) {
 			if(isset($retval[$wkday][$initVal])) {
 				$retval[$wkday][$initVal] += 1;
 			} else {
@@ -646,21 +663,19 @@ SQL;
 		}
 	}
 
-	for($i = 1; $i <= 5; $i++) {
-		ksort($retval[$i]);
-	} 
-
 	return $retval;
 }
 
 function reportDailyUsage() {
 	$sql = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
-	JOIN sections ON usage.secid = sections.secid
-	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
+	JOIN term_sections ON usage.secid = term_sections.secid
+	JOIN classes ON term_sections.cid = classes.cid
+	WHERE classes.dept = ?
 SQL;
 
-	$data = safeDBQuery($sql, array());
+	$dept = getUsersDepartment($_SESSION['username']);
+	$data = safeDBQuery($query, array($dept));
 
 	if($data === -1) {
 		return -1;
@@ -696,6 +711,10 @@ SQL;
 }
 
 
+function getLimits($dept) {
+	return safeDBQuery("SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?", array($dept));
+}
+
 function reportSectionVisits($sect) {
 	$sql = <<<SQL
 SELECT users.realname, users.email, COUNT(usage.markin)
@@ -722,4 +741,21 @@ SQL;
 /*
     NOTE: A report on clockin length might be useful.
  */
+
+/*
+ * Get the department for a user.
+ */
+function getUsersDepartment($user)
+{
+	$result = databaseQuery("SELECT deptid FROM users WHERE username=?", array($user));
+
+	if(!empty($result) && is_array($result))
+	{
+		return $result[0]['deptid'];
+	}
+	else
+	{
+		return -1;
+	}
+}
 ?>

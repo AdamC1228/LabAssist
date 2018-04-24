@@ -23,19 +23,19 @@ $depart = getUsersDepartment($_SESSION['username']);
 $html = "";
 
 if(isset($_POST['tutorAvailability']) && !empty($_POST['tutorAvailability'])) {
-		$prevValue = $_POST['tutorAvailability'];
+	$prevValue = $_POST['tutorAvailability'];
 
-		if($prevValue[0] === 'N') {
-			$val = unregisterSchedule($prevValue, $depart);
-		} else {
-			$val = registerSchedule($prevValue, $depart);
-		}
+	if($prevValue[0] === 'N') {
+		$val = unregisterSchedule($prevValue, $depart);
+	} else {
+		$val = registerSchedule($prevValue, $depart);
+	}
 
-		if($val) {
-	 		$html .= "<script>alert(\"Tutor registered successfully!\");</script>";
-		} else {
-	 		$html .= "<script>alert(\"An error occured registering the tutor!\");</script>";
-		}
+	if($val) {
+		$html .= "<script>alert(\"Tutor registered successfully!\");</script>";
+	} else {
+		$html .= "<script>alert(\"An error occured registering the tutor!\");</script>";
+	}
 }
 
 $html .= generateScheduleTable($depart);

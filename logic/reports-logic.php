@@ -856,6 +856,8 @@ SQL;
 		return -1;
 	}
 
+	$dat = $dat[0];
+
 	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])->format("%d days, %h hours and %i minutes");
 
 	return $dat;

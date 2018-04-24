@@ -3,7 +3,7 @@ require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
 #Global to the file
-$availableReports = array(array('Lab Usage By Hour','0'),array('Lab Usage By Day','1'),array('Student Usage','2'),array('Section Usage','3'));
+$availableReports = array(array('Lab Usage By Hour','0'),array('Lab Usage By Day','1'),array('Usage by Student','2'),array('Section Usage','3'));
 
 $sectionReports = array(array('Section Usage','3'));
 
@@ -276,29 +276,34 @@ function labUsageReportHourly()
         $term=$_GET['selectedTerm'];
         $data = reportHourlyUsage($term);
         
-        var_dump($data);
-        
-        $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
-        
-        $html.= "<h2>Monday</h2>";
-        $html.= "<div class='custLine' id='Mon'></div>";
-        $html.= lineChartWithArea($data[1],"#Mon");
+        if($data !== -1)
+        {
+            $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
+            
+            $html.= "<h2>Monday</h2>";
+            $html.= "<div class='custLine' id='Mon'></div>";
+            $html.= lineChartWithArea($data[1],"#Mon");
 
-        $html.= "<h2>Tuesday</h2>";
-        $html.= "<div class='custLine' id='Tue'></div>";
-        $html.= lineChartWithArea($data[2],"#Tue");
-        
-        $html.= "<h2>Wednesday</h2>";
-        $html.= "<div class='custLine' id='Wed'></div>";
-        $html.= lineChartWithArea($data[3],"#Wed");
-        
-        $html.= "<h2>Thursday</h2>";
-        $html.= "<div class='custLine' id='Thu'></div>";
-        $html.= lineChartWithArea($data[4],"#Thu");
-        
-        $html.= "<h2>Friday</h2>";
-        $html.= "<div class='custLine' id='Fri'></div>";
-        $html.= lineChartWithArea($data[5],"#Fri");
+            $html.= "<h2>Tuesday</h2>";
+            $html.= "<div class='custLine' id='Tue'></div>";
+            $html.= lineChartWithArea($data[2],"#Tue");
+            
+            $html.= "<h2>Wednesday</h2>";
+            $html.= "<div class='custLine' id='Wed'></div>";
+            $html.= lineChartWithArea($data[3],"#Wed");
+            
+            $html.= "<h2>Thursday</h2>";
+            $html.= "<div class='custLine' id='Thu'></div>";
+            $html.= lineChartWithArea($data[4],"#Thu");
+            
+            $html.= "<h2>Friday</h2>";
+            $html.= "<div class='custLine' id='Fri'></div>";
+            $html.= lineChartWithArea($data[5],"#Fri");
+        }
+        else
+        {
+            $html.= "No data available";
+        }
     }
     
     //$html.= arrayPrint(reportHourlyUsage());
@@ -312,9 +317,17 @@ function labUsageReportDaily()
     {
         $term =$_GET['selectedTerm'];
         $data = reportDailyUsage($term);
-        $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
-        $html.= "<div class='custBar' id='week'></div>";
-        $html.= barChart($data,"#week");
+        
+        if($data !== -1)
+        {
+            $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
+            $html.= "<div class='custBar' id='week'></div>";
+            $html.= barChart($data,"#week");
+        }
+        else
+        {
+            $html.= "No data available";
+        }  
     }
     return $html;
 }
@@ -470,8 +483,10 @@ function barChart($array,$cssElement)
     
     $labels="";
     $data="";
+    
 
     $labels.=implode(',',array_keys($array));
+    
     $data.=implode(',',array_values($array));
     
     $html.=<<<eof
@@ -678,11 +693,11 @@ SQL;
 }
 
 function reportDailyUsage($term) {
-	$sql = <<<'SQL'
+	$query = <<<'SQL'
 WITH dept_sections AS (
-	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?)
-		JOIN classes ON sections.cid = classes.cid
-		WHERE classes.dept = ? AND sections.code <> 'TUT' -- Filter out tutoring sections
+	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?) as ts
+		JOIN classes ON ts.cid = classes.cid
+		WHERE classes.dept = ? AND ts.code <> 'TUT' -- Filter out tutoring sections
 )
 SELECT usage.markin, usage.markout FROM usage
 	JOIN dept_sections ON usage.secid = dept_sections.secid
@@ -696,8 +711,9 @@ SQL;
 		$retval[wknumtoname($i)] = array();
 	}
 
+	
 	if($data === -1) {
-		return $retval;
+		return -1;
 	}
 
 	foreach($data as $datum) {
@@ -709,7 +725,7 @@ SQL;
 			$retval[$wkday] = 1;
 		}
 	}
-
+	
 	return $retval;
 }
 
@@ -757,8 +773,7 @@ SQL;
 		return -1;
 	}
 
-	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])
-		.format("%d days, %h hours and %i minutes");
+	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours']).format("%d days, %h hours and %i minutes");
 
 	return $dat;
 }

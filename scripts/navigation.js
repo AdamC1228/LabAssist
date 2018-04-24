@@ -26,7 +26,7 @@ $(document).ready(function ($) {
 
 
     function setHeight() {
-        $('.navigation').css('max-height',($( window ).height()- $('.userInfo').height() - 85));
+        $('.navigation').css('max-height',($( window ).innerHeight()- $('.userInfo').height() - 85));
 
     };
     

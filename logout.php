@@ -1,13 +1,13 @@
 <?php
-	session_start();
+session_start();
 
-    //Clear session variables
-    session_unset();
+//Clear session variables
+session_unset();
 
-    //Clear post variables
-    $_POST = array();
-    
-    //Send user to login page
-    header("location: login.php");
+//Clear post variables
+$_POST = array();
+
+//Send user to login page
+header("location: login.php");
 
 ?>

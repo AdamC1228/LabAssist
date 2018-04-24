@@ -270,34 +270,29 @@ function printReport($reportID)
 
 function labUsageReportHourly()
 {
-    $html = "";
-    if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
-    {
-        $term=$_GET['selectedTerm'];
-        $data = reportHourlyUsage($term);
-        
-        $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
-        
-        $html.= "<h2>Monday</h2>";
-        $html.= "<div class='custLine' id='Mon'></div>";
-        $html.= lineChartWithArea($data[1],"#Mon");
+    $data = reportHourlyUsage();
+    
+    $html = "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
+    
+    $html.= "<h2>Monday</h2>";
+    $html.= "<div class='custLine' id='Mon'></div>";
+    $html.= lineChartWithArea($data[1],"#Mon");
 
-        $html.= "<h2>Tuesday</h2>";
-        $html.= "<div class='custLine' id='Tue'></div>";
-        $html.= lineChartWithArea($data[2],"#Tue");
-        
-        $html.= "<h2>Wednesday</h2>";
-        $html.= "<div class='custLine' id='Wed'></div>";
-        $html.= lineChartWithArea($data[3],"#Wed");
-        
-        $html.= "<h2>Thursday</h2>";
-        $html.= "<div class='custLine' id='Thu'></div>";
-        $html.= lineChartWithArea($data[4],"#Thu");
-        
-        $html.= "<h2>Friday</h2>";
-        $html.= "<div class='custLine' id='Fri'></div>";
-        $html.= lineChartWithArea($data[5],"#Fri");
-    }
+    $html.= "<h2>Tuesday</h2>";
+    $html.= "<div class='custLine' id='Tue'></div>";
+    $html.= lineChartWithArea($data[2],"#Tue");
+    
+    $html.= "<h2>Wednesday</h2>";
+    $html.= "<div class='custLine' id='Wed'></div>";
+    $html.= lineChartWithArea($data[3],"#Wed");
+    
+    $html.= "<h2>Thursday</h2>";
+    $html.= "<div class='custLine' id='Thu'></div>";
+    $html.= lineChartWithArea($data[4],"#Thu");
+    
+    $html.= "<h2>Friday</h2>";
+    $html.= "<div class='custLine' id='Fri'></div>";
+    $html.= lineChartWithArea($data[5],"#Fri");
     
     //$html.= arrayPrint(reportHourlyUsage());
     return $html;
@@ -305,15 +300,12 @@ function labUsageReportHourly()
 
 function labUsageReportDaily()
 {
-    $html = "";
-    if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
-    {
-        $term =$_GET['selectedTerm'];
-        $data = reportDailyUsage($term);
-        $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
-        $html.= "<div class='custBar' id='week'></div>";
-        $html.= barChart($data,"#week");
-    }
+
+    $data = reportDailyUsage();
+    $html = "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
+    $html.= "<div class='custBar' id='week'></div>";
+    $html.= barChart($data,"#week");
+    
     return $html;
 }
 
@@ -611,39 +603,24 @@ eof;
  *
 */
 
-function reportHourlyUsage($term) {
 
-	$query = <<<'SQL'
-WITH dept_sections AS (
-	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?)
-		JOIN classes ON sections.cid = classes.cid
-		WHERE classes.dept = ? AND sections.code <> 'TUT' -- Filter out tutoring sections
-)
+
+function reportHourlyUsage() {
+	$sql = <<<'SQL'
 SELECT usage.markin, usage.markout FROM usage
-	JOIN dept_sections ON usage.secid = dept_sections.secid
+	JOIN sections ON usage.secid = sections.secid
+	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
 SQL;
-	$dept = getUsersDepartment($_SESSION['username']);
-	$data = safeDBQuery($query, array($term, $dept));
+
+	$data = safeDBQuery($sql, array());
 
 	if($data === -1) {
 		return -1;
 	}
 
-	$lims = getLimits($dept);
-	if($lims === -1) {
-		return -1;
-	}
-
-	$lstart = strptime($lims[0]['labstart'], "%T");
-	$lend   = strptime($lims[0]['labend'],   "%T");
-	
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
 		$retval[$i] = array();
-
-		for($j = $lstart['tm_hour']; $j <= $lend['tm_hour']; $j++) {
-			$retval[$i][$j] = 0;
-		}
 	}
 
 	foreach($data as $datum) {
@@ -660,10 +637,7 @@ SQL;
 		 * Maybe we want this report to be a count of clock-ins/hour for 
 		 * each day.
 		 */
-		$minVal = min($end['tm_hour'],   $lend['tm_hour']);
-		$maxVal = max($begin['tm_hour'], $lstart['tm_hour']);
-
-		for($initVal = $maxVal; $initVal <= $minVal; $initVal++) {
+		for($initVal = $begin['tm_hour']; $initVal <= $end['tm_hour']; $initVal++) {
 			if(isset($retval[$wkday][$initVal])) {
 				$retval[$wkday][$initVal] += 1;
 			} else {
@@ -672,34 +646,30 @@ SQL;
 		}
 	}
 
+	for($i = 1; $i <= 5; $i++) {
+		ksort($retval[$i]);
+	} 
+
 	return $retval;
 }
 
-function reportDailyUsage($term) {
+function reportDailyUsage() {
 	$sql = <<<'SQL'
-WITH dept_sections AS (
-	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?)
-		JOIN classes ON sections.cid = classes.cid
-		WHERE classes.dept = ? AND sections.code <> 'TUT' -- Filter out tutoring sections
-)
 SELECT usage.markin, usage.markout FROM usage
-	JOIN dept_sections ON usage.secid = dept_sections.secid
+	JOIN sections ON usage.secid = sections.secid
+	WHERE sections.term = (SELECT code FROM terms WHERE terms.activeterm = true)
 SQL;
 
-	$dept = getUsersDepartment($_SESSION['username']);
-	$data = safeDBQuery($query, array($term, $dept));
+	$data = safeDBQuery($sql, array());
 
 	if($data === -1) {
 		return -1;
 	}
 
 	$retval = array();
-	for($i = 1; $i <= 5; $i++) {
-		$retval[wknumtoname($i)] = array();
-	}
 
 	foreach($data as $datum) {
-		$wkday  = wknumtoname(strftime("%u", strtotime($datum['markin'])));
+		$wkday  = strftime("%u", strtotime($datum['markin']));
 
 		if(isset($retval[$wkday])) {
 			$retval[$wkday] += 1;
@@ -708,6 +678,10 @@ SQL;
 		}
 	}
 
+	for($i = 1; $i <= 5; $i++) {
+		ksort($retval);
+	} 
+	
 	return $retval;
 }
 
@@ -721,13 +695,6 @@ SQL;
 	return safeDBQuery($sql, array());
 }
 
-
-function getLimits($dept) {
-	$query = <<<SQL
-SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?
-SQL;
-	return safeDBQuery($query, array($dept));
-}
 
 function reportSectionVisits($sect) {
 	$sql = <<<SQL
@@ -750,15 +717,7 @@ SELECT COUNT(DISTINCT usage.student) as dist_visits, COUNT(usage.student) as all
 	WHERE usage.secid = ? AND usage.markout IS NOT NULL
 SQL;
 
-	$dat = safeDBQuery($sql, array($sect));
-	if($dat === -1) {
-		return -1;
-	}
-
-	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])
-		.format("%d days, %h hours and %i minutes");
-
-	return $dat;
+	return safeDBQuery($sql, array($sect));
 }
 /*
     NOTE: A report on clockin length might be useful.

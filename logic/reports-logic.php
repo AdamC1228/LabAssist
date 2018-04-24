@@ -404,7 +404,7 @@ function sectionOverviewReport()
 	$data = '';
 	if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
 	{
-		$data = reportSectionSummary($_GET['selectedSection'])[0];
+		$data = reportSectionSummary($_GET['selectedSection']);
 
 		if($data['total_hours']===null)
 		{
@@ -601,9 +601,9 @@ eof;
 function studentUsageReportView($dataset)
 {
 
-	if(empty($dataset))
+	if(empty($dataset) || ($dataset === -1))
 	{
-		return "<p>Database error<p>";
+		return "<p>No data available<p>";
 	}
 
 	$html=<<<eof
@@ -768,16 +768,15 @@ SQL;
 
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
-		$retval[wknumtoname($i)] = array();
+		$retval["'" . wknumtoname($i) . "'"] = 0;
 	}
-
 
 	if($data === -1) {
 		return -1;
 	}
 
 	foreach($data as $datum) {
-		$wkday  = wknumtoname(strftime("%u", strtotime($datum['markin'])));
+		$wkday  = "'" . wknumtoname(strftime("%u", strtotime($datum['markin']))) . "'";
 
 		if(isset($retval[$wkday])) {
 			$retval[$wkday] += 1;
@@ -858,7 +857,7 @@ SQL;
 
 	$dat = $dat[0];
 
-	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])->format("%d days, %h hours and %i minutes");
+	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])->format("%d days, %H:%I");
 
 	return $dat;
 }

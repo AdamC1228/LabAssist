@@ -82,6 +82,9 @@ function printForm($error)
 eof;
 }
 
+/*
+ * Print the ending body.
+ */
 function printEndBody()
 {
 	echo<<<eof

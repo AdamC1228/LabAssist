@@ -65,7 +65,7 @@ function getStartBox($currTime) {
 
 	$html .= "</select>";
 
-	return $html
+	return $html;
 }
 
 /*
@@ -117,7 +117,7 @@ function getEndBox($startTime, $currTime) {
 
 	$html .= "</select>";
 
-	return $html
+	return $html;
 }
 
 /*

@@ -12,6 +12,9 @@
      margin-left:0;
 }
 
+.content-inner {
+    height:100%
+}
 
 
 .lightText{
@@ -50,7 +53,6 @@
      color: var(--primary-text-color);
      min-width:-moz-min-content;
      min-widht:-webkit-min-content;
-     margin-bottom: 125px;
 }
  .portalhead{
      vertical-align: middle;
@@ -101,14 +103,16 @@
      background: #ffffff;
      width: 270px;
      overflow: hidden;
-     height: 100%;
      position: fixed;
-     top: 60px;
+     top:0px;
+     padding-top:60px;
+     height:100%;
      left: 0;
      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     /* background-color: var(--default-primary-color);
      */
 }
+
  .userInfo {
      display:block;
      padding: 13px 15px 12px 15px;
@@ -216,11 +220,14 @@
      font-size:14px;
 }
 /* * * * * * NAVIGATION * * * */
+ .navigationWrapper{
+     
+ }
  .navigation {
      position: relative;
      overflow-y: auto;
-     height: 90%;
-     max-height:78%;
+     height: auto;
+     max-height: 100%;
 }
  .navigation ul{
      list-style: none;
@@ -230,6 +237,7 @@
      margin-top: 0;
      padding-left:0;
 }
+
  .navigation ul li ul{
      display:none;
      width:inherit;

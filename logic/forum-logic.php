@@ -645,6 +645,8 @@ function genClass($dept)
 
 	$html="";
 
+	var_dump($dept);
+	
 	$sql=<<<SQL
 SELECT DISTINCT classes.name, sections.cid FROM terms
 	JOIN sections ON sections.term = terms.code 
@@ -652,6 +654,7 @@ SELECT DISTINCT classes.name, sections.cid FROM terms
 	WHERE terms.activeterm = TRUE AND dept = ?
 SQL;
 	$result=databaseQuery($sql, array($dept));
+	
 
 	if(!is_array($result) || empty($result))
 	{
@@ -672,6 +675,8 @@ SQL;
 	 */
 	$html.= "<select name=\"classSelect\" class=\"inputSelect\">";
 
+	var_dump($result);
+	
 	foreach($result as $row)
 	{
 		if ($class === $row["cid"])
@@ -717,8 +722,13 @@ function filterClasses($result)
 		/*
 		 * Reindex the array.
 		 */
+		 
 		return array_values($newArray);
 	}
+	else
+	{
+        return $result;
+    }
 }
 
 /*

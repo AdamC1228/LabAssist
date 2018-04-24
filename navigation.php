@@ -65,7 +65,7 @@ function createNavigation()
             $admin.=classManagement(++$count);
             $admin.=sectionManagement(++$count);
             $admin.=userManagement();
-            $admin.=forumAdmin();
+            $admin.=tutoringHours();
             $admin.=reports();
             $admin.=endNavGroup();
 
@@ -324,11 +324,11 @@ eof;
     return $html;
 }
 
-function forumAdmin()
+function tutoringHours()
 {
     $html=<<<eof
         <li class="">
-            <a href="" class="nav-menu-item">Q/A Administration</a>
+            <a href="labHours.php" class="nav-menu-item">Lab Hours</a>
         </li>
 eof;
 
@@ -357,11 +357,11 @@ eof;
 }
 
 function manageTutorAvailability() {
-    $html = <<<'HTML'
+    $html = <<<eof
 <li class="">
     <a href="managetutoravailability.php" class="nav-menu-item">Update Tutor Availability</a>
 </li>
-HTML;
+eof;
 
     return $html;
 }

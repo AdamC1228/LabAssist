@@ -367,7 +367,7 @@ function studentUsageReport()
         {
                 $term = $_GET['selectedTerm'];
                 $html.= "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
-                $html.= studentUsageReportView(reportStudentUsage());
+                $html.= studentUsageReportView(reportStudentUsage($term));
         }
         return $html;
 
@@ -383,7 +383,11 @@ function sectionUsageReport()
 
 	if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
 	{
-		$html.= sectionUsageReportView(reportSectionVisits($_GET['selectedSection']));
+		$data = reportSectionVisits($_GET['selectedSection']);
+		if($data !== -1 )
+		{
+			$html.= sectionUsageReportView(reportSectionVisits($_GET['selectedSection']));
+		}
 	}
 
 	//     $html.= arrayPrint(reportSectionVisits(2));
@@ -852,7 +856,7 @@ SQL;
 		return -1;
 	}
 
-	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])::format("%d days, %h hours and %i minutes");
+	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])->format("%d days, %h hours and %i minutes");
 
 	return $dat;
 }

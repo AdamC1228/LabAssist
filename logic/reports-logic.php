@@ -689,13 +689,13 @@ SQL;
 	$dept = getUsersDepartment($_SESSION['username']);
 	$data = safeDBQuery($query, array($term, $dept));
 
-	if($data === -1) {
-		return -1;
-	}
-
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
 		$retval[wknumtoname($i)] = array();
+	}
+
+	if($data === -1) {
+		return $retval;
 	}
 
 	foreach($data as $datum) {

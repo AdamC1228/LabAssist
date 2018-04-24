@@ -362,11 +362,15 @@ function labUsageReportDaily()
  */
 function studentUsageReport()
 {
+        $html = "";
+        if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
+        {
+                $term = $_GET['selectedTerm'];
+                $html.= "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
+                $html.= studentUsageReportView(reportStudentUsage());
+        }
+        return $html;
 
-	$html = "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
-	$html.= studentUsageReportView(reportStudentUsage());
-
-	return $html;
 }
 
 /*

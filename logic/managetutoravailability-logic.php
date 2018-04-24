@@ -2,9 +2,12 @@
 require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
+/*
+ * Generate the schedule table.
+ */
 function generateScheduleTable($dept) {
 	$TIME_SLICE = 30;
-	
+
 	$data = retrieveSchedules($dept);
 	//$lims = getLimits($dept)[0];
 	$lims = getLimits($dept);
@@ -108,10 +111,16 @@ HTML;
 	return $ret;
 }
 
+/*
+ * Get the limits on lab hours.
+ */
 function getLimits($dept) {
 	return databaseQuery("SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?", array($dept));
 }
 
+/*
+ * Mangle scheduling data into a better form.
+ */
 function mapSchedules($data) {
 	$ret = array();
 
@@ -138,6 +147,9 @@ function mapSchedules($data) {
 	return $ret;
 }
 
+/*
+ * Generate a claim button.
+ */
 function genClaimButton($tme) {
 	$val = "{$_SESSION['useridno']} {$tme}";
 
@@ -152,6 +164,9 @@ HTML;
 	return $html;
 }
 
+/*
+ * Generate an unclaim button.
+ */
 function genUnclaimButton($tme) {   
 	$html=<<<HTML
 <form action='{$_SERVER['PHP_SELF']}' method='post'>
@@ -164,6 +179,9 @@ HTML;
 	return $html;
 }
 
+/*
+ * Advance a time half an hour.
+ */
 function advanceHalfHour($tme) {
 	$ret = $tme;
 
@@ -177,6 +195,9 @@ function advanceHalfHour($tme) {
 	return $ret;
 }
 
+/*
+ * Advance a time an hour.
+ */
 function advanceHour($tme) {
 	$ret = $tme;
 
@@ -190,6 +211,9 @@ function advanceHour($tme) {
 	return $ret;
 }
 
+/*
+ * Retrieve scheduling data.
+ */
 function retrieveSchedules($dept) {
 	$sql=<<<'SQL'
 SELECT  filt_users.realname as rname, availability.starttime as starttime, availability.endtime as endtime
@@ -221,6 +245,9 @@ SQL;
 	return $result;
 }
 
+/*
+ * Register a claim.
+ */
 function registerClaim($val, $depart) {
 	list($hour, $min, $day) = sscanf($val, "%d:%d %s");
 
@@ -267,6 +294,9 @@ SQL;
 	return true;
 }
 
+/*
+ * Register an unclaim.
+ */
 function registerUnclaim($val, $depart) {
 	list($hour, $min, $day) = sscanf($val, "%d:%d %s");
 

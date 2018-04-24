@@ -4,6 +4,9 @@ require_once "logic/common/commonFunctions.php";
 
 
 
+/*
+ * Display all the terms.
+ */
 function displayAll()
 {
 	$html = "<script type='text/javascript' src='scripts/manageterms.js'></script>";
@@ -25,6 +28,9 @@ function displayAll()
  */
 
 
+/*
+ * Generate a paginated table.
+ */
 function generatePaginatedTable()
 {
 	$paginationValues=getPaginated();
@@ -93,6 +99,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Get the pagination parameters.
+ */
 function getPaginated()
 {
 	if ( isset($_SESSION['numPerPage']) && !empty($_SESSION['numPerPage']))
@@ -119,6 +128,9 @@ function getPaginated()
 }
 
 
+/*
+ * Print bottom pagination.
+ */
 function printBottomPagination($paginationValues)
 {    
 	$count = getPageCount();
@@ -172,18 +184,26 @@ function printBottomPagination($paginationValues)
 
 
 
+/*
+ * Get the dataset.
+ */
 function getDataSet($array)
 {
-	//return databaseQuery("select terms.code,count(sections.secid) as secCount, count(classes.cid) as classCount,terms.activeterm from terms left join sections on sections.term=terms.code left join classes on sections.cid=classes.cid group by terms.code order by CASE WHEN terms.activeterm = true THEN 1 ELSE 2 end asc OFFSET ? LIMIT ?",$array);
 
 	return databaseQuery("select terms.code,count(sections.secid) as secCount, count(classes.cid) as classCount,terms.activeterm from terms left join sections on sections.term=terms.code left join classes on sections.cid=classes.cid group by terms.code order by terms.code desc OFFSET ? LIMIT ?",$array);
 }
 
+/*
+ * Get the term count.
+ */
 function getPageCount()
 {
 	return databaseExecute("select count(code) as count from terms");
 }
 
+/*
+ * Submit term chganges.
+ */
 function attemptTermChange($array)
 {
 	$result=databaseQuery("update terms set activeterm= case code when ? then cast(true as boolean) else cast(false as boolean) end;",$array);

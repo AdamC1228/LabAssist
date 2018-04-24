@@ -1,4 +1,1 @@
-* Filter reports by current user's department
-
-* Filter lab clockin/outs to be within department limits if they exist
-	* If they don't, exclude clockouts past 11 (The user got autoclocked out)
+Thing

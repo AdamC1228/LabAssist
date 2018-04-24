@@ -15,82 +15,92 @@ $sectionReports = array(array('Section Usage','3'));
  *  Report Header Functions
  *
  *
-*/
+ */
+
+/*
+ * Print report header.
+ */
 function printReportHeader()
 {
-    
-    $reportSelected='0';
-    $term='';
-    $reportSection='';
-    
-    #Print the header where the user can select the appropriate report
-    if(isSet($_GET['selectedReport']) && !empty($_GET['selectedReport']))
-    {
-        $reportSelected=$_GET['selectedReport'];
-    }
-    
-    if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
-    {
-        $term=$_GET['selectedTerm'];
-    }
-    else
-    {
-        $term=databaseExecute("select code from terms where activeterm=true;")[0]['code'];
-    }
-    
-    if(isSet($_GET['reportSection']) && !empty($_GET['reportSection']))
-    {
-        $reportSection=$_GET['reportSection'];
-    }
-    else
-    {
-        $reportSection=-1;
-    }
 
-    $html = "";
-    $html.= "<h2>Reports</h2>\n";
-    $html.= "<form action='{$_SERVER['PHP_SELF']}' method='GET'>";
-    $html.= "   <div class='flex group alignCenterFlex marginBottom80'>";
-    $html.=         reportHeader($reportSelected,$term);
-    $html.=         reportSections($reportSelected,$reportSection,$term);
-    $html.= "       <div class='flex flexAlignCenter marginBottom10 marginLeft40'>";
-    $html.= "           <input name='showReport' style='height:40px; margin-top:10px;' class='btn' type='submit' value='View Report'>";
-    $html.= "       </div> <!-- btn Group -->";
-    $html.= "   </div> <!-- Header Group -->";
-    $html.= "</form> <!-- Header Form -->";
-    
-    return $html;
+	$reportSelected='0';
+	$term='';
+	$reportSection='';
+
+	#Print the header where the user can select the appropriate report
+	if(isSet($_GET['selectedReport']) && !empty($_GET['selectedReport']))
+	{
+		$reportSelected=$_GET['selectedReport'];
+	}
+
+	if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
+	{
+		$term=$_GET['selectedTerm'];
+	}
+	else
+	{
+		$term=databaseExecute("select code from terms where activeterm=true;")[0]['code'];
+	}
+
+	if(isSet($_GET['reportSection']) && !empty($_GET['reportSection']))
+	{
+		$reportSection=$_GET['reportSection'];
+	}
+	else
+	{
+		$reportSection=-1;
+	}
+
+	$html = "";
+	$html.= "<h2>Reports</h2>\n";
+	$html.= "<form action='{$_SERVER['PHP_SELF']}' method='GET'>";
+	$html.= "   <div class='flex group alignCenterFlex marginBottom80'>";
+	$html.=         reportHeader($reportSelected,$term);
+	$html.=         reportSections($reportSelected,$reportSection,$term);
+	$html.= "       <div class='flex flexAlignCenter marginBottom10 marginLeft40'>";
+	$html.= "           <input name='showReport' style='height:40px; margin-top:10px;' class='btn' type='submit' value='View Report'>";
+	$html.= "       </div> <!-- btn Group -->";
+	$html.= "   </div> <!-- Header Group -->";
+	$html.= "</form> <!-- Header Form -->";
+
+	return $html;
 }
 
 
+/*
+ * Create the report header.
+ */
 function reportHeader($prevRep,$prevTerm)
 {
-    $html = "<div class='flexColumn flex marginRight20 paddingRight10' style='max-width:450px;'>\n";
-    $html.= "   <div class='marginLeft10 flexRow  rightAlignFlex flexAlignCenter marginTop10 marginBottom10 flex'>\n";
-    $html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
-    $html.=             "<span>Select a report:</span>\n";
-    $html.= "       </div>\n";
-    $html.= "       <div class='flex flexAlignCenter'>\n";
-    $html.=             reportHeaderReportSelect($prevRep);
-    $html.= "       </div>\n";
-    $html.= "   </div> <!-- End Columns --> \n";
-    $html.= "   <div class='marginLeft10 flexRow rightAlignFlex flexAlignCenter marginTop10 marginBottom10 flex'>\n";
-    $html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
-    $html.=             "<span>Select a term:</span>\n";
-    $html.= "       </div>\n";
-    $html.= "       <div class='flex flexAlignCenter'>\n";
-    $html.=             reportHeaderTermSelect($prevTerm);
-    $html.= "       </div>\n";
-    $html.= "   </div> <!-- End Columns --> \n";
-    $html.= "</div> <!-- End the group --> \n";
- 
-    return $html;
+	$html = "<div class='flexColumn flex marginRight20 paddingRight10' style='max-width:450px;'>\n";
+	$html.= "   <div class='marginLeft10 flexRow  rightAlignFlex flexAlignCenter marginTop10 marginBottom10 flex'>\n";
+	$html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
+	$html.=             "<span>Select a report:</span>\n";
+	$html.= "       </div>\n";
+	$html.= "       <div class='flex flexAlignCenter'>\n";
+	$html.=             reportHeaderReportSelect($prevRep);
+	$html.= "       </div>\n";
+	$html.= "   </div> <!-- End Columns --> \n";
+	$html.= "   <div class='marginLeft10 flexRow rightAlignFlex flexAlignCenter marginTop10 marginBottom10 flex'>\n";
+	$html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
+	$html.=             "<span>Select a term:</span>\n";
+	$html.= "       </div>\n";
+	$html.= "       <div class='flex flexAlignCenter'>\n";
+	$html.=             reportHeaderTermSelect($prevTerm);
+	$html.= "       </div>\n";
+	$html.= "   </div> <!-- End Columns --> \n";
+	$html.= "</div> <!-- End the group --> \n";
+
+	return $html;
 }
 
+/*
+ * Create the report selector.
+ */
 function reportHeaderReportSelect($prevVal)
 {    
-    global $availableReports;
-    $html = "";
+	global $availableReports;
+	$html = "";
 
 
 	$html.= "  <div>";
@@ -110,40 +120,46 @@ function reportHeaderReportSelect($prevVal)
 	$html.= "  </div>";
 
 
-    return $html;
+	return $html;
 }
 
+/*
+ * Create the sections report.
+ */
 function reportSections($report,$prevVal,$term)
 {
-    global $sectionReports;
-    
-    if(in_array($report,array_column($sectionReports,'1')))
-    {
-        $html = "<div class='flex marginLeft10 paddingRight20' style='max-width:450px; max-height:60px;'>\n";
-        $html.= "   <div class='marginLeft10 flexRow flexAlignCenter paddingRight20 marginTop10 marginBottom10 flex'>\n";
-        $html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
-        $html.=             "<span>Section:</span>\n";
-        $html.= "       </div>\n";
-        $html.= "       <div class='flex flexAlignCenter '>\n";
-        $html.=             reportHeaderSectionSelect($prevVal,$term);
-        $html.= "       </div>\n";
-        $html.= "   </div> <!-- End Columns --> \n";
-        $html.= "</div> <!-- End the group --> \n";
-        return $html;
-    }
+	global $sectionReports;
+
+	if(in_array($report,array_column($sectionReports,'1')))
+	{
+		$html = "<div class='flex marginLeft10 paddingRight20' style='max-width:450px; max-height:60px;'>\n";
+		$html.= "   <div class='marginLeft10 flexRow flexAlignCenter paddingRight20 marginTop10 marginBottom10 flex'>\n";
+		$html.= "       <div class='flex flexAlignCenter paddingRight20'>\n";
+		$html.=             "<span>Section:</span>\n";
+		$html.= "       </div>\n";
+		$html.= "       <div class='flex flexAlignCenter '>\n";
+		$html.=             reportHeaderSectionSelect($prevVal,$term);
+		$html.= "       </div>\n";
+		$html.= "   </div> <!-- End Columns --> \n";
+		$html.= "</div> <!-- End the group --> \n";
+		return $html;
+	}
 }
 
+/*
+ * Create the header for the sections report.
+ */
 function reportHeaderSectionSelect($prevVal,$term)
 {    
-    $html = "";
+	$html = "";
 
-//     $result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and teacher=?',array($_SESSION['username']));
+	//     $result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and teacher=?',array($_SESSION['username']));
 
-    $result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and teacher=? and term=?',array('800241353',$term));
+	$result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and teacher=? and term=?',array('800241353',$term));
 
-    if($result==-1)
-        return "No sections taught for selected term";
- 
+	if($result==-1)
+		return "No sections taught for selected term";
+
 	$html.= "  <div>";
 	$html.= "      <select name='selectedSection'   class='inputSelect'>";
 	foreach($result as $row)
@@ -161,7 +177,7 @@ function reportHeaderSectionSelect($prevVal,$term)
 	$html.= "  </div>";
 
 
-    return $html;
+	return $html;
 }
 
 /*
@@ -187,25 +203,25 @@ function reportHeaderTermSelect($current)
 		{
 			if ($current == $row["code"])
 			{
-                if($row['activeterm']==true)
-                {
-                    $html.= "<option value='{$row['code']}' selected>{$row['code']} (Active Term)</option>";
-                }
-                else
-                {
-                    $html.= "<option value='{$row['code']}' selected>{$row['code']}</option>";
-                }
+				if($row['activeterm']==true)
+				{
+					$html.= "<option value='{$row['code']}' selected>{$row['code']} (Active Term)</option>";
+				}
+				else
+				{
+					$html.= "<option value='{$row['code']}' selected>{$row['code']}</option>";
+				}
 			}
 			else
 			{
-                if($row['activeterm']==true)
-                {
-                    $html.= "<option value='{$row['code']}' >{$row['code']} (Active Term)</option>";
-                }
-                else
-                {
-                    $html.= "<option value='{$row['code']}' >{$row['code']}</option>";
-                }
+				if($row['activeterm']==true)
+				{
+					$html.= "<option value='{$row['code']}' >{$row['code']} (Active Term)</option>";
+				}
+				else
+				{
+					$html.= "<option value='{$row['code']}' >{$row['code']}</option>";
+				}
 			}
 		}
 
@@ -221,41 +237,44 @@ function reportHeaderTermSelect($current)
  *  Report Control functions
  *
  *
-*/
+ */
 
 
+/*
+ * Print a report.
+ */
 function printReport($reportID)
 {
-    global $availableReports;
-    $html = "";
-    
-    switch ($reportID) {
-        case 0:
-            //LabUsageReport
-            //$html.= "<h1>{$availableReports[0][0]} report</h1>";
-            $html.= "<h2 class='centerText'>Hourly Usage</h2>";
-            $html.= labUsageReportHourly();
-            break;
-        case 1:
-            $html.= "<h2 class='centerText'>Daily Usage</h2>";
-            $html.= labUsageReportDaily();
-            break;
-        case 2:
-            //Student Usage Report
-            $html.= "<h2 class='centerText'>Student Usage</h2>";
-            $html.= studentUsageReport();
-            break;
-        case 3:
-            $html.= "<h2 class='centerText marginTop30'>Section Usage Overview</h2>";
-            $html.= sectionOverviewReport();
-            $html.= sectionUsageReport();
-            break;
-        case 4:
-            $html.= "<h2 class='centerText'>EasterEgg</h2>";
-            break;
-    }
-    
-    return $html;
+	global $availableReports;
+	$html = "";
+
+	switch ($reportID) {
+	case 0:
+		//LabUsageReport
+		//$html.= "<h1>{$availableReports[0][0]} report</h1>";
+		$html.= "<h2 class='centerText'>Hourly Usage</h2>";
+		$html.= labUsageReportHourly();
+		break;
+	case 1:
+		$html.= "<h2 class='centerText'>Daily Usage</h2>";
+		$html.= labUsageReportDaily();
+		break;
+	case 2:
+		//Student Usage Report
+		$html.= "<h2 class='centerText'>Student Usage</h2>";
+		$html.= studentUsageReport();
+		break;
+	case 3:
+		$html.= "<h2 class='centerText marginTop30'>Section Usage Overview</h2>";
+		$html.= sectionOverviewReport();
+		$html.= sectionUsageReport();
+		break;
+	case 4:
+		$html.= "<h2 class='centerText'>EasterEgg</h2>";
+		break;
+	}
+
+	return $html;
 }
 
 
@@ -265,150 +284,165 @@ function printReport($reportID)
  *  Report Helper Functions
  *
  *
-*/
+ */
 
 
+/*
+ * Create the hourly lab usage report.
+ */
 function labUsageReportHourly()
 {
-    $html = "";
-    if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
-    {
-        $term=$_GET['selectedTerm'];
-        $data = reportHourlyUsage($term);
-        
-        if($data !== -1)
-        {
-            $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
-            
-            $html.= "<h2>Monday</h2>";
-            $html.= "<div class='custLine' id='Mon'></div>";
-            $html.= lineChartWithArea($data[1],"#Mon");
+	$html = "";
+	if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
+	{
+		$term=$_GET['selectedTerm'];
+		$data = reportHourlyUsage($term);
 
-            $html.= "<h2>Tuesday</h2>";
-            $html.= "<div class='custLine' id='Tue'></div>";
-            $html.= lineChartWithArea($data[2],"#Tue");
-            
-            $html.= "<h2>Wednesday</h2>";
-            $html.= "<div class='custLine' id='Wed'></div>";
-            $html.= lineChartWithArea($data[3],"#Wed");
-            
-            $html.= "<h2>Thursday</h2>";
-            $html.= "<div class='custLine' id='Thu'></div>";
-            $html.= lineChartWithArea($data[4],"#Thu");
-            
-            $html.= "<h2>Friday</h2>";
-            $html.= "<div class='custLine' id='Fri'></div>";
-            $html.= lineChartWithArea($data[5],"#Fri");
-        }
-        else
-        {
-            $html.= "No data available";
-        }
-    }
-    
-    //$html.= arrayPrint(reportHourlyUsage());
-    return $html;
+		if($data !== -1)
+		{
+			$html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
+
+			$html.= "<h2>Monday</h2>";
+			$html.= "<div class='custLine' id='Mon'></div>";
+			$html.= lineChartWithArea($data[1],"#Mon");
+
+			$html.= "<h2>Tuesday</h2>";
+			$html.= "<div class='custLine' id='Tue'></div>";
+			$html.= lineChartWithArea($data[2],"#Tue");
+
+			$html.= "<h2>Wednesday</h2>";
+			$html.= "<div class='custLine' id='Wed'></div>";
+			$html.= lineChartWithArea($data[3],"#Wed");
+
+			$html.= "<h2>Thursday</h2>";
+			$html.= "<div class='custLine' id='Thu'></div>";
+			$html.= lineChartWithArea($data[4],"#Thu");
+
+			$html.= "<h2>Friday</h2>";
+			$html.= "<div class='custLine' id='Fri'></div>";
+			$html.= lineChartWithArea($data[5],"#Fri");
+		}
+		else
+		{
+			$html.= "No data available";
+		}
+	}
+
+	//$html.= arrayPrint(reportHourlyUsage());
+	return $html;
 }
 
+/*
+ * Create the daily lab usage report.
+ */
 function labUsageReportDaily()
 {
-    $html = "";
-    if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
-    {
-        $term =$_GET['selectedTerm'];
-        $data = reportDailyUsage($term);
-        
-        if($data !== -1)
-        {
-            $html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
-            $html.= "<div class='custBar' id='week'></div>";
-            $html.= barChart($data,"#week");
-        }
-        else
-        {
-            $html.= "No data available";
-        }  
-    }
-    return $html;
+	$html = "";
+	if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
+	{
+		$term =$_GET['selectedTerm'];
+		$data = reportDailyUsage($term);
+
+		if($data !== -1)
+		{
+			$html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
+			$html.= "<div class='custBar' id='week'></div>";
+			$html.= barChart($data,"#week");
+		}
+		else
+		{
+			$html.= "No data available";
+		}  
+	}
+	return $html;
 }
 
+/*
+ * Crete the student usage report.
+ */
 function studentUsageReport()
 {
 
-    $html = "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
-    $html.= studentUsageReportView(reportStudentUsage());
+	$html = "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
+	$html.= studentUsageReportView(reportStudentUsage());
 
-    return $html;
+	return $html;
 }
 
+/*
+ * Create the section usage report.
+ */
 function sectionUsageReport()
 {
-    $html = "";
-    $html.= "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
-    
-    if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
-    {
-        $html.= sectionUsageReportView(reportSectionVisits($_GET['selectedSection']));
-    }
-    
-//     $html.= arrayPrint(reportSectionVisits(2));
+	$html = "";
+	$html.= "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
 
-    return $html;
+	if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
+	{
+		$html.= sectionUsageReportView(reportSectionVisits($_GET['selectedSection']));
+	}
+
+	//     $html.= arrayPrint(reportSectionVisits(2));
+
+	return $html;
 }
 
+/*
+ * Create the section overview report.
+ */
 function sectionOverviewReport()
 {
-    $html = '';
-    $data = '';
-    if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
-    {
-        $data = reportSectionSummary($_GET['selectedSection'])[0];
-        
-        if($data['total_hours']===null)
-        {
-            $data['total_hours']=0;
-        }
-         
-          
-        $html.=<<<eof
-        <div class='group flex flexAlignCenter marginBottom40 reportOverviewWrapper'>
-            <div class='flex reportOverview'>
-                <div class= 'flex flexGrow flexColumn'>
-                    <div class='flex flexRow rightAlignFlex'>
-                        <div class='flex marginLeft10 rightAlignFlex marginRight20'>
-                            <b>Distinct Visits:</b>
-                        </div>
-                        <div class='flex' style='min-width:40px;'>
-                            {$data['dist_visits']}
-                        </div>
-                    </div> <!-- end row -->
-                    <div class='flex flexGrow rightAlignFlex flexRow'>
-                        <div class='flex marginLeft10 rightAlignFlex marginRight20'>
-                            <b>Total Visits:</b>
-                        </div>
-                        <div class='flex' style='min-width:40px;'>
-                            {$data['all_visits']}
-                        </div>
-                    </div> <!-- end row -->
-                </div><!-- group 1 -->
-                <div class= 'flex flexGrow flexColumn'>
-                    <div class='flex flexGrow rightAlignFlex flexRow'>
-                        <div class='flex marginLeft10 marginRight20'>
-                            <b>Cumulative Tutoring Hours:</b>
-                        </div>
-                        <div class='flex' style='min-width:40px;'>
-                            {$data['total_hours']}
-                        </div>
-                    </div> <!-- end row -->
-                </div> <!-- end group2 -->
-            </div> <!-- end overview -->
-        </div> <!-- end overviewWrapper -->
+	$html = '';
+	$data = '';
+	if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
+	{
+		$data = reportSectionSummary($_GET['selectedSection'])[0];
+
+		if($data['total_hours']===null)
+		{
+			$data['total_hours']=0;
+		}
+
+
+		$html.=<<<eof
+	<div class='group flex flexAlignCenter marginBottom40 reportOverviewWrapper'>
+	    <div class='flex reportOverview'>
+		<div class= 'flex flexGrow flexColumn'>
+		    <div class='flex flexRow rightAlignFlex'>
+			<div class='flex marginLeft10 rightAlignFlex marginRight20'>
+			    <b>Distinct Visits:</b>
+			</div>
+			<div class='flex' style='min-width:40px;'>
+			    {$data['dist_visits']}
+			</div>
+		    </div> <!-- end row -->
+		    <div class='flex flexGrow rightAlignFlex flexRow'>
+			<div class='flex marginLeft10 rightAlignFlex marginRight20'>
+			    <b>Total Visits:</b>
+			</div>
+			<div class='flex' style='min-width:40px;'>
+			    {$data['all_visits']}
+			</div>
+		    </div> <!-- end row -->
+		</div><!-- group 1 -->
+		<div class= 'flex flexGrow flexColumn'>
+		    <div class='flex flexGrow rightAlignFlex flexRow'>
+			<div class='flex marginLeft10 marginRight20'>
+			    <b>Cumulative Tutoring Hours:</b>
+			</div>
+			<div class='flex' style='min-width:40px;'>
+			    {$data['total_hours']}
+			</div>
+		    </div> <!-- end row -->
+		</div> <!-- end group2 -->
+	    </div> <!-- end overview -->
+	</div> <!-- end overviewWrapper -->
 eof;
 
-    }
-//     $html.= arrayPrint(reportSectionSummary(2));
+	}
+	//     $html.= arrayPrint(reportSectionSummary(2));
 
-    return $html;
+	return $html;
 }
 
 /*
@@ -417,123 +451,129 @@ eof;
  *  Charting Functions
  *
  *
-*/
+ */
 
 
+/*
+ * Create a line chart.
+ */
 function lineChartWithArea($array,$cssElement)
 {   
-    $html="";
-    
-    $labels="";
-    $data="";
-    $labels.=implode(',',array_keys($array));
-    $data.=implode(',',array_values($array));
-    
-    $html.=<<<eof
+	$html="";
+
+	$labels="";
+	$data="";
+	$labels.=implode(',',array_keys($array));
+	$data.=implode(',',array_values($array));
+
+	$html.=<<<eof
     <script>
     new Chartist.Line('$cssElement', {
-            labels: [$labels],
-            series: [
-                [$data]
-            ]
-        }, {
-            low: 0,
-            showArea: true,
-            height: 250,
-            axisY: {
-                onlyInteger: true,
-                offset:50
-            },
-            axisX: {
-                onlyInteger: true,
-                offset:50
-            },
-            plugins: [
-                Chartist.plugins.ctAxisTitle({
-                    axisX: {
-                        axisTitle: 'Hour',
-                        axisClass: 'ct-axis-title',
-                        offset: {
-                            x: 0,
-                            y: 50
-                        },
-                        textAnchor: 'middle'
-                    },
-                    axisY: {
-                        axisTitle: 'Logins',
-                        axisClass: 'ct-axis-title',
-                        offset: {
-                            x: 0,
-                            y: -15
-                        },
-                        flipTitle: false
-                    }
-                })
-            ]
-        });
+	    labels: [$labels],
+	    series: [
+		[$data]
+	    ]
+	}, {
+	    low: 0,
+	    showArea: true,
+	    height: 250,
+	    axisY: {
+		onlyInteger: true,
+		offset:50
+	    },
+	    axisX: {
+		onlyInteger: true,
+		offset:50
+	    },
+	    plugins: [
+		Chartist.plugins.ctAxisTitle({
+		    axisX: {
+			axisTitle: 'Hour',
+			axisClass: 'ct-axis-title',
+			offset: {
+			    x: 0,
+			    y: 50
+			},
+			textAnchor: 'middle'
+		    },
+		    axisY: {
+			axisTitle: 'Logins',
+			axisClass: 'ct-axis-title',
+			offset: {
+			    x: 0,
+			    y: -15
+			},
+			flipTitle: false
+		    }
+		})
+	    ]
+	});
     </script>
 eof;
-    
-    return $html;
+
+	return $html;
 }
 
+/*
+ * Create a bar chart.
+ */
 function barChart($array,$cssElement)
 {   
-    $html="";
-    
-    $labels="";
-    $data="";
-    
+	$html="";
 
-    $labels.=implode(',',array_keys($array));
-    
-    $data.=implode(',',array_values($array));
-    
-    $html.=<<<eof
+	$labels="";
+	$data="";
+
+
+	$labels.=implode(',',array_keys($array));
+
+	$data.=implode(',',array_values($array));
+
+	$html.=<<<eof
     <script>
     new Chartist.Bar('$cssElement', {
-            labels: [$labels],
-            series: [
-                [$data]
-            ]
-        }, {
-            low: 0,
-            height: 250,
-            axisY: {
-                onlyInteger: true,
-                offset:50
-            },
-            axisX: {
-                onlyInteger: true,
-                offset:50
-            },
-            plugins: [
-                Chartist.plugins.ctAxisTitle({
-                    axisX: {
-                        axisTitle: 'Day',
-                        axisClass: 'ct-axis-title',
-                        offset: {
-                            x: 0,
-                            y: 50
-                        },
-                        textAnchor: 'middle'
-                    },
-                    axisY: {
-                        axisTitle: 'Logins',
-                        axisClass: 'ct-axis-title',
-                        offset: {
-                            x: 0,
-                            y: -15
-                        },
-                        flipTitle: false
-                    }
-                })
-            ]
-        });
+	    labels: [$labels],
+	    series: [
+		[$data]
+	    ]
+	}, {
+	    low: 0,
+	    height: 250,
+	    axisY: {
+		onlyInteger: true,
+		offset:50
+	    },
+	    axisX: {
+		onlyInteger: true,
+		offset:50
+	    },
+	    plugins: [
+		Chartist.plugins.ctAxisTitle({
+		    axisX: {
+			axisTitle: 'Day',
+			axisClass: 'ct-axis-title',
+			offset: {
+			    x: 0,
+			    y: 50
+			},
+			textAnchor: 'middle'
+		    },
+		    axisY: {
+			axisTitle: 'Logins',
+			axisClass: 'ct-axis-title',
+			offset: {
+			    x: 0,
+			    y: -15
+			},
+			flipTitle: false
+		    }
+		})
+	    ]
+	});
     </script>
 eof;
-    
-    return $html;
+
+	return $html;
 }
 
 
@@ -544,13 +584,16 @@ eof;
  *  Table Functions
  *
  *
-*/
+ */
 
 
+/*
+ * Create a student usage table.
+ */
 function studentUsageReportView($dataset)
 {
 
-    if(empty($dataset))
+	if(empty($dataset))
 	{
 		return "<p>Database error<p>";
 	}
@@ -583,6 +626,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Create a section usage report.
+ */
 function sectionUsageReportView($dataset)
 {
 
@@ -599,24 +645,24 @@ function sectionUsageReportView($dataset)
 	    </thead>
 eof;
 
-    if(empty($dataset) || !is_array($dataset))
+	if(empty($dataset) || !is_array($dataset))
 	{
-        $html.="</table>\n</form>\n</div>\n";
+		$html.="</table>\n</form>\n</div>\n";
 	}
-    else
-    {
-        foreach ($dataset as $row)
-        {
-            $html.="<tr>\n";
-            $html.="    <td>". $row['realname'] ."</td>\n";
-            $html.="    <td>". $row['email'] ."</td>\n";
-            $html.="    <td>". $row['count'] ."</td>\n";
-            $html.="</tr>\n";
-        }
+	else
+	{
+		foreach ($dataset as $row)
+		{
+			$html.="<tr>\n";
+			$html.="    <td>". $row['realname'] ."</td>\n";
+			$html.="    <td>". $row['email'] ."</td>\n";
+			$html.="    <td>". $row['count'] ."</td>\n";
+			$html.="</tr>\n";
+		}
 
-        $html.="</table>\n</form>\n</div>\n";
-    }
-    
+		$html.="</table>\n</form>\n</div>\n";
+	}
+
 	return $html;
 }
 
@@ -626,8 +672,11 @@ eof;
  *  Report Data Functions
  *
  *
-*/
+ */
 
+/*
+ * Get the hourly usage report.
+ */
 function reportHourlyUsage($term) {
 
 	$query = <<<'SQL'
@@ -653,7 +702,7 @@ SQL;
 
 	$lstart = strptime($lims[0]['labstart'], "%T");
 	$lend   = strptime($lims[0]['labend'],   "%T");
-	
+
 	$retval = array();
 	for($i = 1; $i <= 5; $i++) {
 		$retval[$i] = array();
@@ -688,10 +737,13 @@ SQL;
 			}
 		}
 	}
-	
+
 	return $retval;
 }
 
+/*
+ * Create the daily usage report.
+ */
 function reportDailyUsage($term) {
 	$query = <<<'SQL'
 WITH dept_sections AS (
@@ -711,7 +763,7 @@ SQL;
 		$retval[wknumtoname($i)] = array();
 	}
 
-	
+
 	if($data === -1) {
 		return -1;
 	}
@@ -725,21 +777,38 @@ SQL;
 			$retval[$wkday] = 1;
 		}
 	}
-	
+
 	return $retval;
 }
 
 
-function reportStudentUsage() {
+/*
+ * Get the student usage data.
+ */
+function reportStudentUsage($term) {
 	$sql = <<<'SQL'
-SELECT stu.idno, stu.realname, stu.role, stu.total_hours
-	FROM student_total_usage stu
+WITH filt_sections AS (
+	SELECT * FROM sections WHERE sections.term = ?
+)
+SELECT users.idno,
+	users.realname,
+	users.role,
+	sum(usage.markout - usage.markin) AS total_hours
+	FROM usage
+	JOIN filt_sections ON usage.secid = filt_sections.secid
+	JOIN users         ON usage.student = users.idno
+	WHERE usage.markout IS NOT NULL
+	GROUP BY usage.student, users.realname, users.role, users.idno
+	ORDER BY users.role, users.realname
 SQL;
 
-	return safeDBQuery($sql, array());
+	return safeDBQuery($sql, array($term));
 }
 
 
+/*
+ * Get the limit data.
+ */
 function getLimits($dept) {
 	$query = <<<SQL
 SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?
@@ -747,6 +816,9 @@ SQL;
 	return safeDBQuery($query, array($dept));
 }
 
+/*
+ * Get the section visit report.
+ */
 function reportSectionVisits($sect) {
 	$sql = <<<SQL
 SELECT users.realname, users.email, COUNT(usage.markin)
@@ -760,6 +832,9 @@ SQL;
 	return safeDBQuery($sql, array($sect));
 }
 
+/*
+ * Get the section summary report.
+ */
 function reportSectionSummary($sect) {
 	$sql = <<<SQL
 SELECT COUNT(DISTINCT usage.student) as dist_visits, COUNT(usage.student) as all_visits,
@@ -773,7 +848,7 @@ SQL;
 		return -1;
 	}
 
-	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours']).format("%d days, %h hours and %i minutes");
+	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])::format("%d days, %h hours and %i minutes");
 
 	return $dat;
 }

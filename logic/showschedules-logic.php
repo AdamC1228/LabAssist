@@ -2,6 +2,9 @@
 require_once "logic/database/dbCon.php";
 require_once "logic/common/commonFunctions.php";
 
+/*
+ * Generate the schedule table.
+ */
 function generateScheduleTable($dept) {
 	$TIME_SLICE = 30;
 
@@ -97,10 +100,16 @@ HTML;
 	return $ret;
 }
 
+/*
+ * Get the lab hour limits.
+ */
 function getLimits($dept) {
 	return databaseQuery("SELECT deptlabs.labstart, deptlabs.labend FROM deptlabs WHERE deptlabs.dept = ?", array($dept));
 }
 
+/*
+ * Convert record data into a better form.
+ */
 function mapRecords($data) {
 	$ret = array();
 
@@ -130,6 +139,9 @@ function mapRecords($data) {
 	return $ret;
 }
 
+/*
+ * Advance a time half-hour.
+ */
 function advanceHalfHour($tme) {
 	$ret = $tme;
 
@@ -143,6 +155,9 @@ function advanceHalfHour($tme) {
 	return $ret;
 }
 
+/*
+ * Advance a time an hour.
+ */
 function advanceHour($tme) {
 	$ret = $tme;
 
@@ -156,6 +171,9 @@ function advanceHour($tme) {
 	return $ret;
 }
 
+/*
+ * Retrieve availability records.
+ */
 function retrieveAvailability($dept) {
 	$sql=<<<'SQL'
 SELECT  users.realname as rname, users.idno, availability.starttime as starttime, availability.endtime as endtime
@@ -187,6 +205,9 @@ SQL;
 	return $result;
 }
 
+/*
+ * Retrieve scheduling info.
+ */
 function retrieveSchedules($dept) {
 	$sql = <<<'SQL'
 SELECT  users.realname as rname, users.idno, schedules.starttime as starttime, schedules.endtime as endtime
@@ -218,6 +239,9 @@ SQL;
 	return $result;
 }
 
+/*
+ * Register a schedule.
+ */
 function registerSchedule($val, $dept) {
 	list($idno, $hour, $min, $day) = sscanf($val, "%s %d:%d %s");
 
@@ -264,6 +288,9 @@ SQL;
 	return true;
 }
 
+/*
+ * Unregister a schedule.
+ */
 function unregisterSchedule($val, $dept) {
 	$idno = "";
 	$hour = 0;

@@ -4,6 +4,9 @@ require_once "logic/database/dbCon.php";
 
 
 
+/*
+ * Restore form values.
+ */
 function restoreForm()
 {
 	if(isSet($_POST["fname"]) && $_POST["fname"]!=$_SESSION["userAttr"]['fullName'])
@@ -18,6 +21,9 @@ function restoreForm()
 
 
 
+/*
+ * Generate registration forms.
+ */
 function generateRegistration()
 {
 	#User came from userLogin
@@ -48,6 +54,9 @@ eof;
 
 }
 
+/*
+ * Attempt to perform registration.
+ */
 function attemptRegistration()
 {
 	if (empty($_POST['fname']) || empty($_POST['email']))
@@ -73,6 +82,9 @@ function attemptRegistration()
 	return $error;
 }
 
+/*
+ * Insert registration info.
+ */
 function insertRegistration()
 {
 	$status = false;

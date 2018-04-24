@@ -144,6 +144,9 @@ eof;
 }
 
 
+/*
+ * Generate the information for a section.
+ */
 function formattedInformation($uniqueID)
 {
 	$dataArray=getDetailedInfo($uniqueID);
@@ -181,6 +184,9 @@ function formattedInformation($uniqueID)
 	return $html;
 }
 
+/*
+ * Get the list of departments.
+ */
 function getDepartmentList()
 {
 	$html = "";
@@ -219,6 +225,9 @@ function getDepartmentList()
 	return $html;
 }
 
+/*
+ * Get the list of terms.
+ */
 function getTermList($prev)
 {
 	$html = "";
@@ -255,6 +264,9 @@ function getTermList($prev)
 	return $html;
 }
 
+/*
+ * Get the list of professors.
+ */
 function getProfessorList($prev)
 {
 	$html = "";
@@ -296,6 +308,9 @@ function getProfessorList($prev)
 	return $html;
 }
 
+/*
+ * Generate the section table.
+ */
 function generateTable($dataset)
 {
 
@@ -351,6 +366,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Print sections associated with a particular class.
+ */
 function printSectionsAssociated($uniqueID)
 {
 	return generateTable(databaseQuery("select secid,sections.code,term,realname,email from sections,users where (sections.cid=? and users.idno=sections.teacher) order by term DESC,code",array($uniqueID)));
@@ -366,6 +384,9 @@ function printSectionsAssociated($uniqueID)
  *
  */
 
+/*
+ * Get pagination parameters.
+ */
 function getPaginated()
 {
 	if ( isset($_SESSION['numPerPage']) && !empty($_SESSION['numPerPage']))
@@ -392,6 +413,9 @@ function getPaginated()
 }
 
 
+/*
+ * Create a paginated table.
+ */
 function generatePaginatedTable()
 {
 	$paginationValues=getPaginated();
@@ -457,6 +481,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Generate the search SQL.
+ */
 function generateSearchSql()
 {
 	$options=array(array('Department','dept'),array('Class name','name'));
@@ -487,6 +514,9 @@ function generateSearchSql()
 
 }
 
+/*
+ * Generate a paginated table of search results.
+ */
 function generatePaginatedTableSearch()
 {
 
@@ -561,6 +591,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Print the bottom pagination values.
+ */
 function printBottomPagination($paginationValues)
 {    
 	$count = getNumUsers();
@@ -613,6 +646,9 @@ function printBottomPagination($paginationValues)
  */
 
 
+/*
+ * Get the access levels for a role.
+ */
 function getaccessLevelSelect($currentRole)
 {
 	$html = "";
@@ -656,6 +692,9 @@ function getaccessLevelSelect($currentRole)
 }
 
 
+/*
+ * Filter the role list.
+ */
 function filterRoleList($dataSet)
 {
 	$currentRole = getUserLevelAccess($_SESSION['username']);
@@ -678,6 +717,9 @@ function filterRoleList($dataSet)
 }
 
 
+/*
+ * Get detailed info on a section.
+ */
 function getDetailedInfo($uniqueID)
 {
 	$sql="select sections.secid,sections.code,sections.cid,sections.term,sections.teacher from sections where secid=?";
@@ -686,26 +728,41 @@ function getDetailedInfo($uniqueID)
 	return databaseQuery($sql,array($uniqueID));
 }
 
+/*
+ * Execute a query.
+ */
 function getQuery($sql, $array)
 {
 	return databaseQuery($sql,$array);
 }
 
+/*
+ * Get the class dataset.
+ */
 function getDataSet($array)
 {
 	return databaseQuery("SELECT classes.cid, classes.dept, classes.name, count(sections.secid) as sectioncount FROM classes LEFT JOIN sections ON classes.cid = sections.cid where classes.dept=? group BY classes.cid order by classes.dept OFFSET ? LIMIT ?",$array);
 }
 
+/*
+ * Get the searched list.
+ */
 function getSearchList($sql,$array)
 {
 	return databaseQuery($sql,$array);
 }
 
+/*
+ * Get the number of classes.
+ */
 function getNumUsers()
 {
 	return databaseExecute("select count(cid) as count from classes");
 }
 
+/*
+ * Submit edits to the database.
+ */
 function databaseSubmitEdits($array)
 {
 	$sql="update sections set term=?, code=?, teacher=? where secid=?";

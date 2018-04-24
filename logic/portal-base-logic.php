@@ -5,6 +5,9 @@ require_once "logic/database/dbCon.php";
 
 
 
+/*
+ * Get user information.
+ */
 function getUserInfo()
 {
 	$output = "";

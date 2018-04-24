@@ -4,6 +4,9 @@ require_once "logic/common/commonFunctions.php";
 
 
 
+/*
+ * Display all of the data.
+ */
 function displayAll()
 {
 	$html = "<script type='text/javascript' src='scripts/searchbar.js'></script>";
@@ -18,6 +21,9 @@ function displayAll()
 	return $html;
 }
 
+/*
+ * Create the search bar.
+ */
 function createSearchBar()
 {
 
@@ -80,6 +86,9 @@ function createSearchBar()
 	return $html;
 }
 
+/*
+ * Display search results.
+ */
 function searchResults()
 {
 	$html = "<script type='text/javascript' src='scripts/manageusers.js'></script>";
@@ -94,11 +103,17 @@ function searchResults()
 	return $html;
 }
 
+/*
+ * Edit a user.
+ */
 function editUser($userID)
 {
 	return genEditForm($userID);
 }
 
+/*
+ * Generate 'edit-user' form.
+ */
 function genEditForm($userID)
 {
 	$html=<<<eof
@@ -117,6 +132,9 @@ eof;
 }
 
 
+/*
+ * Display formatted user info.
+ */
 function formattedUserInformation($userID)
 {
 	$dataArray=getDetailedUserInfo($userID);
@@ -196,6 +214,9 @@ function formattedUserInformation($userID)
 }
 
 
+/*
+ * Generate the table.
+ */
 function generateTable()
 {
 	$dataset=getUserList();
@@ -268,6 +289,9 @@ eof;
  *
  */
 
+/*
+ * Get pagination parameters.
+ */
 function getPaginated()
 {
 	if ( isset($_SESSION['numPerPage']) && !empty($_SESSION['numPerPage']))
@@ -294,6 +318,9 @@ function getPaginated()
 }
 
 
+/*
+ * Generate the paginated table.
+ */
 function generatePaginatedTable()
 {
 
@@ -359,6 +386,9 @@ eof;
 	return $html;
 }
 
+/*
+ * Generate the search SQL.
+ */
 function generateSearchSql()
 {
 	$options=array(array('ID#','idno'),array('Department','deptid'),array('Username','username'),array('Full Name','realname'),array('E-mail','email'),array('Role','role'));
@@ -389,6 +419,9 @@ function generateSearchSql()
 
 }
 
+/*
+ * Generate a paginated search table.
+ */
 function generatePaginatedTableSearch()
 {
 
@@ -467,6 +500,9 @@ eof;
 	return $html;
 }
 
+/*
+ * PRint bottom pagination values.
+ */
 function printBottomPagination($paginationValues)
 {    
 	$count = getNumUsers();
@@ -519,6 +555,9 @@ function printBottomPagination($paginationValues)
  */
 
 
+/*
+ * Get user access level.
+ */
 function getaccessLevelSelect($currentRole)
 {
 	$html = "";
@@ -562,6 +601,9 @@ function getaccessLevelSelect($currentRole)
 }
 
 
+/*
+ * Get user department list.
+ */
 function getDepartmentList($currentDepartment)
 {
 	$html = "";
@@ -595,6 +637,9 @@ function getDepartmentList($currentDepartment)
 }
 
 
+/*
+ * Filter the role list.
+ */
 function filterRoleList($dataSet)
 {
 	$currentRole = getUserLevelAccess($_SESSION['username']);
@@ -617,6 +662,9 @@ function filterRoleList($dataSet)
 }
 
 
+/*
+ * Get detailed user information.
+ */
 function getDetailedUserInfo($userID)
 {
 	$sql="select users.idno,deptid,username,realname,email,role,encode(avatar,'base64') as avatar from users left join user_avatars on user_avatars.idno=users.idno where users.idno=?";
@@ -627,21 +675,33 @@ function getDetailedUserInfo($userID)
 }
 
 
+/*
+ * Get the list of users.
+ */
 function getUserList($array)
 {
 	return databaseQuery("select * from users order by role desc, username OFFSET ? LIMIT ?",$array);
 }
 
+/*
+ * Get the search list.
+ */
 function getSearchList($sql,$array)
 {
 	return databaseQuery($sql,$array);
 }
 
+/*
+ * Get the number of users.
+ */
 function getNumUsers()
 {
 	return databaseExecute("select count(idno) as count from users");
 }
 
+/*
+ * Submit edits to the database.
+ */
 function databaseSubmitEdits($idno,$role,$department)
 {
 	$sql="update users set role=?, deptid=? where idno=?";

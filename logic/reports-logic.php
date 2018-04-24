@@ -615,7 +615,7 @@ function reportHourlyUsage($term) {
 
 	$query = <<<'SQL'
 WITH dept_sections AS (
-	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?) as ts
+	SELECT * FROM (SELECT * FROM sections WHERE sections.term = ?) AS ts
 		JOIN classes ON ts.cid = classes.cid
 		WHERE classes.dept = ? AND ts.code <> 'TUT' -- Filter out tutoring sections
 )

@@ -3,3 +3,4 @@ tags
 seniordesign/
 .directory
 *.kate-swp
+.Trash*

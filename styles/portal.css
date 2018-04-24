@@ -243,15 +243,21 @@
      width:inherit;
      text-align:left;
      margin-bottom:0px;
+     height:-moz-min-content;
 }
  .navigation ul li:hover ul {
      display: block;
+     min-height:-moz-min-content;
 }
  .navigation ul li ul li {
      display: block;
      height:auto;
      margin:0px;
+     height:-moz-min-content;
 }
+ .collapsible-content {
+     height:-moz-min-content;
+ }
  .nav-menu-item {
      text-decoration:none;
      font-size: 16px;

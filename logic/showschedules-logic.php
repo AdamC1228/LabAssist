@@ -176,13 +176,16 @@ function advanceHour($tme) {
  */
 function retrieveAvailability($dept) {
 	$sql=<<<'SQL'
-SELECT  users.realname as rname, users.idno, availability.starttime as starttime, availability.endtime as endtime
+WITH term_availabilty AS (
+	SELECT * FROM availability WHERE availability.term = (SELECT code FROM terms WHERE terms.activeterm)
+)
+SELECT  users.realname as rname, users.idno, term_availability.starttime as starttime, term_availability.endtime as endtime
 	FROM users 
-	JOIN availability ON availability.student = users.idno
-	JOIN deptlabs     ON availability.dept    = deptlabs.dept
-	WHERE availability.dept = ?
-	AND availability.starttime::time >= deptlabs.labstart
-	AND availability.endtime::time   <= deptlabs.labend
+	JOIN term_availability ON term_availability.student = users.idno
+	JOIN deptlabs     ON term_availability.dept    = deptlabs.dept
+	WHERE term_availability.dept = ?
+	AND term_availability.starttime::time >= deptlabs.labstart
+	AND term_availability.endtime::time   <= deptlabs.labend
 SQL;
 
 	$result = databaseQuery($sql, array($dept));
@@ -210,13 +213,16 @@ SQL;
  */
 function retrieveSchedules($dept) {
 	$sql = <<<'SQL'
-SELECT  users.realname as rname, users.idno, schedules.starttime as starttime, schedules.endtime as endtime
+WITH term_schedules AS (
+	SELECT * FROM schedules WHERE schedules.term = (SELECT code FROM terms WHERE terms.activeterm)
+)
+SELECT  users.realname as rname, users.idno, term_schedules.starttime as starttime, term_schedules.endtime as endtime
 	FROM users 
-	JOIN schedules ON schedules.student = users.idno
-	JOIN deptlabs  ON schedules.dept    = deptlabs.dept
-	WHERE schedules.dept = ?
-	AND schedules.starttime::time >= deptlabs.labstart
-	AND schedules.endtime::time   <= deptlabs.labend
+	JOIN term_schedules ON term_schedules.student = users.idno
+	JOIN deptlabs  ON term_schedules.dept    = deptlabs.dept
+	WHERE term_schedules.dept = ?
+	AND term_schedules.starttime::time >= deptlabs.labstart
+	AND term_schedules.endtime::time   <= deptlabs.labend
 SQL;
 
 	$result = databaseQuery($sql, array($dept));
@@ -246,7 +252,7 @@ function registerSchedule($val, $dept) {
 	list($idno, $hour, $min, $day) = sscanf($val, "%s %d:%d %s");
 
 	$sql = <<<'SQL'
-INSERT INTO schedules(student, dept, starttime, endtime) values (?, ?, ?, ?)
+INSERT INTO schedules(student, dept, starttime, endtime, term) values (?, ?, ?, ? (SELECT code FROM terms WHERE terms.activeterm))
 SQL;
 
 	$nhour = $hour;
@@ -304,7 +310,7 @@ function unregisterSchedule($val, $dept) {
 	}
 
 	$sql = <<<'SQL'
-DELETE FROM schedules where student = ? AND dept = ? AND starttime = ? AND endtime = ?
+DELETE FROM schedules where student = ? AND dept = ? AND starttime = ? AND endtime = ? AND term = (SELECT code FROM terms WHERE terms.activeterm)
 SQL;
 
 	$nhour = $hour;

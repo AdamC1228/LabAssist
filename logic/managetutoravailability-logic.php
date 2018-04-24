@@ -216,13 +216,16 @@ function advanceHour($tme) {
  */
 function retrieveSchedules($dept) {
 	$sql=<<<'SQL'
-SELECT  filt_users.realname as rname, availability.starttime as starttime, availability.endtime as endtime
+WITH term_availability AS (
+	SELECT * FROM availability WHERE availability.term = (SELECT code FROM terms WHERE terms.activeterm)
+)
+SELECT  filt_users.realname as rname, term_availability.starttime as starttime, term_availability.endtime as endtime
 	FROM (SELECT * FROM users WHERE users.idno = ?) as filt_users
-	JOIN availability ON availability.student = filt_users.idno
-	JOIN deptlabs     ON availability.dept    = deptlabs.dept
-	WHERE availability.dept = ?
-	AND availability.starttime::time >= deptlabs.labstart
-	AND availability.endtime::time   <= deptlabs.labend
+	JOIN term_availability ON term_availability.student = filt_users.idno
+	JOIN deptlabs     ON term_availability.dept    = deptlabs.dept
+	WHERE term_availability.dept = ?
+	AND term_availability.starttime::time >= deptlabs.labstart
+	AND term_availability.endtime::time   <= deptlabs.labend
 SQL;
 
 	$result = databaseQuery($sql, array($_SESSION['useridno'], $dept));
@@ -252,7 +255,7 @@ function registerClaim($val, $depart) {
 	list($hour, $min, $day) = sscanf($val, "%d:%d %s");
 
 	$sql = <<<'SQL'
-INSERT INTO availability(student, dept, starttime, endtime) values (?, ?, ?, ?)
+INSERT INTO availability(student, dept, starttime, endtime, term) values (?, ?, ?, ?, (SELECT code FROM terms WHERE terms.activeterm))
 SQL;
 
 	$idno = $_SESSION['useridno'];
@@ -301,7 +304,7 @@ function registerUnclaim($val, $depart) {
 	list($hour, $min, $day) = sscanf($val, "%d:%d %s");
 
 	$sql = <<<'SQL'
-DELETE FROM availability where student = ? AND dept = ? AND starttime = ? AND endtime = ?
+DELETE FROM availability where student = ? AND dept = ? AND starttime = ? AND endtime = ? AND term = (SELECT code FROM terms WHERE terms.activeterm)
 SQL;
 
 	$idno = $_SESSION['useridno'];

@@ -13,7 +13,7 @@ require_once "logic/common/commonFunctions.php";
  
 function genLabTimeForm()
 {
-    $startTime=-1;
+    $startTime=strptime("08:00:00", "%T");
     $endTime=-1;
     if(isset($_POST['startTime']) && !empty($_POST['startTime']))
     {
@@ -32,16 +32,16 @@ function genLabTimeForm()
     <div class="flex flexGrow group">
         <form class="flex flexColumn flexGrow">
             <div class="flex flexRow alignCenterFlex flexGrow">
-                <div class="flex"
+                <div class="flex">
                     Yolo
                 </div>
-                <div class="flex"
+                <div class="flex">
                     {$startBox}
                 </div>
-                <div class="flex"
+                <div class="flex">
                     Swag
                 </div>
-                <div class="flex"
+                <div class="flex">
                     {$endBox}
                 </div>
             </div> <!-- formEntryBlock-->
@@ -84,27 +84,33 @@ function getStartBox($currTime) {
 
 	$html = "";
 
-	$html .= "<select onchange=submit name='startTime'>\n";
+	$html .= "<select onchange='this.form.submit()' name='startTime'>\n";
 
 	$shouldContinue = true;
 
 	$val = $initTime;
+
+	$i = 0;
 
 	while($shouldContinue) {
 		$oval = $val;
 
 		$val = advanceHalfHour($val);
 
+		$i += 1;
+
+		if($i > 20) break;
+
 		/*
 		 * When our advance has hit the next value, don't continue.
 		 */
-		if($val === $latestTime) {
+		if($val == $latestTime) {
 			$shouldContinue = false;
 		}
 		
-		$valStr = "{$oval['tm_hour']}:{$oval['tm_min']}";
+		$valStr = sprintf("%d:%'02d", $oval['tm_hour'], $oval['tm_min']);
 
-		if($oval === $currTime) {
+		if($oval == $currTime) {
 			$html .= "\t<option value='{$valStr}' selected>{$valStr}</option>\n";
 		} else {
 			$html .= "\t<option value='{$valStr}'>{$valStr}</option>\n";
@@ -124,10 +130,12 @@ function getStartBox($currTime) {
 function getEndBox($startTime, $currTime) {
 	$initTime = advanceHalfHour($startTime);
 
+	$nTime = $currTime;
+
 	/*
 	 * Set default value if not specified.
 	 */
-	if($currTime === -1) $currTime = $initTime;
+	if($currTime === -1) $nTime = $initTime;
 
 	/*
 	 * Latest ending time, 7:30 at night.
@@ -136,27 +144,33 @@ function getEndBox($startTime, $currTime) {
 
 	$html = "";
 
-	$html .= "<select onchange=submit name='endTime'>\n";
+	$html .= "<select name='endTime'>\n";
 
 	$shouldContinue = true;
 
 	$val = $initTime;
+
+	$i = 0;
 
 	while($shouldContinue) {
 		$oval = $val;
 
 		$val = advanceHalfHour($val);
 
+		$i += 1;
+
+		if($i > 20) break;
+
 		/*
 		 * When our advance has hit the next value, don't continue.
 		 */
-		if($val === $latestTime) {
+		if($val == $latestTime) {
 			$shouldContinue = false;
 		}
 		
-		$valStr = "{$oval['tm_hour']}:{$oval['tm_min']}";
+		$valStr = sprintf("%d:%'02d", $oval['tm_hour'], $oval['tm_min']);
 
-		if($oval === $currTime) {
+		if($oval == $nTime) {
 			$html .= "\t<option value='{$valStr}' selected>{$valStr}</option>\n";
 		} else {
 			$html .= "\t<option value='{$valStr}'>{$valStr}</option>\n";
@@ -184,11 +198,11 @@ SQL;
 function advanceHalfHour($tme) {
 	$ret = $tme;
 
-	if($tme['tm_min'] === 29) {
+	if($tme['tm_min'] === 30) {
 		$ret['tm_hour'] += 1;
 		$ret['tm_min']   = 0;
 	} else {
-		$ret['tm_min'] = 29;
+		$ret['tm_min'] = 30;
 	}
 
 	return $ret;

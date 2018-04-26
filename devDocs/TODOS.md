@@ -35,3 +35,10 @@ the code base
 	but it could be done. Consider switching the project to using a
 	templating library like smarty instead of the ad-hoc style we are doing
 	now.
+
+* Mail templating
+	Perhaps the mail templates should be stored in the database so that they
+	can be more easily maintained?
+
+	At the the very least, the 'SCHEDULE_CHANGED' message template could do
+	with some more details about what changed.

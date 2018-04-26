@@ -14,44 +14,53 @@ require_once "logic/common/commonFunctions.php";
 function genLabTimeForm()
 {
     $startTime=strptime("08:00:00", "%T");
-    $endTime=-1;
+    $endTime=strptime("16:00:00", "%T");
     if(isset($_POST['startTime']) && !empty($_POST['startTime']))
     {
-        $startTime=$_POST['startTime'];
+        $startTime=strptime($_POST['startTime'], "%R");
     }
     
-    if(isset($_POST['startTime']) && !empty($_POST['startTime']))
+    if(isset($_POST['endTime']) && !empty($_POST['endTime']))
     {
-        $endTime=$_POST['startTime'];
+        $endTime=strptime($_POST['endTime'], "%R");
     } 
+ 
  
     $startBox=getStartBox($startTime);
     $endBox = getEndBox($startTime,$endTime);
 
+//     $post = arrayPrint($_POST);
+//     $post .= "<br>" . arrayPrint($startTime);
+//     $post .= "<br>" . arrayPrint($endTime);
+    
     $html=<<<eof
+    <h2> Set Lab Times</h2>
     <div class="flex flexGrow group">
-        <form class="flex flexColumn flexGrow">
-            <div class="flex flexRow alignCenterFlex flexGrow">
-                <div class="flex">
-                    Yolo
+        <form class="flex flexColumn flexGrow" action="managelabhours.php" method="post">
+            <div class="flex flexColumn alignCenterFlex flexGrow">
+                <div class=' flex flexRow marginTop10 marginBottom20'>
+                    <div class="flex flexAlignCenter marginRight20" style="width:100px;">
+                        Start Time
+                    </div>
+                    <div class="flex flexAlignCenter">
+                        {$startBox}
+                    </div>
                 </div>
-                <div class="flex">
-                    {$startBox}
-                </div>
-                <div class="flex">
-                    Swag
-                </div>
-                <div class="flex">
-                    {$endBox}
+                <div class='flex flexRow marginBottom20'>
+                    <div class="flex flexAlignCenter marginRight20" style= "width:100px;">
+                        End Time
+                    </div>
+                    <div class="flex flexAlignCenter">
+                        {$endBox}
+                    </div>
                 </div>
             </div> <!-- formEntryBlock-->
-            <div class="flex flexRow alignCenterFlex centerFlex flexGrow">
-                <input type=submit value="Cancel" name="submit" class="btn">
-                <input type=submit value="Submit" name="submit" class="btn">
+            <div class="flex flexRow marginBottom10 alignCenterFlex centerFlex flexGrow">
+                <input type=submit value="Cancel" name="formCancel" class="btn marginRight10">
+                <input type=submit value="Submit" name="formSubmit" class="btn marginLeft10">
             </div> <!-- buttonBlock-->
         </form> <!-- formBlock -->
-    </div> <!-- Container End -->
-    
+    </div> <!-- Container End -->    
 eof;
     return $html;
 }
@@ -80,26 +89,20 @@ function getStartBox($currTime) {
 	 * Half an hour before the latest closing time, so that we can guarantee 
 	 * the lab is open some time.
 	 */
-	$latestTime = strptime("19:30:00", "%T");
+	$latestTime = strptime("20:00:00", "%T");
 
 	$html = "";
 
-	$html .= "<select onchange='this.form.submit()' name='startTime'>\n";
+	$html .= "<select onchange=\"this.form.submit()\" name='startTime' class='inputSelectSmall'>\n";
 
 	$shouldContinue = true;
 
 	$val = $initTime;
 
-	$i = 0;
-
 	while($shouldContinue) {
 		$oval = $val;
 
 		$val = advanceHalfHour($val);
-
-		$i += 1;
-
-		if($i > 20) break;
 
 		/*
 		 * When our advance has hit the next value, don't continue.
@@ -109,7 +112,7 @@ function getStartBox($currTime) {
 		}
 		
 		$valStr = sprintf("%d:%'02d", $oval['tm_hour'], $oval['tm_min']);
-
+		
 		if($oval == $currTime) {
 			$html .= "\t<option value='{$valStr}' selected>{$valStr}</option>\n";
 		} else {
@@ -129,7 +132,7 @@ function getStartBox($currTime) {
  */
 function getEndBox($startTime, $currTime) {
 	$initTime = advanceHalfHour($startTime);
-
+	
 	$nTime = $currTime;
 
 	/*
@@ -140,26 +143,20 @@ function getEndBox($startTime, $currTime) {
 	/*
 	 * Latest ending time, 7:30 at night.
 	 */
-	$latestTime = strptime("19:30:00", "%T");
+	$latestTime = strptime("20:30:00", "%T");
 
 	$html = "";
 
-	$html .= "<select name='endTime'>\n";
+	$html .= "<select name='endTime' class='inputSelectSmall'>\n";
 
 	$shouldContinue = true;
 
 	$val = $initTime;
 
-	$i = 0;
-
 	while($shouldContinue) {
 		$oval = $val;
 
 		$val = advanceHalfHour($val);
-
-		$i += 1;
-
-		if($i > 20) break;
 
 		/*
 		 * When our advance has hit the next value, don't continue.
@@ -170,7 +167,8 @@ function getEndBox($startTime, $currTime) {
 		
 		$valStr = sprintf("%d:%'02d", $oval['tm_hour'], $oval['tm_min']);
 
-		if($oval == $nTime) {
+		
+		if($valStr == $nTime) {
 			$html .= "\t<option value='{$valStr}' selected>{$valStr}</option>\n";
 		} else {
 			$html .= "\t<option value='{$valStr}'>{$valStr}</option>\n";
@@ -198,7 +196,9 @@ SQL;
 function advanceHalfHour($tme) {
 	$ret = $tme;
 
-	if($tme['tm_min'] === 30) {
+
+	
+	if($tme['tm_min'] == 30) {
 		$ret['tm_hour'] += 1;
 		$ret['tm_min']   = 0;
 	} else {

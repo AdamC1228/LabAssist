@@ -399,4 +399,56 @@ function wknumtoname($num) {
 		return 'Unknown weekday';
 	}
 }
+
+
+
+function createCSV($headerArray, $dataArray, $headerPos)
+{
+    $filename = '/tmp/report' . rand() . '.csv';
+    $new_csv = fopen($filename, 'w');
+
+    
+    
+    if($headerPos==1)                   // Top heaer
+    {
+        fputcsv($new_csv,$headerArray);
+        
+        foreach($dataArray as $row)
+        {
+            fputcsv($new_csv,$row);
+        }
+    }
+    else if ($headerPos==2)             // Left Side Header is not implemented.
+    {
+        foreach($dataArray as $data)
+        {
+            fputcsv($new_csv,$data);
+        }
+    }
+    
+    
+    fclose($new_csv);
+
+    
+    return $filename;
+}
+
+function postNotification($recipient, $type, $vars) {
+	$vartxt = "";
+
+	foreach($vars as $key => $val) {
+		$vartxt .= $key . ": " . $val . " ;";
+	}
+
+	$vartxt = rtrim($vartxt, "; ");
+
+	$query=<<<SQL
+INSERT INTO pendingmsgs(recipient, mstype, body) VALUES (?, ?, ?)
+SQL;
+
+	$res = safeDBQuery($query, array($recipient, $type, $vartxt));
+
+	if($res === -1) return -1;
+	else            return 1;
+}
 ?>

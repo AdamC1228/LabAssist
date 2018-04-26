@@ -108,7 +108,8 @@ CREATE TABLE public.availability (
     student public.userid NOT NULL,
     starttime timestamp without time zone NOT NULL,
     endtime timestamp without time zone NOT NULL,
-    dept character varying(6) NOT NULL
+    dept character varying(6) NOT NULL,
+    term public.termcode NOT NULL
 );
 
 
@@ -371,7 +372,8 @@ CREATE TABLE public.schedules (
     student public.userid NOT NULL,
     starttime timestamp without time zone NOT NULL,
     endtime timestamp without time zone NOT NULL,
-    dept public.deptid NOT NULL
+    dept public.deptid NOT NULL,
+    term public.termcode NOT NULL
 );
 
 
@@ -468,7 +470,8 @@ CREATE TABLE public.usage (
     student public.userid NOT NULL,
     secid integer NOT NULL,
     markin timestamp without time zone NOT NULL,
-    markout timestamp without time zone
+    markout timestamp without time zone,
+    CONSTRAINT chk_markin_before_markout CHECK ((markin < markout))
 );
 
 
@@ -665,25 +668,26 @@ ALTER TABLE ONLY public.users
 --
 
 CREATE RULE "_RETURN" AS
-    ON SELECT TO public.forum_overview DO INSTEAD  WITH filt_sections AS (
-         SELECT sections.secid,
-            sections.code,
-            sections.cid,
-            sections.term,
-            sections.teacher
-           FROM public.sections
-          WHERE ((sections.term)::bpchar = (( SELECT terms.code
+    ON SELECT TO public.forum_overview DO INSTEAD  WITH filt_questions AS (
+         SELECT questions.quid,
+            questions.subject,
+            questions.title,
+            questions.asker,
+            questions.status,
+            questions.added,
+            questions.term
+           FROM public.questions
+          WHERE ((questions.term)::bpchar = (( SELECT terms.code
                    FROM public.terms
                   WHERE (terms.activeterm = true)))::bpchar)
         )
  SELECT departments.deptid,
     departments.deptname,
-    count(questions.quid) AS question_count,
-    count(questions.quid) FILTER (WHERE (questions.status = 'awaiting_response'::public.question_status)) AS unanswered_count
-   FROM (((public.departments
+    count(filt_questions.quid) AS question_count,
+    count(filt_questions.quid) FILTER (WHERE (filt_questions.status = 'awaiting_response'::public.question_status)) AS unanswered_count
+   FROM ((public.departments
      LEFT JOIN public.classes ON (((departments.deptid)::text = (classes.dept)::text)))
-     LEFT JOIN filt_sections ON ((classes.cid = filt_sections.cid)))
-     LEFT JOIN public.questions ON ((filt_sections.secid = questions.subject)))
+     LEFT JOIN filt_questions ON ((classes.cid = filt_questions.subject)))
   GROUP BY departments.deptid
   ORDER BY departments.deptname;
 

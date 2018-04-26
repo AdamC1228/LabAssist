@@ -153,9 +153,11 @@ function reportHeaderSectionSelect($prevVal,$term)
 {    
 	$html = "";
 
-	//     $result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and teacher=?',array($_SESSION['username']));
-
-	$result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and teacher=? and term=?',array('800241353',$term));
+	if(isUserRoleGreaterThanOrEqualTo($_SESSION['useridno'], 'admin') === 1) {
+		$result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and dept=? and term=?',array(getUsersDepartment($_SESSION['username']),$term));
+	} else {
+		$result=safeDBQuery('select sections.secid,sections.code,classes.name from sections,classes where sections.cid=classes.cid and teacher=?',array($_SESSION['username']));
+	}
 
 	if($result==-1)
 		return "No sections taught for selected term";
@@ -286,6 +288,33 @@ function printReport($reportID)
  *
  */
 
+function generateDownloadLink($header, $data , $pos)
+{
+
+    $filename=createCSV($header,$data ,$pos);
+
+    $html=<<<eof
+    
+    <div class='flex flexGrow flexAlignCenter center Flex marginTop30 marginBottom80 centerAlignFlex'>
+        <form action='reportdownload.php' action='GET' class='flex centerFlex flexGrow flexAlignCenter centerAlignFlex'>
+
+                <input type='hidden' name='file' value='{$filename}'>
+                <input type='submit' class='btn' name='formSubmit' value='Download raw data'>
+
+                
+        </form>
+    </div>
+    
+eof;
+
+
+    return $html;
+}
+ 
+ 
+ 
+ 
+ 
 
 /*
  * Create the hourly lab usage report.
@@ -321,6 +350,8 @@ function labUsageReportHourly()
 			$html.= "<h2>Friday</h2>";
 			$html.= "<div class='custLine' id='Fri'></div>";
 			$html.= lineChartWithArea($data[5],"#Fri");
+			
+            $html.= generateDownloadLink(array_keys($data[1]),array_values($data),1);
 		}
 		else
 		{
@@ -348,6 +379,7 @@ function labUsageReportDaily()
 			$html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
 			$html.= "<div class='custBar' id='week'></div>";
 			$html.= barChart($data,"#week");
+			$html.= generateDownloadLink(array_keys($data[1]),array_values($data),1);
 		}
 		else
 		{
@@ -362,14 +394,16 @@ function labUsageReportDaily()
  */
 function studentUsageReport()
 {
-        $html = "";
-        if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
-        {
-                $term = $_GET['selectedTerm'];
-                $html.= "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
-                $html.= studentUsageReportView(reportStudentUsage($term));
-        }
-        return $html;
+    $html = "";
+    if(isSet($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
+    {
+            $term = $_GET['selectedTerm'];
+            $data = reportStudentUsage($term);
+            $html.= "<link rel='stylesheet' type='text/css' href='styles/tables.css'>";
+            $html.= studentUsageReportView($data);
+            $html.= generateDownloadLink(array_keys($data[0]),array_values($data),1);
+    }
+    return $html;
 
 }
 
@@ -389,6 +423,7 @@ function sectionUsageReport()
             if($data !== -1 )
             {
                 $html.= sectionUsageReportView($data);
+                $html.= generateDownloadLink(array_keys($data[0]),array_values($data),1);
             }
 		}
 	}
@@ -872,7 +907,24 @@ SQL;
 
 	$dat = $dat[0];
 
-	$dat['total_hours'] = DateInterval::createFromDateString($dat['total_hours'])->format("%d days, %H:%I");
+// 	myDebug($dat);
+
+	$tstamp = explode(".", $dat['total_hours'])[0];
+
+	$ar = strptime($tstamp, "%T");
+
+	$days = 0;
+	while($ar['tm_hour'] > 24) {
+		$days += 1;
+
+		$ar['tm_hour'] -= 24;
+	}
+
+	if($days > 0) {
+		$dat['total_hours'] = sprintf("%d days, %d:%'02d", $days, $ar['tm_hour'], $ar['tm_min']);
+	} else {
+		$dat['total_hours'] = sprintf("%d:%'02d", $ar['tm_hour'], $ar['tm_min']);
+	}
 
 	return $dat;
 }

@@ -383,7 +383,9 @@ function filterClasses()
 	//Filter out anything not accessable b y students
 	$curRole=getUserLevelAccessIdno($_SESSION['sidno']);
 
-	if($curRole[0]["role"]=='student')
+    var_dump($curRole);
+	
+	if($curRole=='student')
 	{
 		//Loof for anything that contains the word tutor, and mark the in a new array
 		if (($key = preg_grep("/(tutor)/", array_map('strtolower',array_column($result,'name')))) !== false) 

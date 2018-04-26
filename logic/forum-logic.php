@@ -789,7 +789,15 @@ SQL;
 
 	if(is_array($result))
 	{
-		return 1;
+		$res = safeDBQuery("SELECT title, asker FROM questions WHERE quid = ?", $quid);
+
+		return postNotification($res[0]['asker'], 'PENDING_QUESTION',
+			array(
+				'recipient' => getUserRealName($res[0]['asker']),
+				'nquestions' => 1,
+				'questions' => $res[0]['title']
+			)
+		);
 	}
 	else
 	{
@@ -912,4 +920,23 @@ function getPaginationCountQuestion($array)
 	return databaseQuery("select count(body) as count from posts where question=?",$array);
 }
 
+/*
+ * Get the first name of the currently logged in user.
+ *
+ * The username must be present in the session.
+ */
+function getUserRealName($idno)
+{
+	$sql = "SELECT users.realname FROM users WHERE users.idno=?";
+
+	$result = databaseQuery($sql, array($idno));
+
+	$arr = array();
+
+	if(is_array($result) && !empty($result)) {
+		return trim($result[0]['realname']);
+	} else {
+		return "To Whom It May Concern";
+	}
+}
 ?>

@@ -309,7 +309,12 @@ SQL;
 		return false;
 	}
 
-	return true;
+	$rest = sendNotification($idno, 'SCHEDULE_CHANGED', array(
+		'recipient' => getUserRealName($idno);
+	));
+	
+	if($rest === -1) return false;
+	else            return true;
 }
 
 /*
@@ -330,6 +335,7 @@ function unregisterSchedule($val, $dept) {
 	$sql = <<<'SQL'
 DELETE FROM schedules WHERE dept = ? AND starttime = ? AND endtime = ?
 	AND term = (SELECT code FROM terms WHERE terms.activeterm)
+	RETURNING student
 SQL;
 
 	$nhour = $hour;
@@ -364,12 +370,35 @@ SQL;
 
 	$res = databaseQuery($sql, $params);
 
-	/* 	$res = false; */
-
 	if(!is_array($res)) {
 		return false;
 	}
 
-	return true;
+	$rest = sendNotification($res[0]['student'], 'SCHEDULE_CHANGED', array(
+		'recipient' => getUserRealName($res[0]['student']);
+	));
+	
+	if($rest === -1) return false;
+	else            return true;
+}
+
+/*
+ * Get the first name of the currently logged in user.
+ *
+ * The username must be present in the session.
+ */
+function getUserRealName($idno)
+{
+	$sql = "SELECT users.realname FROM users WHERE users.idno?";
+
+	$result = databaseQuery($sql, array($idno));
+
+	$arr = array();
+
+	if(is_array($result) && !empty($result)) {
+		return trim($result[0]['realname']));
+	} else {
+		return "To Whom It May Concern";
+	}
 }
 ?>

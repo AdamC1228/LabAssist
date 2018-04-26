@@ -5,9 +5,9 @@ session_start();
 
 #Import needed files
 
-require_once "logic/portal-base-logic.php";
 require_once "logic/common/commonFunctions.php";
 require_once "page/portal-base-page.php";
+require_once "logic/portal-base-logic.php";
 require_once "page/default-layout-page.php";
 require_once "navigation.php";
 
@@ -27,17 +27,32 @@ $html="";
 
 if(isset($_POST['formSubmit']) && !empty($_POST['formSubmit']))
 {
-    attemptSetLabTimes();
+    if(isset($_POST['startTime']) && !empty($_POST['startTime']))
+    {
+        if(isset($_POST['endTime']) && !empty($_POST['endTime']))
+        {
+            setTimes(getUsersDepartment($_SESSION['username']),$_POST['startTime'],$_POST['endTime']);
+            $html .= "<script>alert(\"Updated Lab Times!\");</script>";
+        }
+        else
+        {
+            $html .= "<script>alert(\"Failed to set appropriate end time!\");</script>";
+        }
+    }
+    else
+    {
+        $html .= "<script>alert(\"Failed to set appropriate start time!\");</script>";
+    }
     
 }
-else if(isset($_POST['formSubmit']) && !empty($_POST['formSubmit']))
+else if(isset($_POST['formCancel']) && !empty($_POST['formCancel']))
 {
-    
+    header('Location: portal.php');
+    exit();
 }
-else
-{
-    $html .= genLabTimeForm();
-}
+
+$html .= genLabTimeForm();
+
 
 
 

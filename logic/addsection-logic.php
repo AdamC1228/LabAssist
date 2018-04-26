@@ -86,6 +86,7 @@ HTML;
 function getClassList()
 {
 	$html = "";
+	$current = "";
 	$currentDepartment= getUsersDepartment($_SESSION['username']);
 	if($currentDepartment === -1)
 	{
@@ -111,7 +112,8 @@ function getClassList()
 			$current="";
 			$_POST['classSelected']=$result[0]['cid'];
 		}
-
+		
+		
 		/*
 		 * Create select box.
 		 */
@@ -119,7 +121,7 @@ function getClassList()
 
 		foreach($result as $row)
 		{
-			if ($current === $row["cid"])
+			if ($current == $row["cid"])
 			{
 				$html.= "<option value=\"{$row["cid"]}\" selected>{$row["name"]}</option>";
 			}
@@ -176,7 +178,7 @@ function getProfList()
 
 		foreach($result as $row)
 		{
-			if ($current === $row["idno"])
+			if ($current == $row["idno"])
 			{
 				$html.= "<option value=\"{$row['idno']}\" selected>{$row['realname']}</option>";
 			}
@@ -225,7 +227,7 @@ function getTermList()
 
 		foreach($result as $row)
 		{
-			if ($current === $row["code"])
+			if ($current == $row["code"])
 			{
 				$html.= "<option value=\"{$row['code']}\" selected>{$row['code']}</option>";
 			}

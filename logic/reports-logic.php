@@ -383,14 +383,15 @@ function sectionUsageReport()
 
 	if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection']))
 	{
-		$data = reportSectionVisits($_GET['selectedSection']);
-		if($data !== -1 )
+		if(isset($_GET['selectedTerm']) && !empty($_GET['selectedTerm']))
 		{
-			$html.= sectionUsageReportView(reportSectionVisits($_GET['selectedSection']));
+            $data = reportSectionVisits($_GET['selectedSection'],$_GET['selectedTerm']);
+            if($data !== -1 )
+            {
+                $html.= sectionUsageReportView($data);
+            }
 		}
 	}
-
-	//     $html.= arrayPrint(reportSectionVisits(2));
 
 	return $html;
 }
@@ -809,7 +810,18 @@ SELECT users.idno,
 	ORDER BY users.role, users.realname
 SQL;
 
-	return safeDBQuery($sql, array($term));
+	$res = safeDBQuery($sql, array($term));
+	if($res === -1) return -1;
+
+	$ret = array();
+
+	foreach($res as $dat) {
+		$dat['total_hours'] = explode('.', $dat['total_hours'])[0];
+
+		array_push($ret, $dat);
+	}
+
+	return $ret;
 }
 
 
@@ -826,17 +838,20 @@ SQL;
 /*
  * Get the section visit report.
  */
-function reportSectionVisits($sect) {
+function reportSectionVisits($sect, $term) {
 	$sql = <<<SQL
+WITH filt_sections AS (
+	SELECT * FROM sections WHERE sections.term = ?
+)
 SELECT users.realname, users.email, COUNT(usage.markin)
 	FROM usage
-	JOIN term_sections ON usage.secid = term_sections.secid
+	JOIN filt_sections ON usage.secid = filt_sections.secid
 	JOIN users         ON usage.student = users.idno
 	WHERE usage.secid = ? AND usage.markout IS NOT NULL
 	GROUP BY users.idno
 SQL;
 
-	return safeDBQuery($sql, array($sect));
+	return safeDBQuery($sql, array($term, $sect));
 }
 
 /*

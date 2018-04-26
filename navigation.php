@@ -328,7 +328,7 @@ function tutoringHours()
 {
 	$html=<<<eof
 	<li class="">
-	    <a href="labHours.php" class="nav-menu-item">Lab Hours</a>
+	    <a href="managelabhours.php" class="nav-menu-item">Lab Hours</a>
 	</li>
 eof;
 

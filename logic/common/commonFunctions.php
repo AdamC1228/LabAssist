@@ -285,7 +285,7 @@ function doesUserBelongToDept($user, $dept)
 	if($res === -1) {
 		return -1;
 	} else {
-		return $res[0] === $dept;
+		return $res === $dept;
 	}
 }
 

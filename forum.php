@@ -43,7 +43,7 @@ if(isset($_POST['solvedCheck']) && !empty($_POST['solvedCheck']))
 //Handle the Thread responses
 if(isset($_POST['formattedReply']) && !empty($_POST['formattedReply']))
 {
-	$is_Success=createResponse($_GET['viewThread'],$_SESSION['useridno'],$_POST['formattedReply']);
+	$is_Success=createResponse($_GET['viewThread'],$_SESSION['useridno'],$_POST['formattedReply'],"false");
 
 	if($is_Success==1)
 	{

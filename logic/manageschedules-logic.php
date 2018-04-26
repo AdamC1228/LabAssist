@@ -94,7 +94,7 @@ HTML;
 
 				$ret .= generateSelectBox("tutorAvailability", $tutors,
 					$prevValue, 'mangled-id', 'name',
-					"NONE {$_SESSION['useridno']} {$nullVal}");
+					"NONE {$nullVal}");
 
 				$ret .= <<<HTML
 	</form>
@@ -305,8 +305,6 @@ SQL;
 
 	$res = databaseQuery($sql, array($idno, $dept, $start, $end));
 
-	/* 	$res = false; */
-
 	if(!is_array($res)) {
 		return false;
 	}
@@ -324,14 +322,13 @@ function unregisterSchedule($val, $dept) {
 	$day  = 0;
 
 	if($val[0] === 'N') {
-		list($idno, $hour, $min, $day) = sscanf($val, "NONE %s %d:%d %s");
+		list($hour, $min, $day) = sscanf($val, "NONE %d:%d %s");
 	} else {
 		list($idno, $hour, $min, $day) = sscanf($val, "%s %d:%d %s");
 	}
 
 	$sql = <<<'SQL'
-DELETE FROM schedules WHERE student = ? AND dept = ? ]
-	AND starttime = ? AND endtime = ?
+DELETE FROM schedules WHERE dept = ? AND starttime = ? AND endtime = ?
 	AND term = (SELECT code FROM terms WHERE terms.activeterm)
 SQL;
 
@@ -363,7 +360,9 @@ SQL;
 	$start = strftime("%F %T", strtotime($startstr));
 	$end   = strftime("%F %T", strtotime($endstr));
 
-	$res = databaseQuery($sql, array($idno, $dept, $start, $end));
+	$params = array($dept, $start, $end);
+
+	$res = databaseQuery($sql, $params);
 
 	/* 	$res = false; */
 

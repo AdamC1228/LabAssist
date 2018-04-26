@@ -10,6 +10,54 @@ require_once "logic/common/commonFunctions.php";
  * 	- Go from 8:00 AM to 8:00 PM
  */
 
+ 
+function genLabTimeForm()
+{
+    $startTime=-1;
+    $endTime=-1;
+    if(isset($_POST['startTime']) && !empty($_POST['startTime']))
+    {
+        $startTime=$_POST['startTime'];
+    }
+    
+    if(isset($_POST['startTime']) && !empty($_POST['startTime']))
+    {
+        $endTime=$_POST['startTime'];
+    } 
+ 
+    $startBox=getStartBox($startTime);
+    $endBox = getEndBox($startTime,$endTime);
+
+    $html=<<<eof
+    <div class="flex flexGrow group">
+        <form class="flex flexColumn flexGrow">
+            <div class="flex flexRow alignCenterFlex flexGrow">
+                <div class="flex"
+                    Yolo
+                </div>
+                <div class="flex"
+                    {$startBox}
+                </div>
+                <div class="flex"
+                    Swag
+                </div>
+                <div class="flex"
+                    {$endBox}
+                </div>
+            </div> <!-- formEntryBlock-->
+            <div class="flex flexRow alignCenterFlex centerFlex flexGrow">
+                <input type=submit value="Cancel" name="submit" class="btn">
+                <input type=submit value="Submit" name="submit" class="btn">
+            </div> <!-- buttonBlock-->
+        </form> <!-- formBlock -->
+    </div> <!-- Container End -->
+    
+eof;
+    return $html;
+}
+ 
+ 
+ 
 /*
  * Create a start time selecting box.
  *

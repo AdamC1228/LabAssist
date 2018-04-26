@@ -528,7 +528,7 @@ HTML;
 	if($is_question===true)
 	{
 		$pred = isUserRoleGreaterThanOrEqualTo($_SESSION['useridno'], 'tutor');
-
+		
 		if($_SESSION['useridno']===$author || $pred===1)
 		{
 			$html.= "       <div class='isSolved'>\n";
@@ -780,12 +780,12 @@ function getQuestionName($quid)
 /*
  * Create a response.
  */
-function createResponse($quid, $author, $reply)
+function createResponse($quid, $author, $reply, $is_question)
 {
 	$query = <<<SQL
-INSERT INTO posts(question, author, body, is_question, added) VALUES (?, ?, ?, FALSE, CURRENT_TIMESTAMP)
+INSERT INTO posts(question, author, body, is_question, added) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
 SQL;
-	$result=databaseQuery($query, array( $quid, $author, $reply));
+	$result=databaseQuery($query, array( $quid, $author, $reply, $is_question));
 
 	if(is_array($result))
 	{
@@ -819,7 +819,7 @@ SQL;
 		$temp = $result[0]['quid'];
 		array_unshift($postArr,$temp);
 
-		return createResponse($postArr[0], $postArr[1], $postArr[2]);
+		return createResponse($postArr[0], $postArr[1], $postArr[2], true);
 	}
 	else
 	{

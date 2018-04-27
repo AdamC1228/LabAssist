@@ -907,14 +907,32 @@ SQL;
 
 	$dat = $dat[0];
 
-// 	myDebug($dat);
-
 	$tstamp = explode(".", $dat['total_hours'])[0];
 
-	$ar = strptime($tstamp, "%T");
+	$ar = array();
+
+	/*
+	 * Fix issue with '9 days ...'
+	 */
+	if(stripos($tstamp, "days") !== FALSE) {
+		list($dys, $hrs, $mins, $secs) = sscanf($tstamp, "%d days %d:%d:%d");
+
+		while($hrs >= 24) {
+			$dys += 1;
+			$hrs -= 24;
+		}
+
+		$strang = sprintf("%'02d:%'02d:%'02d", $hrs, $mins, $secs);
+
+		$ar = strptime($strang, "%T");
+
+		$ar['tm_hour'] += (24 * $dys);
+	} else {
+		$ar = strptime($tstamp, "%T");
+	}
 
 	$days = 0;
-	while($ar['tm_hour'] > 24) {
+	while($ar['tm_hour'] >= 24) {
 		$days += 1;
 
 		$ar['tm_hour'] -= 24;

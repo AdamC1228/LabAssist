@@ -309,8 +309,8 @@ SQL;
 		return false;
 	}
 
-	$rest = sendNotification($idno, 'SCHEDULE_CHANGED', array(
-		'recipient' => getUserRealName($idno);
+	$rest = postNotification($idno, 'SCHEDULE_CHANGED', array(
+		'recipient' => getUserRealName($idno)
 	));
 	
 	if($rest === -1) return false;
@@ -374,8 +374,8 @@ SQL;
 		return false;
 	}
 
-	$rest = sendNotification($res[0]['student'], 'SCHEDULE_CHANGED', array(
-		'recipient' => getUserRealName($res[0]['student']);
+	$rest = postNotification($res[0]['student'], 'SCHEDULE_CHANGED', array(
+		'recipient' => getUserRealName($res[0]['student'])
 	));
 	
 	if($rest === -1) return false;

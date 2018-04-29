@@ -42,13 +42,10 @@ function printReportHeader()
 		$term=databaseExecute("select code from terms where activeterm=true;")[0]['code'];
 	}
 
-	if(isSet($_GET['reportSection']) && !empty($_GET['reportSection']))
-	{
-		$reportSection=$_GET['reportSection'];
-	}
-	else
-	{
-		$reportSection=-1;
+	if(isset($_GET['selectedSection']) && !empty($_GET['selectedSection'])) {
+		$reportSection=$_GET['selectedSection'];
+	} else {
+		$reportSection = -1;
 	}
 
 	$html = "";

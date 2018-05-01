@@ -1,7 +1,7 @@
 # LabAssist
 Help Lab statistical reporting system.
 
-##Readme
+## Readme
 
 OS independent instructions are provided. Please refer to your OS/distribution's documentation for detailed information regaurding the specific details.
 

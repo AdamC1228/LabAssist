@@ -1,0 +1,1 @@
+Bug in the user verification. Currently does not redirect to the portal if the user is logged in. 

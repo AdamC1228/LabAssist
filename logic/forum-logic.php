@@ -789,15 +789,15 @@ SQL;
 
 	if(is_array($result))
 	{
-		$res = safeDBQuery("SELECT title, asker FROM questions WHERE quid = ?", $quid);
+		$res = safeDBQuery("SELECT title, asker FROM questions WHERE quid = ?", array($quid));
 
-		return postNotification($res[0]['asker'], 'PENDING_QUESTION',
-			array(
-				'recipient' => getUserRealName($res[0]['asker']),
-				'nquestions' => 1,
-				'questions' => $res[0]['title']
-			)
+		$parms = array(
+			'recipient' => getUserRealName($res[0]['asker']),
+			'nquestions' => 1,
+			'questions' => $res[0]['title']
 		);
+
+		return postNotification($res[0]['asker'], 'PENDING_QUESTION', $parms);
 	}
 	else
 	{

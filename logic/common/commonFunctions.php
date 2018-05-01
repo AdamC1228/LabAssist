@@ -437,7 +437,7 @@ function postNotification($recipient, $type, $vars) {
 	$vartxt = "";
 
 	foreach($vars as $key => $val) {
-		$vartxt .= $key . ": " . $val . " ;";
+		$vartxt .= $key . ": " . $val . " ; ";
 	}
 
 	$vartxt = rtrim($vartxt, "; ");

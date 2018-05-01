@@ -383,7 +383,6 @@ function filterClasses()
 	//Filter out anything not accessable b y students
 	$curRole=getUserLevelAccessIdno($_SESSION['sidno']);
 
-    var_dump($curRole);
 	
 	if($curRole=='student')
 	{

@@ -396,7 +396,7 @@ function getUserRealName($idno)
 	$arr = array();
 
 	if(is_array($result) && !empty($result)) {
-		return trim($result[0]['realname']));
+		return trim($result[0]['realname']);
 	} else {
 		return "To Whom It May Concern";
 	}

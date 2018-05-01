@@ -1,10 +1,18 @@
 <?php
 
+
+$serverURL="idmprodldap.wvu.edu";
+$serverPort=389;
+$serverDN="ou=people,dc=wvu,dc=edu";
+
+
 /*
  * Primary login handler
  */
 function login($usr,$pass)
 {
+	global $serverURL;
+	global $serverPort;
 	/*
 	 * Establish ldap connection object
 	 */
@@ -13,7 +21,7 @@ function login($usr,$pass)
 	/*
 	 * Determine if login server is up/down
 	 */
-	$status = chkServer("idmprodldap.wvu.edu",389);
+	$status = chkServer($serverURL,$serverPort);
 
 	/*
 	 * If server is up, lets check the credentials
@@ -34,15 +42,17 @@ function login($usr,$pass)
  */
 function ldapCon()
 {
+	global $serverURL;
+	global $serverPORT;
 	/*
 	 * This is the name of the domain controller
 	 */
-	$server = "ldap://idmprodldap.wvu.edu"; 
+	$server = "ldap://".$serverURL; 
 
 	/*
 	 * The port to query the global catalog for active directory is 3268
 	 */
-	$ldap_connection = ldap_connect($server,389) or die("Could not connect to $ldaphost");
+	$ldap_connection = ldap_connect($server,$serverPORT) or die("Could not connect to $ldaphost");
 
 	//var_dump($ldap_connection);
 
@@ -63,9 +73,11 @@ function ldapCon()
  */
 function checkUser($ldap, $user, $pass)
 {
+	global $serverDN;
+
 	$login_ok = false;
 
-	$ldapParams="uid=$user,ou=people,dc=wvu,dc=edu";
+	$ldapParams="uid=$user," .$serverDN;
 
 	/*
 	 * Check credentials
@@ -138,18 +150,21 @@ function chkServer($host, $port)
  * Get the attributes of the user by the username.
  */
 function getUserAttr($query_user,$password) {
+	
+	global $serverDN;	
+
 	/*
 	 * Active Directory server
 	 */
 	$ldap=ldapCon();
 
-	$ldap_dn="ou=people,DC=wvu,DC=edu";
-	$ldapParams="uid=$query_user,ou=people,dc=wvu,dc=edu";
+	//$ldap_dn="ou=people,DC=wvu,DC=edu";
+	$ldapParams="uid=$query_user," . $serverDN;
 
 	ldap_bind($ldap,$ldapParams,$password) or die("Could not bind to LDAP");
 
 	// Search AD
-	$results = ldap_search($ldap, $ldap_dn, "(uid=$query_user)",
+	$results = ldap_search($ldap, $serverDN, "(uid=$query_user)",
 		array("gecos", "value", "mail", "value", "wvuid", "value")
 	);
 
@@ -172,6 +187,9 @@ function getUserAttr($query_user,$password) {
  * Get the attributes of the user by the ID number.
  */
 function getSidnoAttr($sidno) {
+	
+	global $serverDN;
+	
 	// Active Directory server
 	$ldap=ldapCon();
 
@@ -181,7 +199,7 @@ function getSidnoAttr($sidno) {
 	ldap_bind($ldap) or die("Could not bind to LDAP");
 
 	// Search AD
-	$results = ldap_search($ldap, $ldap_dn, "(wvuid=$sidno)", 
+	$results = ldap_search($ldap, $serverDN, "(wvuid=$sidno)", 
 		array("uid", "value", "gecos", "value", "mail", "value", "wvuid", "value")
 	);
 	$entries = ldap_get_entries($ldap, $results);

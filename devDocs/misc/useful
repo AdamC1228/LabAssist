@@ -1,8 +1,0 @@
-        <div class="marginBottom10 flex rightAlignFlex">
-            <div>  
-                <form action="manageclasses.php" method="post">
-                    <label for='showAllTerms'> Show only current term </label>
-                    <input type='checkbox' $checked name='subscribe' id='showAllTerms' value='true'>
-                </form>
-            </div>
-        </div>

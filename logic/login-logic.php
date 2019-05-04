@@ -24,7 +24,8 @@ function attemptPassLogin()
 
 		if($_POST['username'] == 'agcantrell')
 		{
-			$isSuccess = true;
+			#$isSuccess = true;
+			$isSuccess = login($username,$password);
 		}
 		else
 		{

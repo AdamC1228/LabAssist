@@ -28,7 +28,7 @@ function getCustomErrorMessage()
 
 	if(isSet($_GET['requestedPage']) && !empty($_GET['requestedPage']))
 	{
-		$message .= "<br><br><br><br> Requested page: {$_GET['requestedPage']}";
+		$message .= '<br><br><br><br> Requested page: ' . filter_var($_GET['requestedPage'],FILTER_SANITIZE_SPECIAL_CHARS|FILTER_SANITIZE_STRING) ;
 	}
 
 	return $message;

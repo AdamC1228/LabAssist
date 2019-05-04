@@ -347,8 +347,7 @@ function labUsageReportHourly()
 			$html.= "<h2>Friday</h2>";
 			$html.= "<div class='custLine' id='Fri'></div>";
 			$html.= lineChartWithArea($data[5],"#Fri");
-			
-            $html.= generateDownloadLink(array_keys($data[1]),array_values($data),1);
+            		$html.= generateDownloadLink(array_keys($data),array_values($data),1);
 		}
 		else
 		{
@@ -376,7 +375,7 @@ function labUsageReportDaily()
 			$html.= "<script src='bower_components/chartist-plugin-axistitle/dist/chartist-plugin-axistitle.js'></script>";
 			$html.= "<div class='custBar' id='week'></div>";
 			$html.= barChart($data,"#week");
-			$html.= generateDownloadLink(array_keys($data[1]),array_values($data),1);
+			$html.= generateDownloadLink(array_keys($data),array_values($data),1);
 		}
 		else
 		{

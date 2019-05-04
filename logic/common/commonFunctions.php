@@ -412,11 +412,19 @@ function createCSV($headerArray, $dataArray, $headerPos)
     if($headerPos==1)                   // Top heaer
     {
         fputcsv($new_csv,$headerArray);
-        
-        foreach($dataArray as $row)
-        {
-            fputcsv($new_csv,$row);
-        }
+    
+	if(is_array($dataArray[0]))
+	{    
+    	    foreach($dataArray as $row)
+    	    {
+    	        fputcsv($new_csv,$row);
+    	    }
+	}
+	else
+	{
+		fputcsv($new_csv,$dataArray);
+	}
+
     }
     else if ($headerPos==2)             // Left Side Header is not implemented.
     {

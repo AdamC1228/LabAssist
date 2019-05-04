@@ -1,0 +1,6 @@
+After patching the following steps are required to ensure that the environment is fully functional
+
+2019-05-03
+Fixed vulnerability that allowed unauthenticated users to download files from the system. 
+	Connect to the database and add the following entry
+		insert into pageaccess (role,page) values ('staff','reportdownload.php');

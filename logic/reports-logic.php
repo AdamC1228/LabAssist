@@ -288,15 +288,15 @@ function printReport($reportID)
 function generateDownloadLink($header, $data , $pos)
 {
 
-    $filename=createCSV($header,$data ,$pos);
+    $_SESSION['reportFile'] = createCSV($header,$data ,$pos);
 
     $html=<<<eof
     
     <div class='flex flexGrow flexAlignCenter center Flex marginTop30 marginBottom80 centerAlignFlex'>
         <form action='reportdownload.php' action='GET' class='flex centerFlex flexGrow flexAlignCenter centerAlignFlex'>
 
-                <input type='hidden' name='file' value='{$filename}'>
-                <input type='submit' class='btn' name='formSubmit' value='Download raw data'>
+                <input type='hidden' name='download' value='true'>
+                <input type='submit' class='btn' name='formSubmit' value='Download Raw Data'>
 
                 
         </form>

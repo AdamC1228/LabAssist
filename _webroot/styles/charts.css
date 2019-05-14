@@ -1,0 +1,16 @@
+.custLine .ct-chart-line .ct-series-a .ct-line,
+.custLine .ct-chart-line .ct-series-a .ct-point {
+    stroke: var(--dark-secondary-color);
+
+}
+
+.custLine .ct-chart-line .ct-series-a .ct-area {
+    fill:var(--dark-secondary-color);
+}
+
+
+.custBar .ct-chart-bar .ct-series-a .ct-bar{
+    stroke: var(--dark-secondary-color);
+    stroke-width: 80px;
+}
+

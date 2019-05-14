@@ -1,0 +1,451 @@
+
+.tableStyleA table {
+    margin:auto;
+    border-collapse: collapse;
+    border:0px;
+    width:100%;
+}
+
+.tableStyleA th, td {
+    text-align: center;
+    padding: 12px 5px;
+    margin:0;
+}
+
+.tableStyleA tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+.tableStyleA tr:nth-child(odd){
+    background-color: white;
+}
+
+.tableStyleA th {
+    border-bottom: 2px solid var(--primary-text-color);
+
+        background-color: var(--dark-secondary-color) !important;
+}
+
+
+/*  
+ 
+ 
+    Table Style B
+ 
+ 
+ */
+
+.threadList {
+    display:flex;
+    flex-direction:column;
+}
+.threadHeader {
+    display:flex;
+    flex-direction:row;
+}
+
+.threadBody{
+    display:flex;
+    flex-direction:column;
+}
+
+.threadRow{
+    display:flex;
+    flex-direction:row;
+}
+
+
+
+
+.tableHeaderStyleB {
+    height:50px;
+    border-bottom: 2px solid var(--primary-text-color);
+    background-color: var(--dark-secondary-color) ;
+}
+
+.tableHeaderStyleB>div{
+    align-self:center;
+}
+
+.tableRowStyleB>div {
+    height:5vh;
+    min-height:60px;
+}
+.tableRowStyleB>div>div{
+    align-self:center;
+}
+
+.tableRowStyleB>div:nth-child(even){
+    background-color: #f2f2f2;
+}
+.tableRowStyleB>div:nth-child(odd){
+    background-color: white;
+}
+
+.tableDateStyleB{
+    font-size: 13px;
+    margin-top:4px;
+    margin-bottom:4px;
+}
+
+
+
+/*  
+ 
+ 
+    Thread Views
+ 
+ 
+ */
+
+
+
+.statusCol {
+    max-width:100px;
+    width:100%;
+    text-align: center;
+    align-self:center;
+    justify-content:center;
+    display:flex;
+}
+
+.statusCol>img{
+    display:flex;
+    max-height:4.0vh;
+    min-height:30px;
+    height:100%;
+}
+
+.subjectCol {
+    text-align: left;
+    flex: 1;
+}
+
+.classCol {
+    max-width:300px;
+    min-width:150px;
+    width:15%;
+}
+
+.infoCol {
+    max-width:250px;
+    width:100%;
+}
+
+.infoColText {
+    text-align: right;
+    margin-right: 30px;
+}
+
+.deptCol{
+    flex:1;
+    text-align:left;
+}
+
+.deptColText {
+    text-align:left;
+    margin-left: 50px;
+    height:100%;
+}
+
+.unansQuestCol {
+    text-align:center;
+    max-width:175px;
+    min-width: 100px;
+    width:100%;
+}
+
+.totalQuestCol {
+    text-align:center;
+    max-width:175px;
+    min-width:100px;
+    width:100%;
+}
+
+
+
+.threadBlockTitle{
+    display:flex;
+    flex-direction:row;
+    flex 1;
+    margin-top:10px;
+    margin-left:15px;
+    margin-right:15px;
+    align-items:center;
+}
+
+.threadBlockTitleInput {
+    flex: 1;
+    max-width:600px;
+    margin-left: 10px;
+}
+
+.threadBlockClassText {
+    margin-left: 10px;
+}
+.threadBlockClassInput {
+    flex: 1;
+    max-width:600px;
+    margin-left: 10px;
+}
+
+
+/*  
+ 
+ 
+    Posts
+ 
+ 
+ */
+
+
+.postBlock {
+    display:flex;
+    flex:1;
+    min-height: 350px;
+    background-color:white;
+}
+
+.postBlockUserInfoContainer {
+    margin-top:10px;
+    margin-bottom:10px;
+    display: flex;
+    max-width:250px;
+    flex-direction:column;
+    flex:1;
+    border-right: 2px solid var(--grey-color);
+}
+
+.postBlockUserImgContainer {
+    display: flex;
+    flex:1;
+    max-height:125px;
+    border-bottom: 2px solid var(--grey-color);
+    margin-left:10px;
+    margin-right:10px;
+}
+.postBlockUserImg img{
+     display:block;
+     border-radius: 50%;
+     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+     height: 100%;
+     max-height: 100px;
+}
+.postBlockUserImg{
+    width:100px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.postBlockUserInfoContainer {
+    display: flex;
+    flex:1;
+    margin-left:10px;
+    margin-right:10px;
+}
+.postBlockUserInfo{
+    text-align:center;
+}
+.postBlockContainer {
+    margin-left:10px;
+    margin-right:10px;
+    display: flex;
+    flex-direction:column;
+    flex:1;
+}
+.postBlockHeader {
+    display: flex;
+    flex:1;
+    max-height:30px;
+    margin-top:10px;
+    border-bottom: 2px solid var(--grey-color);
+}
+.postBlockDataContainer {
+    display: flex;
+    flex:1;
+    margin-top:10px;
+}
+.postBlockData {
+    display: block;
+    width:100%;
+    margin-top:0px;
+    padding-top:0px;
+}
+.postBlockData p{
+    margin-top:0px;
+    padding-top:0px;
+}
+
+.postBlockHeaderWrapper {
+    display: flex;
+    flex: 1;
+}
+.postDate {
+    flex:1;
+}
+.isSolved {
+    display:flex;
+    flex:1;
+    align-items:top;
+    justify-content:flex-end;
+}
+
+
+
+
+
+/*  
+ 
+ 
+    Reply
+ 
+ 
+ */
+
+
+
+.responseBlock {
+    display:flex;
+    flex:1;
+    background-color:white;
+}
+
+.responseBlockContainer {
+    display: flex;
+    flex-direction:column;
+    flex:1;
+}
+.responseBlockHeader {
+    display: flex;
+    flex:1;
+    min-height:35px;
+    max-height:35px;
+    background-color: var(--default-primary-color);
+    border-radius: 5px 5px 0px 0px;
+    border-bottom: 2px solid var(--dark-grey-color);
+    justify-content: center;
+    align-items: center;
+}
+.responseBlockData {
+    display: block;
+    width:98%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+}
+.responseBlockSubmit {
+    display: flex;
+    flex:1;
+    justify-content: flex-end;
+    margin:10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*.tableStyleB table {
+    margin:auto;
+    border-collapse: collapse;
+    border:0px;
+    width:100%;
+    table-layout:fixed;
+}
+
+.subjectCol {
+    text-align: left;
+}
+
+.infoCol {
+    text-align: right;
+    margin-right: 100px;
+    max-width:150px;
+}
+
+.infoColText {
+    text-align: right;
+    margin-right: 20px;
+}
+
+.tableStyleB th, td {
+    padding: 12px 5px;
+    margin:0;
+}
+
+.tableStyleB tbody>tr{
+    height:7vh;
+}
+
+.tableStyleB tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+.tableStyleB tr:nth-child(odd){
+    background-color: white;
+}
+
+.tableStyleB th {
+    border-bottom: 2px solid var(--primary-text-color);
+    background-color: var(--dark-secondary-color) !important;
+}
+.classCol {
+    max-width:200px;
+}
+
+.statusCol {
+    max-width:100px;
+    width:100px;
+    text-align: center;
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+

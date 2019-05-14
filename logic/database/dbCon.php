@@ -24,7 +24,6 @@ function connectDB()
 	 
 	$host     = "localhost";
 	$user     = "labassist";
-	$password = "labassist";
 
 	$dBase = "labassist";
 
@@ -88,9 +87,6 @@ function databaseExecute($sql)
 
 function databaseQuery($sql,$array) 
 {
-
-//     var_dump($array);
-//     var_dump(debug_backtrace());
 
 	$result = "";
 	try 
